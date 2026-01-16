@@ -2,7 +2,9 @@
 
 映画の時代設定を視覚的に比較できるタイムラインツール
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/movie-timeline)
+🌐 **[デモを見る](https://movie-timeline-three.vercel.app/)**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/hatanaka0105/-movie-timeline)
 
 ## Features
 
