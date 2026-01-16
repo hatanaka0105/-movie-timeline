@@ -1,0 +1,1147 @@
+{
+  "21159": {
+    "tmdbId": 21159,
+    "title": "The Last Man on Earth",
+    "startYear": 1965,
+    "endYear": null,
+    "period": "1965年",
+    "source": "manual",
+    "notes": "1965年、疫病発生から3年後の世界"
+  },
+  "11234": {
+    "tmdbId": 11234,
+    "title": "The Omega Man",
+    "startYear": 1977,
+    "endYear": null,
+    "period": "1977年",
+    "source": "manual",
+    "notes": "1975年の中ソ細菌戦争後の近未来"
+  },
+  "13885": {
+    "tmdbId": 13885,
+    "title": "Sweeney Todd: The Demon Barber of Fleet Street",
+    "startYear": 1850,
+    "endYear": null,
+    "period": "1850年代",
+    "source": "manual",
+    "notes": "19世紀ロンドン (19th century London)"
+  },
+  "424": {
+    "tmdbId": 424,
+    "title": "The Poseidon Adventure",
+    "startYear": 1972,
+    "endYear": null,
+    "period": "1972年",
+    "source": "manual",
+    "notes": "公開年と同時代"
+  },
+  "861": {
+    "tmdbId": 861,
+    "title": "Total Recall",
+    "startYear": 2084,
+    "endYear": null,
+    "period": "2084年",
+    "source": "manual",
+    "notes": "火星植民地時代"
+  },
+  "945961": {
+    "tmdbId": 945961,
+    "title": "Alien: Romulus",
+    "startYear": 2142,
+    "endYear": null,
+    "period": "2142年",
+    "source": "manual",
+    "notes": "Alien timeline (between Alien 1 & 2)"
+  },
+  "5548": {
+    "tmdbId": 5548,
+    "title": "RoboCop",
+    "startYear": 2043,
+    "endYear": null,
+    "period": "2043年",
+    "source": "manual",
+    "notes": "近未来のデトロイト"
+  },
+  "590223": {
+    "tmdbId": 590223,
+    "title": "Reminiscence",
+    "startYear": 2050,
+    "endYear": null,
+    "period": "2050年",
+    "source": "manual",
+    "notes": "気候変動後のマイアミ"
+  },
+  "157336": {
+    "tmdbId": 157336,
+    "title": "Interstellar",
+    "startYear": 2067,
+    "endYear": null,
+    "period": "2067年",
+    "source": "manual",
+    "notes": "地球環境崩壊時代",
+    "additionalYears": [2100, 2130]
+  },
+  "137113": {
+    "tmdbId": 137113,
+    "title": "Edge of Tomorrow",
+    "startYear": 2015,
+    "endYear": null,
+    "period": "2015年",
+    "source": "manual",
+    "notes": "エイリアン侵略戦争"
+  },
+  "271110": {
+    "tmdbId": 271110,
+    "title": "Passengers",
+    "startYear": 2343,
+    "endYear": null,
+    "period": "2343年",
+    "source": "manual",
+    "notes": "宇宙船アヴァロン号内"
+  },
+  "438631": {
+    "tmdbId": 438631,
+    "title": "Dune",
+    "startYear": 10191,
+    "endYear": null,
+    "period": "10191年",
+    "source": "manual",
+    "notes": "宇宙帝国時代 (A.G. 10191)"
+  },
+  "20662": {
+    "tmdbId": 20662,
+    "title": "Rise of the Planet of the Apes",
+    "startYear": 2011,
+    "endYear": null,
+    "period": "2011年",
+    "source": "manual",
+    "notes": "現代サンフランシスコ（公開年と同時代）"
+  },
+  "12496": {
+    "tmdbId": 12496,
+    "title": "The Twilight Samurai",
+    "startYear": 1860,
+    "endYear": null,
+    "period": "1860年頃",
+    "source": "manual",
+    "notes": "幕末時代 (Bakumatsu period, late Edo period)"
+  },
+  "16306": {
+    "tmdbId": 16306,
+    "title": "Fantastic Planet",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（SF・ファンタジー）",
+    "source": "manual",
+    "notes": "異星を舞台にしたSFアニメーション (Sci-fi animation set on alien planet)"
+  },
+  "120467": {
+    "tmdbId": 120467,
+    "title": "The Grand Budapest Hotel",
+    "startYear": 1932,
+    "endYear": null,
+    "period": "1932年",
+    "source": "manual",
+    "notes": "1932年の架空のヨーロッパのホテルが舞台"
+  },
+  "33538": {
+    "tmdbId": 33538,
+    "title": "The Last Airbender",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の世界を舞台にしたファンタジー映画"
+  },
+  "120": {
+    "tmdbId": 120,
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "中つ国（架空の世界）を舞台"
+  },
+  "121": {
+    "tmdbId": 121,
+    "title": "The Lord of the Rings: The Two Towers",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "中つ国（架空の世界）を舞台"
+  },
+  "122": {
+    "tmdbId": 122,
+    "title": "The Lord of the Rings: The Return of the King",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "中つ国（架空の世界）を舞台"
+  },
+  "12444": {
+    "tmdbId": 12444,
+    "title": "Harry Potter and the Deathly Hallows: Part 1",
+    "startYear": 1997,
+    "endYear": 1998,
+    "period": "1997-1998年",
+    "source": "manual",
+    "notes": "魔法界の現代（1997-1998年）"
+  },
+  "12445": {
+    "tmdbId": 12445,
+    "title": "Harry Potter and the Deathly Hallows: Part 2",
+    "startYear": 1998,
+    "endYear": null,
+    "period": "1998年",
+    "source": "manual",
+    "notes": "魔法界の現代（1998年）"
+  },
+  "674": {
+    "tmdbId": 674,
+    "title": "Harry Potter and the Goblet of Fire",
+    "startYear": 1994,
+    "endYear": 1995,
+    "period": "1994-1995年",
+    "source": "manual",
+    "notes": "魔法界の現代（1994-1995年）"
+  },
+  "767": {
+    "tmdbId": 767,
+    "title": "Harry Potter and the Half-Blood Prince",
+    "startYear": 1996,
+    "endYear": 1997,
+    "period": "1996-1997年",
+    "source": "manual",
+    "notes": "魔法界の現代（1996-1997年）"
+  },
+  "672": {
+    "tmdbId": 672,
+    "title": "Harry Potter and the Chamber of Secrets",
+    "startYear": 1992,
+    "endYear": 1993,
+    "period": "1992-1993年",
+    "source": "manual",
+    "notes": "魔法界の現代（1992-1993年）"
+  },
+  "673": {
+    "tmdbId": 673,
+    "title": "Harry Potter and the Prisoner of Azkaban",
+    "startYear": 1993,
+    "endYear": 1994,
+    "period": "1993-1994年",
+    "source": "manual",
+    "notes": "魔法界の現代（1993-1994年）"
+  },
+  "675": {
+    "tmdbId": 675,
+    "title": "Harry Potter and the Order of the Phoenix",
+    "startYear": 1995,
+    "endYear": 1996,
+    "period": "1995-1996年",
+    "source": "manual",
+    "notes": "魔法界の現代（1995-1996年）"
+  },
+  "671": {
+    "tmdbId": 671,
+    "title": "Harry Potter and the Philosopher's Stone",
+    "startYear": 1991,
+    "endYear": 1992,
+    "period": "1991-1992年",
+    "source": "manual",
+    "notes": "魔法界の現代（1991-1992年）"
+  },
+  "58": {
+    "tmdbId": 58,
+    "title": "Pirates of the Caribbean: Dead Man's Chest",
+    "startYear": 1720,
+    "endYear": null,
+    "period": "1720年代",
+    "source": "manual",
+    "notes": "18世紀のカリブ海（海賊黄金時代）"
+  },
+  "285": {
+    "tmdbId": 285,
+    "title": "Pirates of the Caribbean: At World's End",
+    "startYear": 1720,
+    "endYear": null,
+    "period": "1720年代",
+    "source": "manual",
+    "notes": "18世紀のカリブ海（海賊黄金時代）"
+  },
+  "1865": {
+    "tmdbId": 1865,
+    "title": "Pirates of the Caribbean: On Stranger Tides",
+    "startYear": 1750,
+    "endYear": null,
+    "period": "1750年代",
+    "source": "manual",
+    "notes": "18世紀のカリブ海"
+  },
+  "166426": {
+    "tmdbId": 166426,
+    "title": "Pirates of the Caribbean: Dead Men Tell No Tales",
+    "startYear": 1751,
+    "endYear": null,
+    "period": "1751年",
+    "source": "manual",
+    "notes": "18世紀のカリブ海"
+  },
+  "122917": {
+    "tmdbId": 122917,
+    "title": "The Hobbit: The Battle of the Five Armies",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "中つ国（架空の世界）を舞台"
+  },
+  "49051": {
+    "tmdbId": 49051,
+    "title": "The Hobbit: An Unexpected Journey",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "中つ国（架空の世界）を舞台"
+  },
+  "57158": {
+    "tmdbId": 57158,
+    "title": "The Hobbit: The Desolation of Smaug",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "中つ国（架空の世界）を舞台"
+  },
+  "1271": {
+    "tmdbId": 1271,
+    "title": "300",
+    "startYear": -480,
+    "endYear": null,
+    "period": "紀元前480年",
+    "source": "manual",
+    "notes": "テルモピュライの戦い"
+  },
+  "1979": {
+    "tmdbId": 1979,
+    "title": "Conan the Barbarian",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の古代世界（ハイボリア時代）"
+  },
+  "36647": {
+    "tmdbId": 36647,
+    "title": "The Twilight Saga: Breaking Dawn - Part 1",
+    "startYear": 2006,
+    "endYear": null,
+    "period": "2006年",
+    "source": "manual",
+    "notes": "現代アメリカ（吸血鬼ファンタジー）"
+  },
+  "50619": {
+    "tmdbId": 50619,
+    "title": "The Twilight Saga: Breaking Dawn - Part 2",
+    "startYear": 2006,
+    "endYear": null,
+    "period": "2006年",
+    "source": "manual",
+    "notes": "現代アメリカ（吸血鬼ファンタジー）"
+  },
+  "82695": {
+    "tmdbId": 82695,
+    "title": "The Huntsman: Winter's War",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の中世風の世界"
+  },
+  "523": {
+    "tmdbId": 523,
+    "title": "Labyrinth",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "現実世界と迷宮の間を行き来するファンタジー"
+  },
+  "630": {
+    "tmdbId": 630,
+    "title": "The Wizard of Oz",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "現実世界（1930年代）とオズの国（架空の世界）"
+  },
+  "10191": {
+    "tmdbId": 10191,
+    "title": "How to Train Your Dragon",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空のバイキング世界（ドラゴンと共存）"
+  },
+  "82702": {
+    "tmdbId": 82702,
+    "title": "How to Train Your Dragon 2",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空のバイキング世界（ドラゴンと共存）"
+  },
+  "9567": {
+    "tmdbId": 9567,
+    "title": "Willow",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の中世風ファンタジー世界"
+  },
+  "1979": {
+    "tmdbId": 1979,
+    "title": "Conan the Destroyer",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の古代世界（ハイボリア時代）"
+  },
+  "1930": {
+    "tmdbId": 1930,
+    "title": "The Amazing Spider-Man",
+    "startYear": 2012,
+    "endYear": null,
+    "period": "2012年",
+    "source": "manual",
+    "notes": "現代ニューヨーク（2012年）"
+  },
+  "1933": {
+    "tmdbId": 1933,
+    "title": "Ladyhawke",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の中世ヨーロッパ（魔法と呪い）"
+  },
+  "9798": {
+    "tmdbId": 9798,
+    "title": "Clash of the Titans",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ギリシャ神話の世界（架空の古代）"
+  },
+  "44826": {
+    "tmdbId": 44826,
+    "title": "Clash of the Titans",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ギリシャ神話の世界（架空の古代）"
+  },
+  "53977": {
+    "tmdbId": 53977,
+    "title": "Wrath of the Titans",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ギリシャ神話の世界（架空の古代）"
+  },
+  "37724": {
+    "tmdbId": 37724,
+    "title": "Skyline",
+    "startYear": 2010,
+    "endYear": null,
+    "period": "2010年",
+    "source": "manual",
+    "notes": "現代ロサンゼルス（エイリアン侵略）"
+  },
+  "74465": {
+    "tmdbId": 74465,
+    "title": "The Legend of Tarzan",
+    "startYear": 1890,
+    "endYear": null,
+    "period": "1890年代",
+    "source": "manual",
+    "notes": "1890年代のコンゴ"
+  },
+  "10144": {
+    "tmdbId": 10144,
+    "title": "The Golden Compass",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "並行世界（パラレルワールド）"
+  },
+  "1368": {
+    "tmdbId": 1368,
+    "title": "First Knight",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "アーサー王伝説の世界（架空の中世）"
+  },
+  "10764": {
+    "tmdbId": 10764,
+    "title": "Quantum of Solace",
+    "startYear": 2008,
+    "endYear": null,
+    "period": "2008年",
+    "source": "manual",
+    "notes": "現代（2008年）"
+  },
+  "8871": {
+    "tmdbId": 8871,
+    "title": "Eragon",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空のファンタジー世界（アラゲイジア）"
+  },
+  "1213": {
+    "tmdbId": 1213,
+    "title": "Batman Returns",
+    "startYear": 1992,
+    "endYear": null,
+    "period": "1992年",
+    "source": "manual",
+    "notes": "現代ゴッサムシティ（1992年）"
+  },
+  "335984": {
+    "tmdbId": 335984,
+    "title": "Blade Runner 2049",
+    "startYear": 2049,
+    "endYear": null,
+    "period": "2049年",
+    "source": "manual",
+    "notes": "2049年のロサンゼルス"
+  },
+  "641": {
+    "tmdbId": 641,
+    "title": "Crouching Tiger, Hidden Dragon",
+    "startYear": 1779,
+    "endYear": null,
+    "period": "1779年",
+    "source": "manual",
+    "notes": "清朝時代の中国（1779年頃）"
+  },
+  "329865": {
+    "tmdbId": 329865,
+    "title": "Arrival",
+    "startYear": 2016,
+    "endYear": null,
+    "period": "2016年",
+    "source": "manual",
+    "notes": "現代（2016年、エイリアン来訪）"
+  },
+  "1865": {
+    "tmdbId": 1865,
+    "title": "The NeverEnding Story",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ファンタージェン（架空のファンタジー世界）"
+  },
+  "127585": {
+    "tmdbId": 127585,
+    "title": "X-Men: Days of Future Past",
+    "startYear": 1973,
+    "endYear": 2023,
+    "period": "1973年/2023年",
+    "source": "manual",
+    "notes": "1973年と2023年のタイムトラベル",
+    "additionalYears": [2023]
+  },
+  "1858": {
+    "tmdbId": 1858,
+    "title": "Transformers",
+    "startYear": 2007,
+    "endYear": null,
+    "period": "2007年",
+    "source": "manual",
+    "notes": "現代（2007年）"
+  },
+  "8844": {
+    "tmdbId": 8844,
+    "title": "Jumanji",
+    "startYear": 1995,
+    "endYear": null,
+    "period": "1995年",
+    "source": "manual",
+    "notes": "現代（1995年）とボードゲーム内の世界"
+  },
+  "353081": {
+    "tmdbId": 353081,
+    "title": "Jumanji: Welcome to the Jungle",
+    "startYear": 2017,
+    "endYear": null,
+    "period": "2017年",
+    "source": "manual",
+    "notes": "現代（2017年）とビデオゲーム内の世界"
+  },
+  "512200": {
+    "tmdbId": 512200,
+    "title": "Jumanji: The Next Level",
+    "startYear": 2019,
+    "endYear": null,
+    "period": "2019年",
+    "source": "manual",
+    "notes": "現代（2019年）とビデオゲーム内の世界"
+  },
+  "10674": {
+    "tmdbId": 10674,
+    "title": "Mulan",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の古代中国（ディズニーファンタジー版）"
+  },
+  "337404": {
+    "tmdbId": 337404,
+    "title": "Cruella",
+    "startYear": 1970,
+    "endYear": null,
+    "period": "1970年代",
+    "source": "manual",
+    "notes": "1970年代のロンドン"
+  },
+  "329996": {
+    "tmdbId": 329996,
+    "title": "Dumbo",
+    "startYear": 1919,
+    "endYear": null,
+    "period": "1919年",
+    "source": "manual",
+    "notes": "1919年のアメリカ（サーカス）"
+  },
+  "420817": {
+    "tmdbId": 420817,
+    "title": "Aladdin",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の中東の都市アグラバー"
+  },
+  "12155": {
+    "tmdbId": 12155,
+    "title": "Alice in Wonderland",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "不思議の国（架空の世界）"
+  },
+  "13804": {
+    "tmdbId": 13804,
+    "title": "Beowulf",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "古代北欧（神話的な世界）"
+  },
+  "38055": {
+    "tmdbId": 38055,
+    "title": "Stardust",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ストームホールド王国（架空のファンタジー世界）"
+  },
+  "1865": {
+    "tmdbId": 1865,
+    "title": "The Dark Crystal",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "架空の惑星トラ"
+  },
+  "13342": {
+    "tmdbId": 13342,
+    "title": "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ナルニア国（架空の世界）"
+  },
+  "12444": {
+    "tmdbId": 12444,
+    "title": "The Chronicles of Narnia: Prince Caspian",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ナルニア国（架空の世界）"
+  },
+  "20352": {
+    "tmdbId": 20352,
+    "title": "The Chronicles of Narnia: The Voyage of the Dawn Treader",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "ナルニア国（架空の世界）"
+  },
+  "585": {
+    "tmdbId": 585,
+    "title": "Monsters, Inc.",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "モンスターの世界（架空の世界）"
+  },
+  "862": {
+    "tmdbId": 862,
+    "title": "Toy Story",
+    "startYear": 1995,
+    "endYear": null,
+    "period": "1995年",
+    "source": "manual",
+    "notes": "現代アメリカ（1995年）"
+  },
+  "863": {
+    "tmdbId": 863,
+    "title": "Toy Story 2",
+    "startYear": 1999,
+    "endYear": null,
+    "period": "1999年",
+    "source": "manual",
+    "notes": "現代アメリカ（1999年）"
+  },
+  "10193": {
+    "tmdbId": 10193,
+    "title": "Toy Story 3",
+    "startYear": 2010,
+    "endYear": null,
+    "period": "2010年",
+    "source": "manual",
+    "notes": "現代アメリカ（2010年）"
+  },
+  "301528": {
+    "tmdbId": 301528,
+    "title": "Toy Story 4",
+    "startYear": 2019,
+    "endYear": null,
+    "period": "2019年",
+    "source": "manual",
+    "notes": "現代アメリカ（2019年）"
+  },
+  "920": {
+    "tmdbId": 920,
+    "title": "Cars",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "車の世界（架空の世界）"
+  },
+  "10674": {
+    "tmdbId": 10674,
+    "title": "Mulan",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "中国の伝説（架空の時代）"
+  },
+  "12": {
+    "tmdbId": 12,
+    "title": "Finding Nemo",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "海の世界（架空の世界）"
+  },
+  "127380": {
+    "tmdbId": 127380,
+    "title": "Finding Dory",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "海の世界（架空の世界）"
+  },
+  "354912": {
+    "tmdbId": 354912,
+    "title": "Coco",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "死者の国（ファンタジー世界）"
+  },
+  "508442": {
+    "tmdbId": 508442,
+    "title": "Soul",
+    "startYear": null,
+    "endYear": null,
+    "period": "時代設定なし（ファンタジー）",
+    "source": "manual",
+    "notes": "魂の世界（ファンタジー世界）"
+  },
+  "13": {
+    "tmdbId": 13,
+    "title": "Forrest Gump",
+    "startYear": 1951,
+    "endYear": 1982,
+    "period": "1951-1982年",
+    "source": "manual",
+    "notes": "アメリカ現代史"
+  },
+  "155": {
+    "tmdbId": 155,
+    "title": "The Dark Knight",
+    "startYear": 2008,
+    "endYear": null,
+    "period": "2008年",
+    "source": "manual",
+    "notes": "現代ゴッサム・シティ"
+  },
+  "268": {
+    "tmdbId": 268,
+    "title": "Batman",
+    "startYear": 1989,
+    "endYear": null,
+    "period": "1989年",
+    "source": "manual",
+    "notes": "現代ゴッサム・シティ"
+  },
+  "414906": {
+    "tmdbId": 414906,
+    "title": "The Batman",
+    "startYear": 2022,
+    "endYear": null,
+    "period": "2022年",
+    "source": "manual",
+    "notes": "現代ゴッサム・シティ"
+  },
+  "1726": {
+    "tmdbId": 1726,
+    "title": "Iron Man",
+    "startYear": 2008,
+    "endYear": null,
+    "period": "2008年",
+    "source": "manual",
+    "notes": "MCU 現代"
+  },
+  "299536": {
+    "tmdbId": 299536,
+    "title": "Avengers: Infinity War",
+    "startYear": 2018,
+    "endYear": null,
+    "period": "2018年",
+    "source": "manual",
+    "notes": "MCU 現代"
+  },
+  "299534": {
+    "tmdbId": 299534,
+    "title": "Avengers: Endgame",
+    "startYear": 2023,
+    "endYear": null,
+    "period": "2023年",
+    "source": "manual",
+    "notes": "MCU 5年後（2018 + 5年）"
+  },
+  "315635": {
+    "tmdbId": 315635,
+    "title": "Spider-Man: Homecoming",
+    "startYear": 2016,
+    "endYear": null,
+    "period": "2016年",
+    "source": "manual",
+    "notes": "MCU 現代"
+  },
+  "429617": {
+    "tmdbId": 429617,
+    "title": "Spider-Man: Far From Home",
+    "startYear": 2024,
+    "endYear": null,
+    "period": "2024年",
+    "source": "manual",
+    "notes": "MCU エンドゲーム後"
+  },
+  "634649": {
+    "tmdbId": 634649,
+    "title": "Spider-Man: No Way Home",
+    "startYear": 2024,
+    "endYear": null,
+    "period": "2024年",
+    "source": "manual",
+    "notes": "MCU ファー・フロム・ホーム直後"
+  },
+  "335984": {
+    "tmdbId": 335984,
+    "title": "Blade Runner 2049",
+    "startYear": 2049,
+    "endYear": null,
+    "period": "2049年",
+    "source": "manual",
+    "notes": "SF 近未来ロサンゼルス"
+  },
+  "78": {
+    "tmdbId": 78,
+    "title": "Blade Runner",
+    "startYear": 2019,
+    "endYear": null,
+    "period": "2019年",
+    "source": "manual",
+    "notes": "SF 近未来ロサンゼルス"
+  },
+  "603": {
+    "tmdbId": 603,
+    "title": "The Matrix",
+    "startYear": 1999,
+    "endYear": null,
+    "period": "1999年",
+    "source": "manual",
+    "notes": "現代（仮想世界）"
+  },
+  "604": {
+    "tmdbId": 604,
+    "title": "The Matrix Reloaded",
+    "startYear": 1999,
+    "endYear": null,
+    "period": "1999年",
+    "source": "manual",
+    "notes": "現代（仮想世界）"
+  },
+  "605": {
+    "tmdbId": 605,
+    "title": "The Matrix Revolutions",
+    "startYear": 1999,
+    "endYear": null,
+    "period": "1999年",
+    "source": "manual",
+    "notes": "現代（仮想世界）"
+  },
+  "624860": {
+    "tmdbId": 624860,
+    "title": "The Matrix Resurrections",
+    "startYear": 1999,
+    "endYear": null,
+    "period": "1999年",
+    "source": "manual",
+    "notes": "現代（仮想世界）"
+  },
+  "140607": {
+    "tmdbId": 140607,
+    "title": "Star Wars: The Force Awakens",
+    "startYear": null,
+    "endYear": null,
+    "period": "はるか昔",
+    "source": "manual",
+    "notes": "A Long Time Ago（エピソード4から約30年後）"
+  },
+  "181808": {
+    "tmdbId": 181808,
+    "title": "Star Wars: The Last Jedi",
+    "startYear": null,
+    "endYear": null,
+    "period": "はるか昔",
+    "source": "manual",
+    "notes": "A Long Time Ago（フォースの覚醒直後）"
+  },
+  "181812": {
+    "tmdbId": 181812,
+    "title": "Star Wars: The Rise of Skywalker",
+    "startYear": null,
+    "endYear": null,
+    "period": "はるか昔",
+    "source": "manual",
+    "notes": "A Long Time Ago（最後のジェダイ後）"
+  },
+  "330459": {
+    "tmdbId": 330459,
+    "title": "Rogue One: A Star Wars Story",
+    "startYear": null,
+    "endYear": null,
+    "period": "はるか昔",
+    "source": "manual",
+    "notes": "A Long Time Ago（エピソード4直前）"
+  },
+  "348350": {
+    "tmdbId": 348350,
+    "title": "Solo: A Star Wars Story",
+    "startYear": null,
+    "endYear": null,
+    "period": "はるか昔",
+    "source": "manual",
+    "notes": "A Long Time Ago（エピソード4の約10年前）"
+  },
+  "672": {
+    "tmdbId": 672,
+    "title": "Harry Potter and the Chamber of Secrets",
+    "startYear": 1992,
+    "endYear": 1993,
+    "period": "1992-1993年",
+    "source": "manual",
+    "notes": "ホグワーツ2年目"
+  },
+  "673": {
+    "tmdbId": 673,
+    "title": "Harry Potter and the Prisoner of Azkaban",
+    "startYear": 1993,
+    "endYear": 1994,
+    "period": "1993-1994年",
+    "source": "manual",
+    "notes": "ホグワーツ3年目"
+  },
+  "674": {
+    "tmdbId": 674,
+    "title": "Harry Potter and the Goblet of Fire",
+    "startYear": 1994,
+    "endYear": 1995,
+    "period": "1994-1995年",
+    "source": "manual",
+    "notes": "ホグワーツ4年目"
+  },
+  "675": {
+    "tmdbId": 675,
+    "title": "Harry Potter and the Order of the Phoenix",
+    "startYear": 1995,
+    "endYear": 1996,
+    "period": "1995-1996年",
+    "source": "manual",
+    "notes": "ホグワーツ5年目"
+  },
+  "767": {
+    "tmdbId": 767,
+    "title": "Harry Potter and the Half-Blood Prince",
+    "startYear": 1996,
+    "endYear": 1997,
+    "period": "1996-1997年",
+    "source": "manual",
+    "notes": "ホグワーツ6年目"
+  },
+  "12444": {
+    "tmdbId": 12444,
+    "title": "Harry Potter and the Deathly Hallows: Part 1",
+    "startYear": 1997,
+    "endYear": 1998,
+    "period": "1997-1998年",
+    "source": "manual",
+    "notes": "ホグワーツ7年目前半"
+  },
+  "12445": {
+    "tmdbId": 12445,
+    "title": "Harry Potter and the Deathly Hallows: Part 2",
+    "startYear": 1998,
+    "endYear": null,
+    "period": "1998年",
+    "source": "manual",
+    "notes": "ホグワーツ7年目後半"
+  },
+  "10195": {
+    "tmdbId": 10195,
+    "title": "Thor",
+    "startYear": 2011,
+    "endYear": null,
+    "period": "2011年",
+    "source": "manual",
+    "notes": "MCU 現代"
+  },
+  "76338": {
+    "tmdbId": 76338,
+    "title": "Thor: The Dark World",
+    "startYear": 2013,
+    "endYear": null,
+    "period": "2013年",
+    "source": "manual",
+    "notes": "MCU 現代"
+  },
+  "284053": {
+    "tmdbId": 284053,
+    "title": "Thor: Ragnarok",
+    "startYear": 2017,
+    "endYear": null,
+    "period": "2017年",
+    "source": "manual",
+    "notes": "MCU 現代"
+  },
+  "616037": {
+    "tmdbId": 616037,
+    "title": "Thor: Love and Thunder",
+    "startYear": 2024,
+    "endYear": null,
+    "period": "2024年",
+    "source": "manual",
+    "notes": "MCU エンドゲーム後"
+  },
+  "1771": {
+    "tmdbId": 1771,
+    "title": "Captain America: The First Avenger",
+    "startYear": 1942,
+    "endYear": 1945,
+    "period": "1942-1945年",
+    "source": "manual",
+    "notes": "第二次世界大戦"
+  },
+  "100402": {
+    "tmdbId": 100402,
+    "title": "Captain America: The Winter Soldier",
+    "startYear": 2014,
+    "endYear": null,
+    "period": "2014年",
+    "source": "manual",
+    "notes": "MCU 現代"
+  },
+  "271110": {
+    "tmdbId": 271110,
+    "title": "Captain America: Civil War",
+    "startYear": 2016,
+    "endYear": null,
+    "period": "2016年",
+    "source": "manual",
+    "notes": "MCU 現代（アベンジャーズ対立）"
+  },
+  "453395": {
+    "tmdbId": 453395,
+    "title": "Doctor Strange in the Multiverse of Madness",
+    "startYear": 2024,
+    "endYear": null,
+    "period": "2024年",
+    "source": "manual",
+    "notes": "MCU エンドゲーム後"
+  },
+  "297762": {
+    "tmdbId": 297762,
+    "title": "Wonder Woman",
+    "startYear": 1918,
+    "endYear": null,
+    "period": "1918年",
+    "source": "manual",
+    "notes": "第一次世界大戦"
+  },
+  "464052": {
+    "tmdbId": 464052,
+    "title": "Wonder Woman 1984",
+    "startYear": 1984,
+    "endYear": null,
+    "period": "1984年",
+    "source": "manual",
+    "notes": "1980年代冷戦期"
+  }
+}

@@ -18,16 +18,19 @@ export interface MovieTimePeriodEntry {
 import staticDb from '../data/movieTimePeriods.json';
 
 // 動的データベース（実行時に追加された映画）
-// LocalStorageに保存して永続化
+// サーバーサイドキャッシュ + LocalStorageのハイブリッド
 const STORAGE_KEY = 'movieTimePeriodCache';
 const CACHE_VERSION_KEY = 'movieTimePeriodCacheVersion';
-const CURRENT_CACHE_VERSION = 4; // Incremented to clear Civil War keyword cache
+const CURRENT_CACHE_VERSION = 5; // Incremented for server-side cache migration
+const API_CACHE_URL = '/api/movie-cache';
 
 class MovieTimePeriodDatabase {
   private dynamicDb: Record<string, MovieTimePeriodEntry> = {};
+  private serverCacheLoaded = false;
 
   constructor() {
     this.loadFromStorage();
+    this.loadFromServerCache();
   }
 
   // LocalStorageから読み込み
@@ -69,6 +72,24 @@ class MovieTimePeriodDatabase {
     }
   }
 
+  // サーバーキャッシュから読み込み
+  private async loadFromServerCache() {
+    if (this.serverCacheLoaded) return;
+
+    try {
+      const response = await fetch(API_CACHE_URL);
+      if (response.ok) {
+        const serverCache = await response.json();
+        // サーバーキャッシュとローカルキャッシュをマージ（ローカルを優先）
+        this.dynamicDb = { ...serverCache, ...this.dynamicDb };
+        this.serverCacheLoaded = true;
+        logger.debug(`✅ Loaded ${Object.keys(serverCache).length} entries from server cache`);
+      }
+    } catch (error) {
+      logger.warn('Failed to load server cache, using local cache only:', error);
+    }
+  }
+
   // LocalStorageに保存
   private saveToStorage() {
     try {
@@ -76,6 +97,30 @@ class MovieTimePeriodDatabase {
       localStorage.setItem(CACHE_VERSION_KEY, CURRENT_CACHE_VERSION.toString());
     } catch (error) {
       console.error('Failed to save movie time period cache:', error);
+    }
+  }
+
+  // サーバーキャッシュに保存
+  private async saveToServerCache(tmdbId: number, entry: MovieTimePeriodEntry) {
+    try {
+      await fetch(API_CACHE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          movieId: tmdbId.toString(),
+          data: {
+            startYear: entry.startYear,
+            endYear: entry.endYear,
+            period: entry.period,
+            additionalYears: entry.additionalYears,
+          },
+        }),
+      });
+      logger.debug(`✅ Saved movie ${tmdbId} to server cache`);
+    } catch (error) {
+      logger.warn('Failed to save to server cache:', error);
     }
   }
 
@@ -101,6 +146,8 @@ class MovieTimePeriodDatabase {
     const key = entry.tmdbId.toString();
     this.dynamicDb[key] = entry;
     this.saveToStorage();
+    // サーバーキャッシュにも保存（非同期、失敗しても処理は継続）
+    this.saveToServerCache(entry.tmdbId, entry);
   }
 
   // 映画が登録済みかチェック
