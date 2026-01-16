@@ -1,0 +1,11 @@
+
+    // スパンがある場合、スパンの占有領域も記録
+    if (spanHeight > 0) {
+      occupiedRects.push({
+        x: finalX - SPAN_WIDTH / 2,
+        y: finalY,
+        width: SPAN_WIDTH,
+        height: spanHeight,
+        isSpan: true,
+      });
+    }

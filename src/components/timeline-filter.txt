@@ -1,0 +1,16 @@
+  // 特殊な時代設定の映画を分離
+  const specialPeriodMovies = movies.filter(m => 
+    m.timeline.period === 'はるか昔' || 
+    m.timeline.period === 'A Long Time Ago' ||
+    m.timeline.period === '時代設定なし（ファンタジー）' ||
+    m.timeline.period === 'No Time Period (Fantasy)'
+  );
+  
+  // 通常のタイムライン映画（年代が特定できるもの）
+  const timelineMovies = movies.filter(m => 
+    m.timeline.period !== 'はるか昔' && 
+    m.timeline.period !== 'A Long Time Ago' &&
+    m.timeline.period !== '時代設定なし（ファンタジー）' &&
+    m.timeline.period !== 'No Time Period (Fantasy)'
+  );
+

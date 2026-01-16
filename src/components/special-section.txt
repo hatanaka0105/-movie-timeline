@@ -1,0 +1,19 @@
+      {/* 特殊な時代設定の映画（ファンタジー・はるか昔など） */}
+      {specialPeriodMovies.length > 0 && (
+        <div className="mb-8 pb-8 border-b border-gray-700">
+          <h3 className="text-lg font-semibold text-amber-400 mb-4">
+            {t.specialTimePeriods || '特殊な時代設定'}
+          </h3>
+          <div className="flex flex-wrap gap-4">
+            {specialPeriodMovies.map((movie) => (
+              <MovieCard
+                key={movie.id}
+                movie={movie}
+                size={thumbnailSize}
+                onDelete={() => onDeleteMovie(movie.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+

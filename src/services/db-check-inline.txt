@@ -1,0 +1,11 @@
+  // まずデータベースをチェック
+  const dbEntry = movieTimePeriodDb.getTimePeriod(movie.id);
+  if (dbEntry) {
+    return {
+      startYear: dbEntry.startYear,
+      endYear: dbEntry.endYear,
+      period: dbEntry.period,
+      additionalYears: dbEntry.additionalYears,
+    };
+  }
+

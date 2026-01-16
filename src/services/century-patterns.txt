@@ -1,0 +1,59 @@
+
+  // 世紀表現から年代を推定
+  const centuryPatterns: Array<{ pattern: RegExp; getCentury: (match: RegExpMatchArray) => number }> = [
+    // 日本語の世紀表現
+    { pattern: /(\d{1,2})世紀/g, getCentury: (m) => parseInt(m[1]) },
+
+    // 英語の世紀表現（序数）
+    { pattern: /(\d{1,2})(?:st|nd|rd|th)\s+century/gi, getCentury: (m) => parseInt(m[1]) },
+
+    // 英語の世紀表現（基数）
+    { pattern: /century\s+(\d{1,2})/gi, getCentury: (m) => parseInt(m[1]) },
+
+    // 世紀の前期・後期表現
+    { pattern: /early\s+(\d{1,2})(?:st|nd|rd|th)\s+century/gi, getCentury: (m) => parseInt(m[1]) },
+    { pattern: /late\s+(\d{1,2})(?:st|nd|rd|th)\s+century/gi, getCentury: (m) => parseInt(m[1]) },
+    { pattern: /mid[- ](\d{1,2})(?:st|nd|rd|th)\s+century/gi, getCentury: (m) => parseInt(m[1]) },
+
+    // turn of the century
+    { pattern: /turn\s+of\s+the\s+(\d{1,2})(?:st|nd|rd|th)\s+century/gi, getCentury: (m) => parseInt(m[1]) },
+
+    // 世紀末
+    { pattern: /(\d{1,2})世紀末/g, getCentury: (m) => parseInt(m[1]) },
+    { pattern: /end\s+of\s+the\s+(\d{1,2})(?:st|nd|rd|th)\s+century/gi, getCentury: (m) => parseInt(m[1]) },
+
+    // 世紀初頭
+    { pattern: /(\d{1,2})世紀初頭/g, getCentury: (m) => parseInt(m[1]) },
+    { pattern: /beginning\s+of\s+the\s+(\d{1,2})(?:st|nd|rd|th)\s+century/gi, getCentury: (m) => parseInt(m[1]) },
+  ];
+
+  // 世紀表現をチェック
+  centuryPatterns.forEach(({ pattern, getCentury }) => {
+    const matches = text.matchAll(pattern);
+    for (const match of matches) {
+      const century = getCentury(match);
+      if (century >= 1 && century <= 21) {
+        // 世紀の中間年を使用（例：19世紀 = 1850年）
+        let year = (century - 1) * 100 + 50;
+
+        // early/late/midの判定
+        const matchText = match[0].toLowerCase();
+        if (matchText.includes('early') || matchText.includes('初頭') || matchText.includes('beginning')) {
+          year = (century - 1) * 100 + 20; // 世紀初頭は+20年
+        } else if (matchText.includes('late') || matchText.includes('末') || matchText.includes('end')) {
+          year = (century - 1) * 100 + 80; // 世紀末は+80年
+        } else if (matchText.includes('mid') || matchText.includes('中')) {
+          year = (century - 1) * 100 + 50; // 世紀中頃は+50年
+        } else if (matchText.includes('turn')) {
+          year = century * 100; // turn of the centuryは次の世紀の開始年
+        }
+
+        foundYears.push({
+          year: year,
+          context: match[0],
+          priority: 3, // 世紀表現は中程度の優先度
+        });
+      }
+    }
+  });
+

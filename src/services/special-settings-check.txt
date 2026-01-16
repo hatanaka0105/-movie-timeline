@@ -1,0 +1,61 @@
+
+  // 特殊な時代設定のチェック
+  // 1. 「はるか昔」パターン（スター・ウォーズなど）
+  const longAgoPatterns = [
+    /long.*ago/gi,
+    /a long time ago/gi,
+    /はるか昔/g,
+    /遥か昔/g,
+    /遠い昔/g,
+  ];
+  
+  for (const pattern of longAgoPatterns) {
+    if (pattern.test(text)) {
+      return {
+        startYear: null,
+        endYear: null,
+        period: 'はるか昔',
+        isEstimated: false,
+      };
+    }
+  }
+
+  // 2. ファンタジー・架空世界パターン
+  const fantasyKeywords = [
+    'middle-earth',
+    'middle earth',
+    'ミドルアース',
+    '中つ国',
+    'fictional',
+    'fantasy world',
+    'imaginary',
+    'mythical',
+    '架空',
+    'ファンタジー世界',
+  ];
+
+  const genreIds = movie.genre_ids || [];
+  const isFantasyGenre = genreIds.includes(14); // 14 = Fantasy genre
+
+  // タイトルや概要にファンタジー関連のキーワードがある、またはファンタジージャンルの場合
+  const hasFantasyKeyword = fantasyKeywords.some(keyword => text.includes(keyword.toLowerCase()));
+  
+  // ロード・オブ・ザ・リングなどの明確なファンタジー作品を検出
+  const explicitFantasyTitles = [
+    'lord of the rings',
+    'the hobbit',
+    'ロード・オブ・ザ・リング',
+    'ホビット',
+  ];
+  
+  const isExplicitFantasy = explicitFantasyTitles.some(title => text.includes(title.toLowerCase()));
+
+  if (isExplicitFantasy || (isFantasyGenre && hasFantasyKeyword)) {
+    return {
+      startYear: null,
+      endYear: null,
+      period: '時代設定なし（ファンタジー）',
+      isEstimated: false,
+    };
+  }
+

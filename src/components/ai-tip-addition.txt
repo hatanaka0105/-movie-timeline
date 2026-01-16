@@ -1,0 +1,13 @@
+      {/* 説明 */}
+      <div className="mt-4 space-y-2">
+        <div className="p-3 bg-gray-900/50 rounded-md">
+          <p className="text-xs text-gray-400">
+            {t.searchTip}
+          </p>
+        </div>
+        <div className="p-3 bg-blue-900/30 border border-blue-500/30 rounded-md">
+          <p className="text-xs text-blue-300">
+            {t.aiLookupTip}
+          </p>
+        </div>
+      </div>

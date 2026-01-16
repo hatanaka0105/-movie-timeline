@@ -1,0 +1,8 @@
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold text-amber-400">{t.searchMovies}</h2>
+        {query.includes('!') && (
+          <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/20 border border-blue-500/50 rounded-full">
+            <span className="text-xs font-semibold text-blue-300">🤖 AI検索モード</span>
+          </div>
+        )}
+      </div>

@@ -1,0 +1,124 @@
+// 映画の時代設定データベース
+// TMDbのデータだけでは時代設定を特定できない映画の情報を格納
+
+import { logger } from '../utils/logger';
+
+export interface MovieTimePeriodEntry {
+  tmdbId: number;
+  title: string;
+  startYear: number;
+  endYear: number | null;
+  period: string;
+  source: 'manual' | 'ai_lookup' | 'user_provided';
+  notes?: string;
+  additionalYears?: number[];
+}
+
+// 静的データベース（事前登録された映画）
+import staticDb from '../data/movieTimePeriods.json';
+
+// 動的データベース（実行時に追加された映画）
+// LocalStorageに保存して永続化
+const STORAGE_KEY = 'movieTimePeriodCache';
+const CACHE_VERSION_KEY = 'movieTimePeriodCacheVersion';
+const CURRENT_CACHE_VERSION = 4; // Incremented to clear Civil War keyword cache
+
+class MovieTimePeriodDatabase {
+  private dynamicDb: Record<string, MovieTimePeriodEntry> = {};
+
+  constructor() {
+    this.loadFromStorage();
+  }
+
+  // LocalStorageから読み込み
+  private loadFromStorage() {
+    try {
+      // 開発モードでURLパラメータにclearCache=1がある場合、キャッシュをクリア
+      if (import.meta.env.DEV) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('clearCache') === '1') {
+          logger.info('🗑️ Clearing cache due to clearCache=1 URL parameter');
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(CACHE_VERSION_KEY);
+          // URLパラメータを削除してリロード
+          urlParams.delete('clearCache');
+          const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+          window.history.replaceState({}, '', newUrl);
+          return;
+        }
+      }
+
+      const storedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+      const version = storedVersion ? parseInt(storedVersion) : 0;
+
+      // If cache version doesn't match, clear old cache
+      if (version !== CURRENT_CACHE_VERSION) {
+        logger.info(`🗑️ Cache version mismatch (${version} !== ${CURRENT_CACHE_VERSION}), clearing old cache`);
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.setItem(CACHE_VERSION_KEY, CURRENT_CACHE_VERSION.toString());
+        return;
+      }
+
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        this.dynamicDb = JSON.parse(stored);
+        logger.debug(`✅ Loaded ${Object.keys(this.dynamicDb).length} cached entries from localStorage`);
+      }
+    } catch (error) {
+      console.error('Failed to load movie time period cache:', error);
+    }
+  }
+
+  // LocalStorageに保存
+  private saveToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.dynamicDb));
+      localStorage.setItem(CACHE_VERSION_KEY, CURRENT_CACHE_VERSION.toString());
+    } catch (error) {
+      console.error('Failed to save movie time period cache:', error);
+    }
+  }
+
+  // 映画の時代設定を取得
+  getTimePeriod(tmdbId: number): MovieTimePeriodEntry | null {
+    const key = tmdbId.toString();
+
+    // まず静的DBをチェック
+    if (staticDb[key as keyof typeof staticDb]) {
+      return staticDb[key as keyof typeof staticDb] as MovieTimePeriodEntry;
+    }
+
+    // 次に動的DBをチェック
+    if (this.dynamicDb[key]) {
+      return this.dynamicDb[key];
+    }
+
+    return null;
+  }
+
+  // 新しい映画の時代設定を追加
+  addTimePeriod(entry: MovieTimePeriodEntry): void {
+    const key = entry.tmdbId.toString();
+    this.dynamicDb[key] = entry;
+    this.saveToStorage();
+  }
+
+  // 映画が登録済みかチェック
+  hasTimePeriod(tmdbId: number): boolean {
+    return this.getTimePeriod(tmdbId) !== null;
+  }
+
+  // 動的DBの全エントリを取得（デバッグ用）
+  getAllDynamicEntries(): MovieTimePeriodEntry[] {
+    return Object.values(this.dynamicDb);
+  }
+
+  // 動的DBをクリア
+  clearDynamicDb(): void {
+    this.dynamicDb = {};
+    localStorage.removeItem(STORAGE_KEY);
+  }
+}
+
+// シングルトンインスタンス
+export const movieTimePeriodDb = new MovieTimePeriodDatabase();

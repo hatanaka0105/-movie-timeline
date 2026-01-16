@@ -1,0 +1,26 @@
+81a82,88
+>     // スパンの高さを計算（endYearがある場合）
+>     let spanHeight = 0;
+>     if (movie.timeline.endYear && movie.timeline.endYear !== movieYear) {
+>       const yearSpan = movie.timeline.endYear - movieYear;
+>       spanHeight = yearSpan * pixelsPerYear;
+>     }
+> 
+125c132,133
+<     // 占有領域を記録
+---
+>     // サムネイルの占有領域を記録
+126a135
+>       isSpan: false,
+130a140,148
+>     
+>     // スパンがある場合、スパンの占有領域も記録
+>     if (spanHeight > 0) {
+>       occupiedRects.push({
+>         x: finalX - SPAN_WIDTH / 2,
+>         y: finalY,
+>         width: SPAN_WIDTH,
+>         height: spanHeight,
+>         isSpan: true,
+>       });
+>     }
