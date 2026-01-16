@@ -37,7 +37,7 @@ class MovieTimePeriodDatabase {
       if (import.meta.env.DEV) {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('clearCache') === '1') {
-          logger.info('🗑️ Clearing cache due to clearCache=1 URL parameter');
+          logger.log('🗑️ Clearing cache due to clearCache=1 URL parameter');
           localStorage.removeItem(STORAGE_KEY);
           localStorage.removeItem(CACHE_VERSION_KEY);
           // URLパラメータを削除してリロード
@@ -53,7 +53,7 @@ class MovieTimePeriodDatabase {
 
       // If cache version doesn't match, clear old cache
       if (version !== CURRENT_CACHE_VERSION) {
-        logger.info(`🗑️ Cache version mismatch (${version} !== ${CURRENT_CACHE_VERSION}), clearing old cache`);
+        logger.log(`🗑️ Cache version mismatch (${version} !== ${CURRENT_CACHE_VERSION}), clearing old cache`);
         localStorage.removeItem(STORAGE_KEY);
         localStorage.setItem(CACHE_VERSION_KEY, CURRENT_CACHE_VERSION.toString());
         return;

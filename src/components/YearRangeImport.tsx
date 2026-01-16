@@ -22,9 +22,8 @@ export default function YearRangeImport({ onAddMovies }: YearRangeImportProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState<string>('');
 
-  const fetchMoviesForTimePeriod = async (start: number, end: number): Promise<TMDbMovie[]> => {
+  const fetchMoviesForTimePeriod = async (): Promise<TMDbMovie[]> => {
     const movies: TMDbMovie[] = [];
-    const moviesPerPage = 20; // 1ページあたり20本
     const maxPages = 10; // 最大10ページ取得
 
     // ジャンルID: 18=ドラマ, 28=アクション, 36=歴史, 10752=戦争, 37=西部劇, 878=SF

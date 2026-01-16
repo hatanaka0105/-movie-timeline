@@ -75,15 +75,13 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
     }
   };
 
-  // エクスポートデータと圧縮率を計算
+  // エクスポートデータを計算
   let exportData: string = '';
-  let compressionRate: number | null = null;
 
   if (movies.length > 0) {
     const jsonData = JSON.stringify(movies);
     const compressed = LZString.compressToEncodedURIComponent(jsonData);
     exportData = compressed;
-    compressionRate = Math.round(compressed.length / jsonData.length * 100);
   }
 
   return (

@@ -61,13 +61,6 @@ function normalizeQuery(query: string): string {
     .toLowerCase();
 }
 
-// 映画タイトルが検索クエリにマッチするか判定（曖昧マッチ）
-function fuzzyMatch(title: string, query: string): boolean {
-  const normalizedTitle = normalizeQuery(title);
-  const normalizedQuery = normalizeQuery(query);
-  return normalizedTitle.includes(normalizedQuery);
-}
-
 export async function searchMovies(query: string): Promise<TMDbMovie[]> {
   if (!TMDB_API_KEY) {
     console.warn('TMDb API key is not set. Using mock data for demo.');
