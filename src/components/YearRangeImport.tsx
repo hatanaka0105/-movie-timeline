@@ -22,7 +22,7 @@ export default function YearRangeImport({ onAddMovies }: YearRangeImportProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState<string>('');
 
-  const fetchMoviesForTimePeriod = async (): Promise<TMDbMovie[]> => {
+  const fetchMoviesForTimePeriod = async (_start: number, _end: number): Promise<TMDbMovie[]> => {
     const movies: TMDbMovie[] = [];
     const maxPages = 10; // 最大10ページ取得
 

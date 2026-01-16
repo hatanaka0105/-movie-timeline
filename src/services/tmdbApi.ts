@@ -54,13 +54,6 @@ const GENRE_MAP: Record<number, string> = {
   37: '西部劇',
 };
 
-// 検索クエリを正規化（・や空白を削除して曖昧検索に対応）
-function normalizeQuery(query: string): string {
-  return query
-    .replace(/[・\s\-~〜]/g, '') // ・、空白、ハイフン、チルダを削除
-    .toLowerCase();
-}
-
 export async function searchMovies(query: string): Promise<TMDbMovie[]> {
   if (!TMDB_API_KEY) {
     console.warn('TMDb API key is not set. Using mock data for demo.');
