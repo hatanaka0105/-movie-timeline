@@ -47,6 +47,38 @@ npm run dev
 
 http://localhost:5173/ にアクセス
 
+## Vercel へのデプロイ
+
+### 1. Vercel KV データベースのセットアップ
+
+サーバー側のキャッシュにはVercel KVを使用します。
+
+1. [Vercel Dashboard](https://vercel.com/dashboard) にアクセス
+2. プロジェクトを選択
+3. 「Storage」タブをクリック
+4. 「Create Database」→「KV」を選択
+5. データベース名を入力（例：`movie-cache-kv`）
+6. 「Create」をクリック
+7. 作成されたデータベースをプロジェクトに接続
+
+これにより、必要な環境変数（`KV_URL`, `KV_REST_API_URL`, `KV_REST_API_TOKEN`, `KV_REST_API_READ_ONLY_TOKEN`）が自動的に設定されます。
+
+### 2. TMDb API キーの設定
+
+Vercel Dashboard のプロジェクト設定で環境変数を追加：
+
+1. 「Settings」→「Environment Variables」
+2. `VITE_TMDB_API_KEY` を追加
+3. 値にTMDb APIキーを入力
+
+### 3. デプロイ
+
+```bash
+git push
+```
+
+Vercelが自動的にビルド・デプロイします。
+
 ## Scripts
 
 ```bash

@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import fs from 'fs';
-import path from 'path';
+import { kv } from '@vercel/kv';
 
 interface TimePeriodData {
   startYear: number | null;
@@ -13,34 +12,7 @@ interface CacheData {
   [movieId: string]: TimePeriodData;
 }
 
-const CACHE_FILE_PATH = path.join(process.cwd(), 'public', 'data', 'movie-cache.json');
-
-// キャッシュファイルを読み込む
-function loadCache(): CacheData {
-  try {
-    if (fs.existsSync(CACHE_FILE_PATH)) {
-      const data = fs.readFileSync(CACHE_FILE_PATH, 'utf-8');
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error('Failed to load cache:', error);
-  }
-  return {};
-}
-
-// キャッシュファイルに書き込む
-function saveCache(cache: CacheData): void {
-  try {
-    const dir = path.dirname(CACHE_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(CACHE_FILE_PATH, JSON.stringify(cache, null, 2));
-  } catch (error) {
-    console.error('Failed to save cache:', error);
-    throw error;
-  }
-}
+const CACHE_KEY = 'movie-time-periods';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS設定
@@ -55,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'GET') {
       // 全キャッシュデータを返す
-      const cache = loadCache();
+      const cache = await kv.get<CacheData>(CACHE_KEY) || {};
       return res.status(200).json(cache);
     }
 
@@ -71,12 +43,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // 既存のキャッシュを読み込み
-      const cache = loadCache();
+      const cache = await kv.get<CacheData>(CACHE_KEY) || {};
 
       // 新しいエントリを追加（既存のものは上書きしない）
       if (!cache[movieId]) {
         cache[movieId] = data;
-        saveCache(cache);
+        await kv.set(CACHE_KEY, cache);
         return res.status(200).json({ success: true, message: 'Cache updated' });
       } else {
         return res.status(200).json({ success: true, message: 'Cache already exists' });
