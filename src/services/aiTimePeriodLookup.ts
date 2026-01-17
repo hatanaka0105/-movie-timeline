@@ -6,6 +6,7 @@ import { TMDbMovieDetails } from './tmdbApi';
 import { logger } from '../utils/logger';
 import { CENTURY_OFFSETS, YEAR_RANGE } from '../config/constants';
 import { extractTimePeriodWithGemini } from './geminiApi';
+import { extractTimePeriodWithGroq } from './groqApi';
 
 interface LookupResult {
   success: boolean;
@@ -419,6 +420,34 @@ export async function lookupAndCacheTimePeriod(
       logger.debug(`✅ Cached time period for "${movie.title}": ${geminiResult.period}`);
 
       return entry;
+    }
+
+    // 3. Geminiがレート制限の場合、Groqにフォールバック
+    if (geminiResult.source === 'gemini_rate_limit') {
+      logger.debug(`🚀 Gemini rate limited, falling back to Groq for "${movie.title}"...`);
+      const groqResult = await extractTimePeriodWithGroq(movie);
+
+      if (groqResult.success && groqResult.startYear !== null) {
+        const entry: MovieTimePeriodEntry = {
+          tmdbId: movie.id,
+          title: movie.original_title,
+          startYear: groqResult.startYear,
+          endYear: groqResult.endYear,
+          period: groqResult.period,
+          source: 'ai_lookup',
+          notes: `AI lookup (${groqResult.confidence} confidence) from ${groqResult.source} (Gemini fallback)`,
+          additionalYears: groqResult.additionalYears,
+        };
+
+        // データベースに保存
+        movieTimePeriodDb.addTimePeriod(entry);
+        logger.debug(`✅ Cached time period for "${movie.title}": ${groqResult.period} (via Groq fallback)`);
+
+        return entry;
+      }
+
+      logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia, Gemini, and Groq all failed)`);
+      return null;
     }
 
     logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia and Gemini both failed)`);
