@@ -5,17 +5,17 @@ export default function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
   const { language } = useLanguage();
 
-  const themes: { id: ThemeType; label: { ja: string; en: string }; icon: string }[] = [
-    { id: 'classic', label: { ja: 'クラシック', en: 'Classic' }, icon: '🎬' },
-    { id: 'cinematic', label: { ja: 'シネマティック', en: 'Cinematic' }, icon: '🎭' },
-    { id: 'modern', label: { ja: 'モダン', en: 'Modern' }, icon: '✨' },
-    { id: 'retro', label: { ja: 'レトロ', en: 'Retro' }, icon: '📽️' },
+  const themes: { id: ThemeType; label: { ja: string; en: string }; font: string }[] = [
+    { id: 'classic', label: { ja: 'クラシック', en: 'Classic' }, font: 'System' },
+    { id: 'cinematic', label: { ja: 'シネマティック', en: 'Cinematic' }, font: 'Playfair' },
+    { id: 'modern', label: { ja: 'モダン', en: 'Modern' }, font: 'Inter' },
+    { id: 'retro', label: { ja: 'レトロ', en: 'Retro' }, font: 'Bebas' },
   ];
 
   return (
     <div className="theme-switcher">
       <label className="theme-switcher-label">
-        {language === 'ja' ? 'テーマ' : 'Theme'}
+        {language === 'ja' ? 'フォント' : 'Font'}
       </label>
       <div className="theme-switcher-buttons">
         {themes.map((t) => (
@@ -25,8 +25,7 @@ export default function ThemeSwitcher() {
             className={`theme-button ${theme === t.id ? 'active' : ''}`}
             title={language === 'ja' ? t.label.ja : t.label.en}
           >
-            <span className="theme-icon">{t.icon}</span>
-            <span className="theme-label">{language === 'ja' ? t.label.ja : t.label.en}</span>
+            <span className="theme-label">{t.font}</span>
           </button>
         ))}
       </div>
