@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import { Movie, TimelineLayout } from '../types/movie.types';
 import MovieCard from './MovieCard';
 import TimelineRuler from './TimelineRuler';
@@ -24,6 +24,15 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
   const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(LAYOUT_CONFIG.CONTAINER_DEFAULT_WIDTH);
+
+  // Memoize callbacks to prevent unnecessary re-renders
+  const handleDeleteMovie = useCallback((movieId: string) => {
+    onDeleteMovie(movieId);
+  }, [onDeleteMovie]);
+
+  const handleEditMovieYear = useCallback((movieId: string, startYear: number | null, endYear: number | null) => {
+    onEditMovieYear(movieId, startYear, endYear);
+  }, [onEditMovieYear]);
 
   useEffect(() => {
     const updateWidth = () => {
@@ -194,8 +203,8 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
                 key={movie.id}
                 movie={movie}
                 size={thumbnailSize}
-                onDelete={() => onDeleteMovie(movie.id)}
-                onEditYear={(startYear, endYear) => onEditMovieYear(movie.id, startYear, endYear)}
+                onDelete={() => handleDeleteMovie(movie.id)}
+                onEditYear={(startYear, endYear) => handleEditMovieYear(movie.id, startYear, endYear)}
               />
             ))}
           </div>
@@ -312,8 +321,8 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
                       <MovieCard
                         movie={movie}
                         size={thumbnailSize}
-                        onDelete={isAdditional ? undefined : () => onDeleteMovie(movie.id)}
-                        onEditYear={isAdditional ? undefined : (startYear, endYear) => onEditMovieYear(movie.id, startYear, endYear)}
+                        onDelete={isAdditional ? undefined : () => handleDeleteMovie(movie.id)}
+                        onEditYear={isAdditional ? undefined : (startYear, endYear) => handleEditMovieYear(movie.id, startYear, endYear)}
                       />
                     </div>
 

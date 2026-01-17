@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Movie } from '../types/movie.types';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -10,7 +10,7 @@ interface MovieCardProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export default function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: MovieCardProps) {
+function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: MovieCardProps) {
   const { t } = useLanguage();
   const { title, timeline, posterUrl, genre } = movie;
   const [isEditing, setIsEditing] = useState(false);
@@ -189,3 +189,21 @@ export default function MovieCard({ movie, onClick, onDelete, onEditYear, size =
     </div>
   );
 }
+
+// Memoize MovieCard to prevent unnecessary re-renders
+export default memo(MovieCard, (prevProps, nextProps) => {
+  // Only re-render if these specific props change
+  return (
+    prevProps.movie.id === nextProps.movie.id &&
+    prevProps.movie.title === nextProps.movie.title &&
+    prevProps.movie.posterUrl === nextProps.movie.posterUrl &&
+    prevProps.movie.timeline.startYear === nextProps.movie.timeline.startYear &&
+    prevProps.movie.timeline.endYear === nextProps.movie.timeline.endYear &&
+    prevProps.movie.timeline.period === nextProps.movie.timeline.period &&
+    prevProps.movie.timeline.isEstimated === nextProps.movie.timeline.isEstimated &&
+    prevProps.size === nextProps.size &&
+    prevProps.onClick === nextProps.onClick &&
+    prevProps.onDelete === nextProps.onDelete &&
+    prevProps.onEditYear === nextProps.onEditYear
+  );
+});
