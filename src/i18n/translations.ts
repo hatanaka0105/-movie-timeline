@@ -98,11 +98,39 @@ export interface Translations {
   periodPlaceholder: string; // "1910年代"
   analyzing: string; // "年代測定中..."
   unknownEra: string; // "時代不明"
+  periodDescription: string; // "時代説明"
+  genreComma: string; // "ジャンル（カンマ区切り）"
+  posterUrl: string; // "ポスターURL"
+  synopsis: string; // "あらすじ"
+  movieTitleRequired: string; // "映画タイトル *"
+  titlePlaceholder: string; // "タイタニック"
+  releasePlaceholder: string; // "1997"
+  startYearPlaceholder: string; // "1912"
+  endYearPlaceholder: string; // "1912（省略可）"
+  genrePlaceholder: string; // "ドラマ, ロマンス"
+  posterUrlPlaceholder: string; // "https://example.com/poster.jpg"
+  synopsisPlaceholder: string; // "映画のあらすじ..."
+  exportImport: string; // "📋 エクスポート/インポート"
+  exportTitle: string; // "📤 エクスポート"
+  importTitle: string; // "📥 インポート"
+  copyToClipboard: string; // "📋 クリップボードにコピー"
+  copiedToClipboard: string; // "クリップボードにコピーしました！"
+  compressedData: string; // "🗜️ 圧縮データ"
+  characterCount: string; // "文字数"
+  clickToSelect: string; // "💡 クリックして選択 → Ctrl+C でコピー"
+  importDescription: string; // "圧縮データまたは通常のJSONデータを貼り付けて読み込みます（自動判別）"
+  importPlaceholder: string; // "圧縮データまたは通常のJSONを貼り付け..."
+  importExecute: string; // "✅ インポート実行"
+  clear: string; // "🗑️ クリア"
+  importWarning: string; // "⚠️ インポートすると現在のタイムラインに追加されます。既存のデータは保持されます。"
+  errorArrayRequired: string; // "データは配列形式である必要があります"
+  errorNoValidMovies: string; // "有効な映画データが見つかりませんでした"
+  errorImportFailed: string; // "インポートに失敗しました"
 }
 
 export const translations: Record<Language, Translations> = {
   ja: {
-    appTitle: '🎬 MovieTimeline',
+    appTitle: '🎞️ MovieTimeline',
     appSubtitle: '映画の時代設定を視覚化',
     hideForm: '入力フォームを隠す',
     addMovie: '映画を追加',
@@ -186,9 +214,37 @@ export const translations: Record<Language, Translations> = {
     periodPlaceholder: '1910年代',
     analyzing: '年代測定中...',
     unknownEra: '時代不明',
+    periodDescription: '時代説明',
+    genreComma: 'ジャンル（カンマ区切り）',
+    posterUrl: 'ポスターURL',
+    synopsis: 'あらすじ',
+    movieTitleRequired: '映画タイトル *',
+    titlePlaceholder: 'タイタニック',
+    releasePlaceholder: '1997',
+    startYearPlaceholder: '1912',
+    endYearPlaceholder: '1912（省略可）',
+    genrePlaceholder: 'ドラマ, ロマンス',
+    posterUrlPlaceholder: 'https://example.com/poster.jpg',
+    synopsisPlaceholder: '映画のあらすじ...',
+    exportImport: '📋 エクスポート/インポート',
+    exportTitle: '📤 エクスポート',
+    importTitle: '📥 インポート',
+    copyToClipboard: '📋 クリップボードにコピー',
+    copiedToClipboard: 'クリップボードにコピーしました！',
+    compressedData: '🗜️ 圧縮データ',
+    characterCount: '文字数',
+    clickToSelect: '💡 クリックして選択 → Ctrl+C でコピー',
+    importDescription: '圧縮データまたは通常のJSONデータを貼り付けて読み込みます（自動判別）',
+    importPlaceholder: '圧縮データまたは通常のJSONを貼り付け...',
+    importExecute: '✅ インポート実行',
+    clear: '🗑️ クリア',
+    importWarning: '⚠️ インポートすると現在のタイムラインに追加されます。既存のデータは保持されます。',
+    errorArrayRequired: 'データは配列形式である必要があります',
+    errorNoValidMovies: '有効な映画データが見つかりませんでした',
+    errorImportFailed: 'インポートに失敗しました',
   },
   en: {
-    appTitle: '🎬 MovieTimeline',
+    appTitle: '🎞️ MovieTimeline',
     appSubtitle: 'Visualize movie time periods',
     hideForm: 'Hide Form',
     addMovie: 'Add Movie',
@@ -272,5 +328,33 @@ export const translations: Record<Language, Translations> = {
     periodPlaceholder: '1910s',
     analyzing: 'Analyzing time period...',
     unknownEra: 'Unknown Era',
+    periodDescription: 'Period Description',
+    genreComma: 'Genres (comma-separated)',
+    posterUrl: 'Poster URL',
+    synopsis: 'Synopsis',
+    movieTitleRequired: 'Movie Title *',
+    titlePlaceholder: 'Titanic',
+    releasePlaceholder: '1997',
+    startYearPlaceholder: '1912',
+    endYearPlaceholder: '1912 (optional)',
+    genrePlaceholder: 'Drama, Romance',
+    posterUrlPlaceholder: 'https://example.com/poster.jpg',
+    synopsisPlaceholder: 'Movie synopsis...',
+    exportImport: '📋 Export/Import',
+    exportTitle: '📤 Export',
+    importTitle: '📥 Import',
+    copyToClipboard: '📋 Copy to Clipboard',
+    copiedToClipboard: 'Copied to clipboard!',
+    compressedData: '🗜️ Compressed Data',
+    characterCount: 'Characters',
+    clickToSelect: '💡 Click to select → Ctrl+C to copy',
+    importDescription: 'Paste compressed or regular JSON data to import (auto-detected)',
+    importPlaceholder: 'Paste compressed data or JSON...',
+    importExecute: '✅ Execute Import',
+    clear: '🗑️ Clear',
+    importWarning: '⚠️ Importing will add to current timeline. Existing data will be preserved.',
+    errorArrayRequired: 'Data must be in array format',
+    errorNoValidMovies: 'No valid movie data found',
+    errorImportFailed: 'Import failed',
   },
 };

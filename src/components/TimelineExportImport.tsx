@@ -19,7 +19,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
     const compressed = LZString.compressToEncodedURIComponent(jsonData);
 
     navigator.clipboard.writeText(compressed);
-    setSuccess(`クリップボードにコピーしました！`);
+    setSuccess(t.copiedToClipboard);
     setTimeout(() => setSuccess(null), 3000);
   };
 
@@ -49,7 +49,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
       }
 
       if (!Array.isArray(parsed)) {
-        throw new Error('データは配列形式である必要があります');
+        throw new Error(t.errorArrayRequired);
       }
 
       // 基本的な検証
@@ -64,7 +64,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
       });
 
       if (validMovies.length === 0) {
-        throw new Error('有効な映画データが見つかりませんでした');
+        throw new Error(t.errorNoValidMovies);
       }
 
       onImport(validMovies);
@@ -73,7 +73,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
       setTimeout(() => setSuccess(null), 3000);
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'インポートに失敗しました');
+      setError(err instanceof Error ? err.message : t.errorImportFailed);
     }
   };
 
@@ -88,7 +88,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
-      <h2 className="text-2xl font-bold text-amber-400 mb-4">📋 エクスポート/インポート</h2>
+      <h2 className="text-2xl font-bold text-amber-400 mb-4">{t.exportImport}</h2>
 
       {/* 成功メッセージ */}
       {success && (
@@ -107,7 +107,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
       <div className="space-y-4">
         {/* エクスポートセクション */}
         <div className="bg-gray-900/50 p-4 rounded-md">
-          <h3 className="text-lg font-semibold text-amber-300 mb-2">📤 エクスポート</h3>
+          <h3 className="text-lg font-semibold text-amber-300 mb-2">{t.exportTitle}</h3>
           <p className="text-xs text-gray-400 mb-3">
             {movies.length}{t.moviesCountLabel}
           </p>
@@ -117,13 +117,13 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
             disabled={movies.length === 0}
             className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-md transition-colors text-sm mb-3"
           >
-            📋 クリップボードにコピー
+            {t.copyToClipboard}
           </button>
 
           <div className="relative">
             <div className="mb-2 text-xs text-gray-400 flex justify-between">
-              <span>🗜️ 圧縮データ</span>
-              <span>文字数: {exportData.length.toLocaleString()}</span>
+              <span>{t.compressedData}</span>
+              <span>{t.characterCount}: {exportData.length.toLocaleString()}</span>
             </div>
             <textarea
               value={exportData}
@@ -133,23 +133,23 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
               onClick={(e) => e.currentTarget.select()}
             />
             <p className="text-xs text-gray-500 mt-2">
-              💡 クリックして選択 → Ctrl+C でコピー
+              {t.clickToSelect}
             </p>
           </div>
         </div>
 
         {/* インポートセクション */}
         <div className="bg-gray-900/50 p-4 rounded-md">
-          <h3 className="text-lg font-semibold text-amber-300 mb-2">📥 インポート</h3>
+          <h3 className="text-lg font-semibold text-amber-300 mb-2">{t.importTitle}</h3>
           <p className="text-xs text-gray-400 mb-3">
-            圧縮データまたは通常のJSONデータを貼り付けて読み込みます（自動判別）
+            {t.importDescription}
           </p>
 
           <div className="space-y-3">
             <textarea
               value={importText}
               onChange={(e) => setImportText(e.target.value)}
-              placeholder='圧縮データまたは通常のJSONを貼り付け...'
+              placeholder={t.importPlaceholder}
               rows={3}
               className="w-full p-3 bg-gray-950 text-gray-300 text-xs font-mono rounded-md border border-gray-700 resize-none"
             />
@@ -160,7 +160,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
                 disabled={!importText.trim()}
                 className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-md transition-colors text-sm"
               >
-                ✅ インポート実行
+                {t.importExecute}
               </button>
               <button
                 onClick={() => {
@@ -169,13 +169,13 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
                 }}
                 className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors text-sm"
               >
-                🗑️ クリア
+                {t.clear}
               </button>
             </div>
 
             <div className="p-3 bg-yellow-900/20 border border-yellow-700 rounded-md">
               <p className="text-xs text-yellow-400">
-                ⚠️ インポートすると現在のタイムラインに追加されます。既存のデータは保持されます。
+                {t.importWarning}
               </p>
             </div>
           </div>

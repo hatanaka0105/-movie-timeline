@@ -60,11 +60,11 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
-      <h2 className="text-2xl font-bold text-amber-400 mb-4">映画を追加</h2>
+      <h2 className="text-2xl font-bold text-amber-400 mb-4">{t.manualInput}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">
-            映画タイトル *
+            {t.movieTitleRequired}
           </label>
           <input
             type="text"
@@ -73,7 +73,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
             onChange={handleChange}
             required
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-            placeholder="タイタニック"
+            placeholder={t.titlePlaceholder}
           />
         </div>
 
@@ -88,7 +88,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
               value={formData.year}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-              placeholder="1997"
+              placeholder={t.releasePlaceholder}
             />
           </div>
           <div>
@@ -101,7 +101,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
               value={formData.startYear}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-              placeholder="1912"
+              placeholder={t.startYearPlaceholder}
             />
           </div>
         </div>
@@ -117,12 +117,12 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
               value={formData.endYear}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-              placeholder="1912（省略可）"
+              placeholder={t.endYearPlaceholder}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              時代説明
+              {t.periodDescription}
             </label>
             <input
               type="text"
@@ -137,7 +137,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">
-            ジャンル（カンマ区切り）
+            {t.genreComma}
           </label>
           <input
             type="text"
@@ -145,13 +145,13 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
             value={formData.genre}
             onChange={handleChange}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-            placeholder="ドラマ, ロマンス"
+            placeholder={t.genrePlaceholder}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">
-            ポスターURL
+            {t.posterUrl}
           </label>
           <input
             type="url"
@@ -159,13 +159,13 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
             value={formData.posterUrl}
             onChange={handleChange}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-            placeholder="https://example.com/poster.jpg"
+            placeholder={t.posterUrlPlaceholder}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">
-            あらすじ
+            {t.synopsis}
           </label>
           <textarea
             name="synopsis"
@@ -173,7 +173,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
             onChange={handleChange}
             rows={3}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-            placeholder="映画のあらすじ..."
+            placeholder={t.synopsisPlaceholder}
           />
         </div>
 
@@ -181,7 +181,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
           type="submit"
           className="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold py-2 px-4 rounded-md transition-colors duration-200"
         >
-          追加
+          {t.addButton}
         </button>
       </form>
     </div>
