@@ -204,6 +204,7 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
   period: string;
   isEstimated?: boolean;
   additionalYears?: number[];
+  isPending?: boolean;
 } {
   const title = movie.title.toLowerCase() + ' ' + movie.original_title.toLowerCase();
   const overview = movie.overview.toLowerCase();
