@@ -7,6 +7,8 @@ import {
   getYearMarkers,
   getTimelineHeight,
 } from '../utils/layoutCalculator';
+import { calculateTimelineLayout as calculateTimelineLayoutOptimized } from '../utils/layoutCalculatorOptimized';
+import { featureFlags } from '../config/featureFlags';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LAYOUT_CONFIG } from '../config/constants';
 
@@ -64,12 +66,18 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
   );
 
   const layout = useMemo(
-    () => calculateTimelineLayout(
-      timelineMovies,
-      containerWidth - LAYOUT_CONFIG.RULER_WIDTH,
-      scale,
-      thumbnailSize
-    ),
+    () => {
+      const layoutFunc = featureFlags.useOptimizedLayout
+        ? calculateTimelineLayoutOptimized
+        : calculateTimelineLayout;
+
+      return layoutFunc(
+        timelineMovies,
+        containerWidth - LAYOUT_CONFIG.RULER_WIDTH,
+        scale,
+        thumbnailSize
+      );
+    },
     [timelineMovies, containerWidth, scale, thumbnailSize]
   );
 
