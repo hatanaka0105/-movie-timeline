@@ -1,11 +1,16 @@
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 import { movieTimePeriodDb } from './movieTimePeriodDb';
 import { logger } from '../utils/logger';
 
-// プロキシ経由でTMDb APIを呼び出す
-async function fetchTMDbViaProxy(endpoint: string, params: Record<string, string>) {
-  const queryParams = new URLSearchParams({ endpoint, ...params });
-  const response = await fetch(`/api/tmdb-proxy?${queryParams.toString()}`);
+// TMDb APIを直接呼び出す
+async function fetchTMDb(endpoint: string, params: Record<string, string>) {
+  const queryParams = new URLSearchParams({
+    api_key: TMDB_API_KEY,
+    ...params
+  });
+  const response = await fetch(`${TMDB_BASE_URL}/${endpoint}?${queryParams.toString()}`);
   return response;
 }
 
@@ -65,7 +70,7 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
     const seenIds = new Set<number>();
 
     // 1. 元のクエリで検索
-    const response1 = await fetchTMDbViaProxy('search/movie', {
+    const response1 = await fetchTMDb('search/movie', {
       query: query,
       language: 'ja-JP',
     });
@@ -83,7 +88,7 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
     // 2. 正規化版（・や空白を削除）で検索
     const normalizedQuery = query.replace(/[・\s]/g, '');
     if (normalizedQuery !== query) {
-      const response2 = await fetchTMDbViaProxy('search/movie', {
+      const response2 = await fetchTMDb('search/movie', {
         query: normalizedQuery,
         language: 'ja-JP',
       });
@@ -127,7 +132,7 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
         const withMiddleDot = normalizedQuery.slice(0, pos) + '・' + normalizedQuery.slice(pos);
 
         if (withMiddleDot !== query && !seenIds.has(-pos)) { // 重複検索を防ぐ
-          const response3 = await fetchTMDbViaProxy('search/movie', {
+          const response3 = await fetchTMDb('search/movie', {
             query: withMiddleDot,
             language: 'ja-JP',
           });
@@ -157,7 +162,7 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
 export async function getMovieDetails(movieId: number): Promise<TMDbMovieDetails | null> {
   try {
     // 日本語版を取得
-    const responseJa = await fetchTMDbViaProxy(`movie/${movieId}`, { language: 'ja-JP' });
+    const responseJa = await fetchTMDb(`movie/${movieId}`, { language: 'ja-JP' });
 
     if (!responseJa.ok) {
       throw new Error(`TMDb API error: ${responseJa.status} ${responseJa.statusText}`);
@@ -167,7 +172,7 @@ export async function getMovieDetails(movieId: number): Promise<TMDbMovieDetails
 
     // 英語版も取得（年代抽出の精度向上のため）
     try {
-      const responseEn = await fetchTMDbViaProxy(`movie/${movieId}`, { language: 'en-US' });
+      const responseEn = await fetchTMDb(`movie/${movieId}`, { language: 'en-US' });
 
       if (responseEn.ok) {
         const dataEn: TMDbMovieDetails = await responseEn.json();

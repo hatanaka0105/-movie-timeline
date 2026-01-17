@@ -4,6 +4,8 @@
 import { TMDbMovieDetails } from './tmdbApi';
 import { logger } from '../utils/logger';
 
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
 export interface GeminiTimePeriodResult {
   success: boolean;
   startYear: number | null;
@@ -88,17 +90,16 @@ JSON response:`;
       }
     };
 
-    const response = await fetch('/api/gemini-proxy', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gemini-2.5-flash',
-        action: 'generateContent',
-        ...requestBody,
-      }),
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
