@@ -4,10 +4,6 @@
 import { TMDbMovieDetails } from './tmdbApi';
 import { logger } from '../utils/logger';
 
-// Feature Flag: プロキシ経由でAPIを呼び出すかどうか
-// 常にtrue（本番・開発問わずプロキシ経由でAPIキーを保護）
-const USE_PROXY = true;
-
 export interface GeminiTimePeriodResult {
   success: boolean;
   startYear: number | null;
