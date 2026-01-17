@@ -12,6 +12,7 @@ export interface MovieTimePeriodEntry {
   source: 'manual' | 'ai_lookup' | 'user_provided';
   notes?: string;
   additionalYears?: number[];
+  reliability?: 'high' | 'low'; // キャッシュの信頼性（低は再試行可能）
 }
 
 // 静的データベース（事前登録された映画）
@@ -153,6 +154,14 @@ class MovieTimePeriodDatabase {
   // 映画が登録済みかチェック
   hasTimePeriod(tmdbId: number): boolean {
     return this.getTimePeriod(tmdbId) !== null;
+  }
+
+  // 特定の映画を削除（低信頼性キャッシュの再試行用）
+  removeTimePeriod(tmdbId: number): void {
+    const key = tmdbId.toString();
+    delete this.dynamicDb[key];
+    this.saveToStorage();
+    logger.debug(`🗑️ Removed cached entry for movie ${tmdbId}`);
   }
 
   // 動的DBの全エントリを取得（デバッグ用）

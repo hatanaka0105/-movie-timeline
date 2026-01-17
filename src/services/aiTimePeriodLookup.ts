@@ -19,6 +19,76 @@ interface LookupResult {
   error?: string;
 }
 
+/**
+ * キャッシュの信頼性を判定
+ * 低信頼性の場合は再試行可能とする
+ */
+function determineReliability(
+  result: LookupResult,
+  movie: TMDbMovieDetails
+): 'high' | 'low' {
+  // 年代が特定できた場合は高信頼性
+  if (result.startYear !== null) {
+    return 'high';
+  }
+
+  // ここから先は startYear === null (時代不明) の場合
+
+  const genres = movie.genres?.map(g => g.name.toLowerCase()) || [];
+  const isFantasy = genres.some(g =>
+    g.includes('fantasy') ||
+    g.includes('animation') ||
+    g.includes('family')
+  );
+  const isSciFi = genres.some(g => g.includes('science fiction'));
+
+  // ファンタジー/アニメで NO_PERIOD や LONG_AGO の場合は高信頼性
+  // (意図的に時代設定がない作品として妥当)
+  if (isFantasy && (result.period === 'NO_PERIOD' || result.period === 'LONG_AGO')) {
+    return 'high';
+  }
+
+  // SF作品で時代不明の場合は低信頼性
+  // (SFは通常具体的な年代設定があるはず)
+  if (isSciFi) {
+    logger.debug(`🔍 SF movie "${movie.title}" has no period - marking as low reliability`);
+    return 'low';
+  }
+
+  // 最終フォールバック（Groq）まで到達して失敗した場合は低信頼性
+  if (result.source === 'groq_error' || result.source === 'groq_rate_limit') {
+    logger.debug(`🔍 Movie "${movie.title}" failed at final fallback - marking as low reliability`);
+    return 'low';
+  }
+
+  // AI の confidence が low の場合は低信頼性
+  if (result.confidence === 'low') {
+    logger.debug(`🔍 AI confidence is low for "${movie.title}" - marking as low reliability`);
+    return 'low';
+  }
+
+  // Wikipedia で見つからなかった場合は低信頼性
+  if (result.source === 'wikipedia_not_found' || result.source === 'wikipedia_no_period') {
+    logger.debug(`🔍 Wikipedia not found for "${movie.title}" - marking as low reliability`);
+    return 'low';
+  }
+
+  // エラーで失敗した場合（レート制限以外）は低信頼性
+  if (result.source.includes('error')) {
+    logger.debug(`🔍 Error occurred for "${movie.title}" - marking as low reliability`);
+    return 'low';
+  }
+
+  // ファンタジーでない作品で時代不明の場合は低信頼性
+  if (!isFantasy) {
+    logger.debug(`🔍 Non-fantasy movie "${movie.title}" has no period - marking as low reliability`);
+    return 'low';
+  }
+
+  // その他の場合は高信頼性
+  return 'high';
+}
+
 // WikipediaからMovie時代設定を取得
 export async function lookupMovieTimePeriod(
   movie: TMDbMovieDetails
@@ -369,9 +439,16 @@ export async function lookupAndCacheTimePeriod(
   movie: TMDbMovieDetails
 ): Promise<MovieTimePeriodEntry | null> {
   try {
-    // 既にデータベースにある場合はスキップ
+    // 既にデータベースにある場合はスキップ（ただし低信頼性の場合は再試行）
     if (movieTimePeriodDb.hasTimePeriod(movie.id)) {
-      return movieTimePeriodDb.getTimePeriod(movie.id);
+      const cached = movieTimePeriodDb.getTimePeriod(movie.id);
+      if (cached && cached.reliability !== 'low') {
+        logger.debug(`✅ Using cached time period for "${movie.title}" (reliability: ${cached.reliability || 'high'})`);
+        return cached;
+      }
+      // 低信頼性キャッシュは無視して再試行
+      logger.debug(`🔄 Ignoring low reliability cache for "${movie.title}" - retrying lookup`);
+      movieTimePeriodDb.removeTimePeriod(movie.id);
     }
 
     logger.debug(`🤖 Starting AI lookup for movie: ${movie.title}`);
@@ -381,6 +458,7 @@ export async function lookupAndCacheTimePeriod(
     const wikipediaResult = await lookupMovieTimePeriod(movie);
 
     if (wikipediaResult.success && wikipediaResult.startYear !== null) {
+      const reliability = determineReliability(wikipediaResult, movie);
       const entry: MovieTimePeriodEntry = {
         tmdbId: movie.id,
         title: movie.original_title,
@@ -390,11 +468,12 @@ export async function lookupAndCacheTimePeriod(
         source: 'ai_lookup',
         notes: `AI lookup (${wikipediaResult.confidence} confidence) from ${wikipediaResult.source}`,
         additionalYears: wikipediaResult.additionalYears,
+        reliability,
       };
 
       // データベースに保存
       movieTimePeriodDb.addTimePeriod(entry);
-      logger.debug(`✅ Cached time period for "${movie.title}": ${wikipediaResult.period}`);
+      logger.debug(`✅ Cached time period for "${movie.title}": ${wikipediaResult.period} (reliability: ${reliability})`);
 
       return entry;
     }
@@ -404,6 +483,7 @@ export async function lookupAndCacheTimePeriod(
     const geminiResult = await extractTimePeriodWithGemini(movie);
 
     if (geminiResult.success && geminiResult.startYear !== null) {
+      const reliability = determineReliability(geminiResult, movie);
       const entry: MovieTimePeriodEntry = {
         tmdbId: movie.id,
         title: movie.original_title,
@@ -413,11 +493,12 @@ export async function lookupAndCacheTimePeriod(
         source: 'ai_lookup',
         notes: `AI lookup (${geminiResult.confidence} confidence) from ${geminiResult.source}`,
         additionalYears: geminiResult.additionalYears,
+        reliability,
       };
 
       // データベースに保存
       movieTimePeriodDb.addTimePeriod(entry);
-      logger.debug(`✅ Cached time period for "${movie.title}": ${geminiResult.period}`);
+      logger.debug(`✅ Cached time period for "${movie.title}": ${geminiResult.period} (reliability: ${reliability})`);
 
       return entry;
     }
@@ -428,6 +509,7 @@ export async function lookupAndCacheTimePeriod(
       const groqResult = await extractTimePeriodWithGroq(movie);
 
       if (groqResult.success && groqResult.startYear !== null) {
+        const reliability = determineReliability(groqResult, movie);
         const entry: MovieTimePeriodEntry = {
           tmdbId: movie.id,
           title: movie.original_title,
@@ -437,16 +519,32 @@ export async function lookupAndCacheTimePeriod(
           source: 'ai_lookup',
           notes: `AI lookup (${groqResult.confidence} confidence) from ${groqResult.source} (Gemini fallback)`,
           additionalYears: groqResult.additionalYears,
+          reliability,
         };
 
         // データベースに保存
         movieTimePeriodDb.addTimePeriod(entry);
-        logger.debug(`✅ Cached time period for "${movie.title}": ${groqResult.period} (via Groq fallback)`);
+        logger.debug(`✅ Cached time period for "${movie.title}": ${groqResult.period} (via Groq fallback, reliability: ${reliability})`);
 
         return entry;
       }
 
-      logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia, Gemini, and Groq all failed)`);
+      // Groqでも失敗した場合、低信頼性で「時代不明」をキャッシュ
+      const failedReliability = determineReliability(groqResult, movie);
+      logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia, Gemini, and Groq all failed) - caching with reliability: ${failedReliability}`);
+
+      // 時代不明として低信頼性でキャッシュ（次回再試行可能）
+      const failedEntry: MovieTimePeriodEntry = {
+        tmdbId: movie.id,
+        title: movie.original_title,
+        startYear: 0, // 0 を使用して時代不明を表現
+        endYear: null,
+        period: '時代不明',
+        source: 'ai_lookup',
+        notes: `All lookup methods failed (${groqResult.source})`,
+        reliability: failedReliability,
+      };
+      movieTimePeriodDb.addTimePeriod(failedEntry);
       return null;
     }
 
