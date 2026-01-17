@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Movie } from '../types/movie.types';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface MovieInputFormProps {
   onAddMovie: (movie: Movie) => void;
 }
 
 export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     title: '',
     year: '',
@@ -78,7 +80,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              公開年
+              {t.releaseYear}
             </label>
             <input
               type="number"
@@ -91,7 +93,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              時代設定（開始年）
+              {t.startYearSetting}
             </label>
             <input
               type="number"
@@ -107,7 +109,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              時代設定（終了年）
+              {t.endYearSetting}
             </label>
             <input
               type="number"
@@ -128,7 +130,7 @@ export default function MovieInputForm({ onAddMovie }: MovieInputFormProps) {
               value={formData.period}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-              placeholder="1910年代"
+              placeholder={t.periodPlaceholder}
             />
           </div>
         </div>

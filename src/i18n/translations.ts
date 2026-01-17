@@ -81,6 +81,21 @@ export interface Translations {
   startBeforeEnd: string;
   maxRange20Years: string;
   apiKeyNotSet: string;
+
+  // Additional translations
+  processingMoviesCount: string; // "件の映画を処理中..."
+  moviesImported: string; // "件の映画をインポートしました！"
+  moviesCountLabel: string; // "件の映画"
+  fetchingMovie: string; // "を取得中..."
+  wikipediaSearching: string; // "Wikipedia検索中..."
+  successCount: string; // "成功"
+  failedCount: string; // "失敗"
+  totalCount: string; // "合計"
+  editButton: string; // "編集"
+  endLabel: string; // "終了"
+  startYearSetting: string; // "時代設定（開始年）"
+  endYearSetting: string; // "時代設定（終了年）"
+  periodPlaceholder: string; // "1910年代"
 }
 
 export const translations: Record<Language, Translations> = {
@@ -153,6 +168,20 @@ export const translations: Record<Language, Translations> = {
     startBeforeEnd: '開始年は終了年より前である必要があります',
     maxRange20Years: '範囲は20年以内にしてください',
     apiKeyNotSet: 'TMDb APIキーが設定されていません',
+
+    processingMoviesCount: '件の映画を処理中...',
+    moviesImported: '件の映画をインポートしました！',
+    moviesCountLabel: '件の映画',
+    fetchingMovie: 'を取得中...',
+    wikipediaSearching: 'Wikipedia検索中...',
+    successCount: '成功',
+    failedCount: '失敗',
+    totalCount: '合計',
+    editButton: '編集',
+    endLabel: '終了',
+    startYearSetting: '時代設定（開始年）',
+    endYearSetting: '時代設定（終了年）',
+    periodPlaceholder: '1910年代',
   },
   en: {
     appTitle: '🎬 MovieTimeline',
@@ -223,5 +252,19 @@ export const translations: Record<Language, Translations> = {
     startBeforeEnd: 'Start year must be before end year',
     maxRange20Years: 'Please limit range to 20 years',
     apiKeyNotSet: 'TMDb API key is not set',
+
+    processingMoviesCount: 'movies processing...',
+    moviesImported: 'movies imported!',
+    moviesCountLabel: 'movies',
+    fetchingMovie: 'fetching...',
+    wikipediaSearching: 'Searching Wikipedia...',
+    successCount: 'Success',
+    failedCount: 'Failed',
+    totalCount: 'Total',
+    editButton: 'Edit',
+    endLabel: 'End',
+    startYearSetting: 'Time Period (Start Year)',
+    endYearSetting: 'Time Period (End Year)',
+    periodPlaceholder: '1910s',
   },
 };

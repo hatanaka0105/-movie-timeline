@@ -5,6 +5,7 @@ import {
   getImageUrl,
   extractTimePeriod,
 } from '../services/tmdbApi';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface AutoMovieImporterProps {
   onAddMovies: (movies: Movie[]) => void;
@@ -37,6 +38,7 @@ const GENRES = [
 ];
 
 export default function AutoMovieImporter({ onAddMovies }: AutoMovieImporterProps) {
+  const { t } = useLanguage();
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState<string>('');
   const [stats, setStats] = useState({
@@ -75,7 +77,7 @@ export default function AutoMovieImporter({ onAddMovies }: AutoMovieImporterProp
         const data = await response.json();
         const tmdbMovies = data.results || [];
 
-        setProgress(`${genreName} - ${tmdbMovies.length}件の映画を処理中...`);
+        setProgress(`${genreName} - ${tmdbMovies.length}${t.processingMoviesCount}`);
 
         for (let i = 0; i < tmdbMovies.length; i++) {
           if (stopRef.current) {
@@ -85,7 +87,7 @@ export default function AutoMovieImporter({ onAddMovies }: AutoMovieImporterProp
           const tmdbMovie = tmdbMovies[i];
 
           try {
-            setProgress(`${genreName} - ${i + 1}/${tmdbMovies.length}: ${tmdbMovie.title || tmdbMovie.original_title} を取得中...`);
+            setProgress(`${genreName} - ${i + 1}/${tmdbMovies.length}: ${tmdbMovie.title || tmdbMovie.original_title} ${t.fetchingMovie}`);
 
             const details = await getMovieDetails(tmdbMovie.id);
 
@@ -216,14 +218,14 @@ export default function AutoMovieImporter({ onAddMovies }: AutoMovieImporterProp
             <div className="text-gray-400">取得対象:</div>
             <div className="text-white">{GENRES.length}ジャンル × 約100本 = 約1,900本</div>
 
-            <div className="text-gray-400">処理済み:</div>
-            <div className="text-green-400">{stats.success}件</div>
+            <div className="text-gray-400">{t.successCount}:</div>
+            <div className="text-green-400">{stats.success}{t.moviesCountLabel}</div>
 
-            <div className="text-gray-400">失敗:</div>
-            <div className="text-red-400">{stats.failed}件</div>
+            <div className="text-gray-400">{t.failedCount}:</div>
+            <div className="text-red-400">{stats.failed}{t.moviesCountLabel}</div>
 
-            <div className="text-gray-400">合計:</div>
-            <div className="text-white">{stats.total}件</div>
+            <div className="text-gray-400">{t.totalCount}:</div>
+            <div className="text-white">{stats.total}{t.moviesCountLabel}</div>
           </div>
 
           {stats.currentGenre && (

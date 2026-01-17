@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Movie } from '../types/movie.types';
 import LZString from 'lz-string';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface TimelineExportImportProps {
   movies: Movie[];
@@ -8,6 +9,7 @@ interface TimelineExportImportProps {
 }
 
 export default function TimelineExportImport({ movies, onImport }: TimelineExportImportProps) {
+  const { t } = useLanguage();
   const [importText, setImportText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
       }
 
       onImport(validMovies);
-      setSuccess(`${validMovies.length}件の映画をインポートしました！`);
+      setSuccess(`${validMovies.length}${t.moviesImported}`);
       setImportText('');
       setTimeout(() => setSuccess(null), 3000);
 
@@ -107,7 +109,7 @@ export default function TimelineExportImport({ movies, onImport }: TimelineExpor
         <div className="bg-gray-900/50 p-4 rounded-md">
           <h3 className="text-lg font-semibold text-amber-300 mb-2">📤 エクスポート</h3>
           <p className="text-xs text-gray-400 mb-3">
-            {movies.length}件の映画
+            {movies.length}{t.moviesCountLabel}
           </p>
 
           <button

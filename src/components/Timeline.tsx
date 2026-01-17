@@ -269,7 +269,7 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
                       {/* 終了年ラベル */}
                       <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap scale-[2]">
                         <div className="backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-semibold border bg-amber-500/30 text-amber-200 border-amber-500/40">
-                          終了: {displayYear}年
+                          {t.endLabel}: {displayYear}{t.year}
                         </div>
                       </div>
                     </div>
@@ -333,8 +333,8 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
                           ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
                           : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
                       }`}>
-                        {displayYear}年
-                        {hasTimeSpan && ` - ${movie.timeline.endYear}年`}
+                        {displayYear}{t.year}
+                        {hasTimeSpan && ` - ${movie.timeline.endYear}${t.year}`}
                       </div>
                     </div>
                   </div>

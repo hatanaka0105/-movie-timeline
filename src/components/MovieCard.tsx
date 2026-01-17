@@ -138,7 +138,7 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
       {timeline.isEstimated && (
         <div
           className="absolute top-1 left-1 z-10 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-          title="Wikipedia検索中..."
+          title={t.wikipediaSearching}
         >
           🔍
         </div>
