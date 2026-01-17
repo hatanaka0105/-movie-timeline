@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { rateLimit } from '../lib/rateLimit';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
@@ -26,6 +27,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // レート制限: 1時間あたり50リクエスト（Gemini APIは高コスト）
+  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+             (req.headers['x-real-ip'] as string) ||
+             'unknown';
+  const rateLimitResult = await rateLimit(ip, 50, 3600);
+
+  if (!rateLimitResult.success) {
+    return res.status(429).json({
+      error: 'Too many requests',
+      resetTime: rateLimitResult.resetTime
+    });
   }
 
   try {

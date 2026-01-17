@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { rateLimit } from '../lib/rateLimit';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -26,6 +27,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // レート制限: 1時間あたり200リクエスト（検索が多いため）
+  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+             (req.headers['x-real-ip'] as string) ||
+             'unknown';
+  const rateLimitResult = await rateLimit(ip, 200, 3600);
+
+  if (!rateLimitResult.success) {
+    return res.status(429).json({
+      error: 'Too many requests',
+      resetTime: rateLimitResult.resetTime
+    });
   }
 
   try {
