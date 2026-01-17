@@ -16,19 +16,17 @@ function generateMockMovies(count: number): Movie[] {
 
     movies.push({
       id: `mock-${i}`,
-      tmdbId: i,
       title: `Movie ${i}`,
-      releaseDate: `${year}-01-01`,
-      posterPath: null,
-      overview: '',
-      genres: [],
+      year: year,
+      posterUrl: '',
       timeline: {
         startYear: year,
         endYear: hasSpan ? year + Math.floor(Math.random() * 20) : null,
         period: `${year}年`,
-        confidence: 'high',
-        source: 'mock',
+        isEstimated: false,
       },
+      genre: [],
+      synopsis: '',
     });
   }
 
