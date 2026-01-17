@@ -7,10 +7,9 @@ export default function ThemeSwitcher() {
 
   const themes: { id: ThemeType; label: { ja: string; en: string }; icon: string }[] = [
     { id: 'classic', label: { ja: 'クラシック', en: 'Classic' }, icon: '🎬' },
-    { id: 'cyberpunk', label: { ja: 'サイバーパンク', en: 'Cyberpunk' }, icon: '🌃' },
-    { id: 'minimal', label: { ja: 'ミニマル', en: 'Minimal' }, icon: '⚪' },
-    { id: 'glass', label: { ja: 'グラス', en: 'Glass' }, icon: '💎' },
-    { id: 'brutal', label: { ja: 'ブルータル', en: 'Brutal' }, icon: '⬛' },
+    { id: 'cinematic', label: { ja: 'シネマティック', en: 'Cinematic' }, icon: '🎭' },
+    { id: 'modern', label: { ja: 'モダン', en: 'Modern' }, icon: '✨' },
+    { id: 'retro', label: { ja: 'レトロ', en: 'Retro' }, icon: '📽️' },
   ];
 
   return (

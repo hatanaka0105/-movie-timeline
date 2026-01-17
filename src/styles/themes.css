@@ -2,6 +2,9 @@
    THEME SYSTEM - Global CSS Variables
    ============================================ */
 
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Roboto:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&family=Open+Sans:wght@300;400;600;700&display=swap');
+
 /* Classic Theme (Default) */
 :root,
 [data-theme="classic"] {
@@ -18,207 +21,119 @@
   --shadow: rgba(0, 0, 0, 0.5);
   --card-hover-scale: 1.05;
   --transition-speed: 300ms;
+
+  /* Default font */
+  --font-heading: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Cyberpunk Theme */
-[data-theme="cyberpunk"] {
-  --bg-primary: #0a0e27;
-  --bg-secondary: #1a1f3a;
-  --bg-tertiary: #2d3561;
-  --text-primary: #00ffff;
-  --text-secondary: #ff00ff;
-  --text-muted: #7dd3fc;
-  --accent-primary: #00ffff;
-  --accent-secondary: #ff00ff;
-  --accent-hover: #00cccc;
-  --border-color: #00ffff;
-  --shadow: rgba(0, 255, 255, 0.5);
-  --card-hover-scale: 1.08;
-  --transition-speed: 200ms;
-  --neon-glow: 0 0 10px var(--accent-primary), 0 0 20px var(--accent-primary);
-}
-
-[data-theme="cyberpunk"] * {
-  font-family: 'Courier New', monospace;
-}
-
-[data-theme="cyberpunk"] .bg-gray-800 {
-  background: linear-gradient(135deg, #1a1f3a 0%, #0a0e27 100%);
-  border: 1px solid var(--accent-primary);
-  box-shadow: var(--neon-glow);
-}
-
-[data-theme="cyberpunk"] .text-amber-400,
-[data-theme="cyberpunk"] .text-amber-300 {
-  color: var(--accent-primary);
-  text-shadow: var(--neon-glow);
-}
-
-[data-theme="cyberpunk"] button:hover {
-  box-shadow: var(--neon-glow);
-}
-
-/* Minimal Theme */
-[data-theme="minimal"] {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f3f4f6;
-  --text-primary: #111827;
-  --text-secondary: #374151;
-  --text-muted: #6b7280;
-  --accent-primary: #3b82f6;
-  --accent-secondary: #2563eb;
-  --accent-hover: #1d4ed8;
-  --border-color: #e5e7eb;
-  --shadow: rgba(0, 0, 0, 0.1);
-  --card-hover-scale: 1.02;
-  --transition-speed: 200ms;
-}
-
-[data-theme="minimal"] body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-[data-theme="minimal"] .bg-gray-900 {
-  background: var(--bg-secondary);
-}
-
-[data-theme="minimal"] .bg-gray-800 {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px var(--shadow);
-}
-
-[data-theme="minimal"] .bg-gray-700 {
-  background: var(--bg-tertiary);
-}
-
-[data-theme="minimal"] .text-white {
-  color: var(--text-primary);
-}
-
-[data-theme="minimal"] .text-gray-300,
-[data-theme="minimal"] .text-gray-400 {
-  color: var(--text-secondary);
-}
-
-[data-theme="minimal"] .text-amber-400,
-[data-theme="minimal"] .text-amber-300 {
-  color: var(--accent-primary);
-}
-
-[data-theme="minimal"] .border-gray-700 {
-  border-color: var(--border-color);
-}
-
-/* Glass Theme */
-[data-theme="glass"] {
-  --bg-primary: #0f172a;
-  --bg-secondary: rgba(30, 41, 59, 0.7);
-  --bg-tertiary: rgba(51, 65, 85, 0.5);
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --accent-primary: #818cf8;
-  --accent-secondary: #6366f1;
-  --accent-hover: #4f46e5;
-  --border-color: rgba(255, 255, 255, 0.1);
-  --shadow: rgba(0, 0, 0, 0.3);
-  --card-hover-scale: 1.03;
-  --transition-speed: 300ms;
-}
-
-[data-theme="glass"] body {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  background-attachment: fixed;
-}
-
-[data-theme="glass"] .bg-gray-800 {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-[data-theme="glass"] .bg-gray-700 {
-  background: rgba(51, 65, 85, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-[data-theme="glass"] .text-amber-400,
-[data-theme="glass"] .text-amber-300 {
-  color: var(--accent-primary);
-}
-
-/* Brutal Theme */
-[data-theme="brutal"] {
-  --bg-primary: #ffff00;
-  --bg-secondary: #000000;
-  --bg-tertiary: #ff00ff;
-  --text-primary: #000000;
-  --text-secondary: #ffffff;
-  --text-muted: #666666;
-  --accent-primary: #ff0000;
-  --accent-secondary: #00ff00;
-  --accent-hover: #cc0000;
-  --border-color: #000000;
-  --shadow: rgba(0, 0, 0, 0.8);
+/* Cinematic Font Theme - Elegant movie-style typography */
+[data-theme="cinematic"] {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --accent-primary: #fbbf24;
+  --accent-secondary: #f59e0b;
+  --accent-hover: #d97706;
+  --border-color: #4b5563;
+  --shadow: rgba(0, 0, 0, 0.5);
   --card-hover-scale: 1.05;
-  --transition-speed: 100ms;
+  --transition-speed: 300ms;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Roboto', sans-serif;
 }
 
-[data-theme="brutal"] * {
-  font-weight: 900;
+[data-theme="cinematic"] h1,
+[data-theme="cinematic"] h2,
+[data-theme="cinematic"] h3,
+[data-theme="cinematic"] .movie-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-[data-theme="brutal"] body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
+[data-theme="cinematic"] body,
+[data-theme="cinematic"] p,
+[data-theme="cinematic"] button,
+[data-theme="cinematic"] input {
+  font-family: var(--font-body);
+  font-weight: 400;
 }
 
-[data-theme="brutal"] .bg-gray-900 {
-  background: var(--bg-secondary);
-  border: 4px solid var(--border-color);
+/* Modern Font Theme - Clean and stylish */
+[data-theme="modern"] {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --accent-primary: #fbbf24;
+  --accent-secondary: #f59e0b;
+  --accent-hover: #d97706;
+  --border-color: #4b5563;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --card-hover-scale: 1.05;
+  --transition-speed: 300ms;
+
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
-[data-theme="brutal"] .bg-gray-800 {
-  background: var(--text-secondary);
-  border: 4px solid var(--border-color);
-  box-shadow: 8px 8px 0 var(--border-color);
-  color: var(--bg-secondary);
+[data-theme="modern"] * {
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
-[data-theme="brutal"] .bg-gray-700 {
-  background: var(--bg-tertiary);
-  border: 3px solid var(--border-color);
+[data-theme="modern"] h1,
+[data-theme="modern"] h2,
+[data-theme="modern"] h3,
+[data-theme="modern"] .movie-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-[data-theme="brutal"] .text-white {
-  color: var(--bg-secondary);
+/* Retro Font Theme - Vintage movie theater style */
+[data-theme="retro"] {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --accent-primary: #fbbf24;
+  --accent-secondary: #f59e0b;
+  --accent-hover: #d97706;
+  --border-color: #4b5563;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --card-hover-scale: 1.05;
+  --transition-speed: 300ms;
+
+  --font-heading: 'Bebas Neue', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
 }
 
-[data-theme="brutal"] .text-gray-300,
-[data-theme="brutal"] .text-gray-400 {
-  color: var(--text-primary);
+[data-theme="retro"] h1,
+[data-theme="retro"] h2,
+[data-theme="retro"] h3,
+[data-theme="retro"] .movie-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-[data-theme="brutal"] .text-amber-400,
-[data-theme="brutal"] .text-amber-300 {
-  color: var(--accent-primary);
-}
-
-[data-theme="brutal"] button {
-  border: 3px solid var(--border-color);
-  box-shadow: 4px 4px 0 var(--border-color);
-  transition: all 0.1s;
-}
-
-[data-theme="brutal"] button:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--border-color);
+[data-theme="retro"] body,
+[data-theme="retro"] p,
+[data-theme="retro"] button,
+[data-theme="retro"] input {
+  font-family: var(--font-body);
+  font-weight: 400;
 }
 
 /* Theme Switcher Styles */
@@ -280,12 +195,3 @@
   font-weight: 600;
 }
 
-[data-theme="brutal"] .theme-button {
-  border-width: 3px;
-  box-shadow: 3px 3px 0 var(--border-color);
-}
-
-[data-theme="brutal"] .theme-button:hover {
-  transform: translate(1px, 1px);
-  box-shadow: 2px 2px 0 var(--border-color);
-}

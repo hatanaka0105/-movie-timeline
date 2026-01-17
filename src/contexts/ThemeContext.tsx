@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type ThemeType = 'classic' | 'cyberpunk' | 'minimal' | 'glass' | 'brutal';
+export type ThemeType = 'classic' | 'cinematic' | 'modern' | 'retro';
 
 interface ThemeContextType {
   theme: ThemeType;
