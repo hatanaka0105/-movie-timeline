@@ -4,8 +4,9 @@
 import { TMDbMovieDetails } from './tmdbApi';
 import { logger } from '../utils/logger';
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+// Feature Flag: プロキシ経由でAPIを呼び出すかどうか
+// 常にtrue（本番・開発問わずプロキシ経由でAPIキーを保護）
+const USE_PROXY = true;
 
 export interface GeminiTimePeriodResult {
   success: boolean;
@@ -24,18 +25,6 @@ export interface GeminiTimePeriodResult {
 export async function extractTimePeriodWithGemini(
   movie: TMDbMovieDetails
 ): Promise<GeminiTimePeriodResult> {
-  if (!GEMINI_API_KEY) {
-    logger.warn('Gemini API key is not set');
-    return {
-      success: false,
-      startYear: null,
-      endYear: null,
-      period: '時代不明',
-      confidence: 'low',
-      source: 'gemini_api_key_missing',
-      error: 'Gemini API key is not configured',
-    };
-  }
 
   try {
     const releaseYear = movie.release_date?.split('-')[0] || 'unknown';
@@ -91,21 +80,27 @@ JSON response:`;
 
     logger.debug(`🤖 Gemini Flash: Analyzing "${movie.title}"...`);
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+    const requestBody = {
+      contents: [{
+        parts: [{
+          text: prompt
+        }]
+      }],
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 2048,
+      }
+    };
+
+    const response = await fetch('/api/gemini-proxy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.1,
-          maxOutputTokens: 2048,
-        }
+        model: 'gemini-2.5-flash',
+        action: 'generateContent',
+        ...requestBody,
       }),
     });
 
