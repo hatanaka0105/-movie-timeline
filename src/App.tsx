@@ -6,6 +6,7 @@ import MovieSearch from './components/MovieSearch';
 import YearRangeImport from './components/YearRangeImport';
 import AutoMovieImporter from './components/AutoMovieImporter';
 import TimelineExportImport from './components/TimelineExportImport';
+import ThemeSwitcher from './components/ThemeSwitcher';
 import { useLanguage } from './i18n/LanguageContext';
 import { movieTimePeriodDb } from './services/movieTimePeriodDb';
 
@@ -96,6 +97,10 @@ function App() {
                   {t.english}
                 </button>
               </div>
+
+              {/* Theme Switcher */}
+              <ThemeSwitcher />
+
               <button
                 onClick={() => setShowForm(!showForm)}
                 className="px-3 md:px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold rounded-lg transition-colors text-sm md:text-base"
