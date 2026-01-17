@@ -3,7 +3,7 @@
 
 import { calculateTimelineLayout as calculateOriginal } from './layoutCalculator';
 import { calculateTimelineLayout as calculateOptimized } from './layoutCalculatorOptimized';
-import { Movie } from '../types';
+import { Movie } from '../types/movie.types';
 
 // Generate mock movies for testing
 function generateMockMovies(count: number): Movie[] {

@@ -1,7 +1,7 @@
 // Optimized layout calculator with Spatial Hashing
 // O(n) collision detection instead of O(n²)
 
-import { Movie } from '../types';
+import { Movie } from '../types/movie.types';
 
 export interface TimelineLayout {
   movieId: string;
@@ -44,12 +44,6 @@ class SpatialHashGrid {
   constructor(cellSize = 200) {
     this.cellSize = cellSize;
     this.grid = new Map();
-  }
-
-  private getCellKey(x: number, y: number): string {
-    const cellX = Math.floor(x / this.cellSize);
-    const cellY = Math.floor(y / this.cellSize);
-    return `${cellX},${cellY}`;
   }
 
   private getCellsForRect(rect: Rect): string[] {
