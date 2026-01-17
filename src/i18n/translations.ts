@@ -96,6 +96,8 @@ export interface Translations {
   startYearSetting: string; // "時代設定（開始年）"
   endYearSetting: string; // "時代設定（終了年）"
   periodPlaceholder: string; // "1910年代"
+  analyzing: string; // "年代測定中..."
+  unknownEra: string; // "時代不明"
 }
 
 export const translations: Record<Language, Translations> = {
@@ -182,6 +184,8 @@ export const translations: Record<Language, Translations> = {
     startYearSetting: '時代設定（開始年）',
     endYearSetting: '時代設定（終了年）',
     periodPlaceholder: '1910年代',
+    analyzing: '年代測定中...',
+    unknownEra: '時代不明',
   },
   en: {
     appTitle: '🎬 MovieTimeline',
@@ -266,5 +270,7 @@ export const translations: Record<Language, Translations> = {
     startYearSetting: 'Time Period (Start Year)',
     endYearSetting: 'Time Period (End Year)',
     periodPlaceholder: '1910s',
+    analyzing: 'Analyzing time period...',
+    unknownEra: 'Unknown Era',
   },
 };

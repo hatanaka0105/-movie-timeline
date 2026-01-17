@@ -26,6 +26,12 @@ function App() {
     setMovies([...movies, ...newMovies]);
   };
 
+  const handleUpdateMovie = (movieId: string, updates: Partial<Movie>) => {
+    setMovies(prevMovies => prevMovies.map(movie =>
+      movie.id === movieId ? { ...movie, ...updates } : movie
+    ));
+  };
+
   const handleDeleteMovie = (movieId: string) => {
     setMovies(movies.filter(m => m.id !== movieId));
   };
@@ -196,7 +202,7 @@ function App() {
 
                 {/* 入力コンポーネント */}
                 {inputMode === 'search' ? (
-                  <MovieSearch onAddMovie={handleAddMovie} />
+                  <MovieSearch onAddMovie={handleAddMovie} onUpdateMovie={handleUpdateMovie} />
                 ) : inputMode === 'range' ? (
                   <YearRangeImport onAddMovies={handleAddMovies} />
                 ) : inputMode === 'auto' ? (

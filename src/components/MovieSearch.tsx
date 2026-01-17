@@ -12,14 +12,14 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 interface MovieSearchProps {
   onAddMovie: (movie: Movie) => void;
+  onUpdateMovie: (movieId: string, updates: Partial<Movie>) => void;
 }
 
-export default function MovieSearch({ onAddMovie }: MovieSearchProps) {
+export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchProps) {
   const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<TMDbMovie[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   // 自動検索のためのデバウンス処理
   useEffect(() => {
@@ -64,57 +64,76 @@ export default function MovieSearch({ onAddMovie }: MovieSearchProps) {
   };
 
   const handleSelectMovie = async (tmdbMovie: TMDbMovie) => {
-    setIsLoading(true);
-
-    // 詳細情報を取得
+    // 詳細情報を取得（これは高速）
     const details = await getMovieDetails(tmdbMovie.id);
 
-    if (details) {
+    if (!details) return;
+
+    // 映画IDを生成
+    const movieId = `tmdb-${details.id}`;
+
+    // まず「年代測定中」の状態でカードを即座に追加
+    const pendingMovie: Movie = {
+      id: movieId,
+      title: details.title,
+      year: details.release_date
+        ? parseInt(details.release_date.split('-')[0])
+        : new Date().getFullYear(),
+      posterUrl: getImageUrl(details.poster_path),
+      timeline: {
+        startYear: null,
+        endYear: null,
+        period: t.analyzing || '年代測定中...',
+        isPending: true, // 処理中フラグ
+      },
+      genre: details.genres ? details.genres.map(g => g.name) : [],
+      synopsis: details.overview,
+    };
+
+    // すぐに追加（UIをブロックしない）
+    onAddMovie(pendingMovie);
+
+    // バックグラウンドで年代判定処理を実行
+    (async () => {
       // 時代設定を抽出
       let timeline = extractTimePeriod(details);
 
-      // フォールバック（推定値）になった場合、自動的にWikipedia検索を実行
+      // フォールバック（推定値）になった場合、自動的にWikipedia/Gemini検索を実行
       if (timeline.isEstimated) {
         const wikiResult = await lookupAndCacheTimePeriod(details);
 
         if (wikiResult) {
-          // Wikipedia検索結果を使用
+          // Wikipedia/Gemini検索結果を使用
           timeline = {
             startYear: wikiResult.startYear,
             endYear: wikiResult.endYear,
             period: wikiResult.period,
             additionalYears: wikiResult.additionalYears,
-            isEstimated: false, // Wikipedia検索成功なのでisEstimatedをfalseに
+            isEstimated: false,
+            isPending: false,
           };
         } else {
-          // Wikipedia検索が失敗した場合、時代設定を不明にする
+          // 検索が失敗した場合、時代設定を不明にする
           timeline = {
             startYear: null,
             endYear: null,
-            period: '時代不明',
-            isEstimated: false, // 公開年フォールバックは使わない
+            period: t.unknownEra || '時代不明',
+            isEstimated: false,
+            isPending: false,
           };
         }
+      } else {
+        // 時代設定が確定している場合
+        timeline.isPending = false;
       }
 
-      // Movie型に変換
-      const movie: Movie = {
-        id: `tmdb-${details.id}`,
-        title: details.title,
-        year: details.release_date
-          ? parseInt(details.release_date.split('-')[0])
-          : new Date().getFullYear(),
-        posterUrl: getImageUrl(details.poster_path),
+      // 映画情報を更新（年代判定完了）
+      onUpdateMovie(movieId, {
         timeline,
-        genre: details.genres ? details.genres.map(g => g.name) : [],
-        synopsis: details.overview,
-      };
+      });
+    })();
 
-      onAddMovie(movie);
-      // 検索結果とクエリを保持（連続追加を可能にする）
-    }
-
-    setIsLoading(false);
+    // 検索結果とクエリを保持（連続追加を可能にする）
   };
 
   return (
@@ -141,15 +160,8 @@ export default function MovieSearch({ onAddMovie }: MovieSearchProps) {
         </div>
       </form>
 
-      {/* ローディング */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
-        </div>
-      )}
-
       {/* 検索結果 */}
-      {searchResults.length > 0 && !isLoading && (
+      {searchResults.length > 0 && (
         <div className="space-y-2 max-h-96 overflow-y-auto">
           <p className="text-sm text-gray-400 mb-2">
             {searchResults.length}{t.searchResultsFound}

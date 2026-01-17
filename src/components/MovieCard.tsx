@@ -18,7 +18,11 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
 
   // 時代設定の表示を決定
   let yearDisplay: string;
-  if (timeline.period === 'はるか昔' || timeline.period === 'A Long Time Ago') {
+  let isPending = timeline.isPending || false;
+
+  if (isPending) {
+    yearDisplay = timeline.period; // "年代測定中..." or "Analyzing time period..."
+  } else if (timeline.period === 'はるか昔' || timeline.period === 'A Long Time Ago') {
     yearDisplay = t.longAgoPeriod;
   } else if (timeline.period === '時代設定なし（ファンタジー）' || timeline.period === 'No Time Period (Fantasy)') {
     yearDisplay = t.fantasyPeriod;
@@ -173,7 +177,12 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
             className={`${textSizeClasses[size].year} text-amber-400 mt-0.5 bg-gray-700 border border-amber-500 rounded px-1 w-full focus:outline-none focus:ring-1 focus:ring-amber-500`}
           />
         ) : (
-          <p className={`${textSizeClasses[size].year} text-amber-400 mt-0.5`}>{yearDisplay}</p>
+          <div className="flex items-center gap-1 mt-0.5">
+            {isPending && (
+              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-amber-400" />
+            )}
+            <p className={`${textSizeClasses[size].year} text-amber-400`}>{yearDisplay}</p>
+          </div>
         )}
         {size !== 'small' && genre.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-2">
