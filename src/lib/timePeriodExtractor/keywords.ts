@@ -47,7 +47,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'reformation': 1517,
   'leonardo da vinci': 1500,
   'michelangelo': 1504,
-  'galileo': 1610,
+  'galileo galilei': 1610,
 
   // 日本の時代
   '戦国時代': 1550,
@@ -378,8 +378,8 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   '明朝': 1500,
   'shogunate': 1700,
   // '将軍': 1700, // 削除: too generic (現代映画でも「将軍」という言葉が使われる）
-  'tokugawa': 1700,
-  '徳川': 1700,
+  'tokugawa ieyasu': 1600,
+  '徳川家康': 1600,
 
   // 産業革命・近代化
   'industrial revolution': 1820,
