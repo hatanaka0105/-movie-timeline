@@ -369,7 +369,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'ming dynasty': 1500,
   '明朝': 1500,
   'shogunate': 1700,
-  '将軍': 1700,
+  // '将軍': 1700, // 削除: too generic (現代映画でも「将軍」という言葉が使われる）
   'tokugawa': 1700,
   '徳川': 1700,
 
