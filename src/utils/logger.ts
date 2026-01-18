@@ -21,8 +21,7 @@ export const logger = {
   },
 
   debug: (...args: any[]) => {
-    if (isDevelopment) {
-      console.debug(...args);
-    }
+    // デバッグログも本番環境で出力（トラブルシューティング用）
+    console.debug(...args);
   },
 };
