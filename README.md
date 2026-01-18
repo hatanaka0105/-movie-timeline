@@ -1,6 +1,6 @@
 # 🎬 MovieTimeline
 
-映画の時代設定を視覚的に比較できるタイムラインツール
+映画の時代設定を視覚的に比較できるタイムラインツール。
 
 🌐 **[デモを見る](https://movie-timeline-three.vercel.app/)**
 
