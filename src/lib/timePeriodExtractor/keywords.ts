@@ -80,10 +80,14 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'コロンブス': 1492,
   'conquistador': 1520,
   'magellan': 1520,
-  'colonial': 1700,
-  'plantation': 1750,
-  'slavery': 1800,
-  'slave trade': 1780,
+  'colonial america': 1700,
+  'american colonial': 1700,
+  // 'colonial': 1700, // 削除: too generic (様々な時代・地域の植民地)
+  'plantation system': 1750,
+  // 'plantation': 1750, // 削除: too generic
+  'transatlantic slave trade': 1780,
+  // 'slavery': 1800, // 削除: too generic (ローマ時代等でも使用)
+  // 'slave trade': 1780, // 削除: やや汎用的
 
   // アメリカ史
   'pilgrims': 1620,
@@ -159,8 +163,8 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'レーニン': 1920,
   'stalin': 1935,
   'スターリン': 1935,
-  'communism': 1930,
-  '共産主義': 1930,
+  // 'communism': 1930, // 削除: too generic (1917年～現代まで)
+  // '共産主義': 1930, // 削除: too generic
 
   // 第二次世界大戦
   '第二次世界大戦': 1942,
@@ -221,13 +225,15 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'ロンメル': 1942,
   'gestapo': 1940,
   'ゲシュタポ': 1940,
-  'resistance': 1943,
-  'レジスタンス': 1943,
-  'partisan': 1943,
-  'パルチザン': 1943,
-  'occupied france': 1942,
-  '占領': 1942,
-  'vichy': 1942,
+  'french resistance': 1943,
+  'フランス・レジスタンス': 1943,
+  // 'resistance': 1943, // 削除: too generic
+  // 'レジスタンス': 1943, // 削除: too generic
+  // 'partisan': 1943, // 削除: too generic
+  // 'パルチザン': 1943, // 削除: too generic
+  'vichy france': 1942,
+  'ヴィシー政権': 1942,
+  // '占領': 1942, // 削除: too generic
   'ヴィシー': 1942,
   'de gaulle': 1944,
   'ドゴール': 1944,
@@ -292,10 +298,12 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'counterculture': 1968,
   'summer of love': 1967,
   'サマー・オブ・ラブ': 1967,
-  'vietnam protest': 1968,
-  '反戦運動': 1968,
-  '学生運動': 1968,
-  'student protest': 1968,
+  'vietnam war protest': 1968,
+  'ベトナム反戦運動': 1968,
+  // '反戦運動': 1968, // 削除: too generic
+  // '学生運動': 1968, // 削除: too generic
+  'may 1968 paris': 1968,
+  'パリ五月革命': 1968,
   'paris 68': 1968,
   'パリ68年': 1968,
 
@@ -378,20 +386,21 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   '産業革命': 1820,
   'steam engine': 1820,
   '蒸気機関': 1820,
-  'factory': 1850,
-  '工場': 1850,
-  'railroad': 1850,
-  '鉄道': 1850,
+  // 'factory': 1850, // 削除: too generic
+  // '工場': 1850, // 削除: too generic
+  // 'railroad': 1850, // 削除: too generic
+  // '鉄道': 1850, // 削除: too generic
 
   // アメリカ開拓時代
-  'homestead': 1870,
-  'ホームステッド': 1870,
-  'pioneer': 1850,
-  '開拓者': 1850,
+  // 'homestead': 1870, // 削除: too generic
+  // 'ホームステッド': 1870, // 削除: too generic
+  // 'pioneer': 1850, // 削除: too generic
+  // '開拓者': 1850, // 削除: too generic
   'oregon trail': 1850,
   'オレゴン街道': 1850,
-  'california gold': 1849,
-  'カリフォルニア': 1849,
+  'california gold rush': 1849,
+  'ゴールドラッシュ': 1849,
+  // 'カリフォルニア': 1849, // 削除: too generic
   'forty-niner': 1849,
 
   // 奴隷制・人権
@@ -401,12 +410,12 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'ハリエット・タブマン': 1850,
   'frederick douglass': 1850,
   'フレデリック・ダグラス': 1850,
-  'emancipation': 1863,
-  '奴隷解放': 1863,
-  '奴隷': 1850,
-  'slave': 1850,
-  'abolitionist': 1850,
-  '奴隷廃止': 1850,
+  'emancipation proclamation': 1863,
+  '奴隷解放宣言': 1863,
+  // '奴隷': 1850, // 削除: too generic
+  // 'slave': 1850, // 削除: too generic
+  'abolitionist movement': 1850,
+  '奴隷廃止運動': 1850,
 
   // 日本現代史追加
   'バブル': 1989,
@@ -417,17 +426,18 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
 
   // 音楽・文化史
   'swing era': 1940,
-  'スウィング': 1940,
-  'big band': 1940,
-  'ビッグバンド': 1940,
-  'bebop': 1945,
-  'ビバップ': 1945,
-  'motown': 1965,
-  'モータウン': 1965,
-  'grunge': 1992,
-  'グランジ': 1992,
-  'new wave': 1980,
-  'ニューウェーブ': 1980,
+  'スウィング時代': 1940,
+  // 'スウィング': 1940, // 削除: too generic
+  // 'big band': 1940, // 削除: too generic
+  // 'ビッグバンド': 1940, // 削除: too generic
+  'bebop jazz': 1945,
+  'ビバップジャズ': 1945,
+  'motown records': 1965,
+  'モータウンレコード': 1965,
+  // 'grunge': 1992, // 削除: 音楽ジャンルで時代を限定するのは不適切
+  // 'グランジ': 1992, // 削除: too generic
+  // 'new wave': 1980, // 削除: too generic
+  // 'ニューウェーブ': 1980, // 削除: too generic
 
   // 時代区分（世紀）
   '19th century': 1850,

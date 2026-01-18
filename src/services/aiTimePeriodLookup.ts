@@ -439,15 +439,17 @@ export async function lookupAndCacheTimePeriod(
   movie: TMDbMovieDetails
 ): Promise<MovieTimePeriodEntry | null> {
   try {
-    // 既にデータベースにある場合はスキップ（ただし低信頼性の場合は再試行）
+    // 既にデータベースにある場合はスキップ（ただし低信頼性またはreliabilityフィールドがない場合は再試行）
     if (movieTimePeriodDb.hasTimePeriod(movie.id)) {
       const cached = movieTimePeriodDb.getTimePeriod(movie.id);
-      if (cached && cached.reliability !== 'low') {
-        logger.debug(`✅ Using cached time period for "${movie.title}" (reliability: ${cached.reliability || 'high'})`);
+      // reliabilityが'high'の場合のみキャッシュを使用
+      if (cached && cached.reliability === 'high') {
+        logger.debug(`✅ Using cached time period for "${movie.title}" (reliability: high)`);
         return cached;
       }
-      // 低信頼性キャッシュは無視して再試行
-      logger.debug(`🔄 Ignoring low reliability cache for "${movie.title}" - retrying lookup`);
+      // 低信頼性またはreliabilityフィールドなしのキャッシュは削除して再試行
+      const reason = !cached?.reliability ? 'no reliability field' : 'low reliability';
+      logger.debug(`🔄 Ignoring cache for "${movie.title}" (${reason}) - retrying lookup`);
       movieTimePeriodDb.removeTimePeriod(movie.id);
     }
 
