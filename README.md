@@ -38,6 +38,10 @@ npm install
 #### Gemini API キー
 1. [Google AI Studio](https://makersuite.google.com/app/apikey) でAPIキーを取得
 
+#### DeepSeek API キー (オプション、推奨)
+1. [DeepSeek Platform](https://platform.deepseek.com/api_keys) でAPIキーを取得
+2. 無料枠: 新規登録で500万トークン (30日間有効)
+
 #### 環境変数設定
 `.env` ファイルを作成:
 
@@ -49,6 +53,7 @@ cp .env.example .env
 
 ```
 VITE_TMDB_API_KEY=your_tmdb_api_key_here
+VITE_DEEPSEEK_API_KEY=your_deepseek_api_key_here
 VITE_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
@@ -86,8 +91,9 @@ Vercel Dashboard のプロジェクト設定で環境変数を追加：
 
 1. 「Settings」→「Environment Variables」
 2. 以下の環境変数を追加（`VITE_`プレフィックスは**付けない**）:
-   - `TMDB_API_KEY`: TMDb APIキー
-   - `GEMINI_API_KEY`: Gemini APIキー
+   - `TMDB_API_KEY`: TMDb APIキー (必須)
+   - `DEEPSEEK_API_KEY`: DeepSeek APIキー (推奨 - 高推論能力)
+   - `GEMINI_API_KEY`: Gemini APIキー (必須)
 3. Environment: **Production**, **Preview**, **Development** すべてにチェック
 4. 「Save」をクリック
 
@@ -110,9 +116,10 @@ Vercelが自動的にビルド・デプロイします。
 このアプリケーションは以下のセキュリティ対策を実装しています:
 
 ### APIキー保護
-- **サーバーレスプロキシ**: TMDb/Gemini APIキーはサーバーサイドのみで使用
+- **サーバーレスプロキシ**: TMDb/DeepSeek/Gemini APIキーはサーバーサイドのみで使用
 - **レート制限**: IPアドレスベースでAPI呼び出しを制限
   - TMDb: 200 requests/hour
+  - DeepSeek: 50 requests/hour
   - Gemini: 50 requests/hour
 - **CORS制限**: 許可されたオリジンからのみアクセス可能
 
@@ -129,11 +136,27 @@ Vercelが自動的にビルド・デプロイします。
 ```
 ユーザー → Vercel Edge (セキュリティヘッダー)
          → フロントエンド (React SPA)
-         → APIプロキシ (/api/tmdb-proxy, /api/gemini-proxy)
+         → APIプロキシ (/api/tmdb-proxy, /api/deepseek-proxy, /api/gemini-proxy)
             - レート制限 (Vercel KV)
             - CORS検証
             - 入力バリデーション (Zod)
-         → 外部API (TMDb, Gemini)
+         → 外部API (TMDb, DeepSeek, Gemini)
+```
+
+### 時代設定推定のフォールバック戦略
+
+```
+1. TMDb メタデータ (映画データベースの年代情報)
+   ↓ 失敗
+2. Wikipedia API (構造化された時代設定データ)
+   ↓ 失敗
+3. DeepSeek-V3 (高推論AI - o1レベルの分析)
+   ↓ 失敗
+4. Gemini Flash 2.0 (高速AI - コスト効率重視)
+   ↓ 失敗
+5. Groq (超高速AI - 緊急フォールバック)
+   ↓ 失敗
+6. キーワード抽出 (正規表現パターンマッチ)
 ```
 
 **利点**:
@@ -205,7 +228,8 @@ const CURRENT_CACHE_VERSION = 4; // increment this number
 - **Build**: Vite
 - **APIs**:
   - TMDb API (映画データ)
-  - Gemini AI (時代設定推定)
+  - DeepSeek-V3 (高推論AI - 現代映画の時代設定推論)
+  - Gemini Flash 2.0 (高速AI - コスト効率重視)
 - **Backend**:
   - Vercel Serverless Functions (APIプロキシ)
   - Vercel KV (Redis) (レート制限)

@@ -5,6 +5,7 @@ import { MovieTimePeriodEntry, movieTimePeriodDb } from './movieTimePeriodDb';
 import { TMDbMovieDetails } from './tmdbApi';
 import { logger } from '../utils/logger';
 import { CENTURY_OFFSETS, YEAR_RANGE } from '../config/constants';
+import { extractTimePeriodWithDeepSeek } from './deepseekApi';
 import { extractTimePeriodWithGemini } from './geminiApi';
 import { extractTimePeriodWithGroq } from './groqApi';
 
@@ -486,8 +487,56 @@ export async function lookupAndCacheTimePeriod(
       return entry;
     }
 
-    // 2. Wikipediaで見つからなかった場合、Gemini Flashで検索
-    logger.debug(`🤖 Wikipedia failed, trying Gemini Flash for "${movie.title}"...`);
+    // 2. Wikipediaで見つからなかった場合、DeepSeek-V3で検索（高推論能力）
+    logger.debug(`🤖 Wikipedia failed, trying DeepSeek-V3 for "${movie.title}"...`);
+    const releaseYear = parseInt(movie.release_date?.split('-')[0] || '0');
+    const deepseekResult = await extractTimePeriodWithDeepSeek(
+      movie.original_title,
+      movie.overview || '',
+      releaseYear
+    );
+
+    const deepseekLookupResult: LookupResult = {
+      success: deepseekResult.startYear !== null,
+      startYear: deepseekResult.startYear,
+      endYear: deepseekResult.endYear,
+      period: deepseekResult.startYear
+        ? `${deepseekResult.startYear}${deepseekResult.endYear ? `-${deepseekResult.endYear}` : ''}`
+        : '時代不明',
+      confidence: deepseekResult.confidence > 0.8 ? 'high' : deepseekResult.confidence > 0.5 ? 'medium' : 'low',
+      source: 'deepseek',
+    };
+
+    logger.debug(`📊 DeepSeek result for "${movie.title}":`, {
+      success: deepseekLookupResult.success,
+      startYear: deepseekLookupResult.startYear,
+      source: deepseekLookupResult.source,
+      confidence: deepseekLookupResult.confidence
+    });
+
+    if (deepseekLookupResult.success && deepseekLookupResult.startYear !== null) {
+      const reliability = determineReliability(deepseekLookupResult, movie);
+      const entry: MovieTimePeriodEntry = {
+        tmdbId: movie.id,
+        title: movie.original_title,
+        startYear: deepseekLookupResult.startYear,
+        endYear: deepseekLookupResult.endYear,
+        period: deepseekLookupResult.period,
+        source: 'ai_lookup',
+        notes: `AI lookup (${deepseekLookupResult.confidence} confidence) from ${deepseekLookupResult.source}`,
+        additionalYears: deepseekLookupResult.additionalYears,
+        reliability,
+      };
+
+      // データベースに保存
+      movieTimePeriodDb.addTimePeriod(entry);
+      logger.debug(`✅ Cached time period for "${movie.title}": ${deepseekLookupResult.period} (reliability: ${reliability})`);
+
+      return entry;
+    }
+
+    // 3. DeepSeekで見つからなかった場合、Gemini Flashで検索
+    logger.debug(`🤖 DeepSeek failed, trying Gemini Flash for "${movie.title}"...`);
     const geminiResult = await extractTimePeriodWithGemini(movie);
     logger.debug(`📊 Gemini result for "${movie.title}":`, {
       success: geminiResult.success,
@@ -518,9 +567,9 @@ export async function lookupAndCacheTimePeriod(
       return entry;
     }
 
-    // 3. Geminiがレート制限の場合、Groqにフォールバック
-    if (geminiResult.source === 'gemini_rate_limit') {
-      logger.debug(`🚀 Gemini rate limited, falling back to Groq for "${movie.title}"...`);
+    // 4. Geminiがレート制限またはエラーの場合、Groqにフォールバック
+    if (geminiResult.source === 'gemini_rate_limit' || geminiResult.source === 'gemini_error') {
+      logger.debug(`🚀 Gemini failed, falling back to Groq for "${movie.title}"...`);
       const groqResult = await extractTimePeriodWithGroq(movie);
       logger.debug(`📊 Groq result for "${movie.title}":`, {
         success: groqResult.success,
@@ -553,7 +602,7 @@ export async function lookupAndCacheTimePeriod(
 
       // Groqでも失敗した場合、低信頼性で「時代不明」をキャッシュ
       const failedReliability = determineReliability(groqResult, movie);
-      logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia, Gemini, and Groq all failed) - caching with reliability: ${failedReliability}`);
+      logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia, DeepSeek, Gemini, and Groq all failed) - caching with reliability: ${failedReliability}`);
 
       // 時代不明として低信頼性でキャッシュ（次回再試行可能）
       const failedEntry: MovieTimePeriodEntry = {
@@ -570,7 +619,7 @@ export async function lookupAndCacheTimePeriod(
       return null;
     }
 
-    logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia and Gemini both failed)`);
+    logger.debug(`⚠️ No time period found for "${movie.title}" (Wikipedia, DeepSeek, and Gemini all failed)`);
     return null;
   } catch (error) {
     logger.error(`Error in lookupAndCacheTimePeriod for movie "${movie.title}":`, error);

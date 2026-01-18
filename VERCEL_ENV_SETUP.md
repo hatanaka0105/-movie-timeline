@@ -13,13 +13,21 @@
 - **値の例**: `23b4dfd5c1561702da9a1a1b3a7d2d25` (32文字の英数字)
 - **重要**: `VITE_`プレフィックスは**付けません**（サーバーサイド専用）
 
-### 2. GEMINI_API_KEY (必須)
+### 2. DEEPSEEK_API_KEY (推奨)
+- **説明**: DeepSeek API キー（高推論能力AI、現代映画の時代設定推論に強い）
+- **取得方法**: https://platform.deepseek.com/api_keys
+- **無料枠**: 新規登録で500万トークン (30日間有効)
+- **値の例**: `sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
+- **重要**: `VITE_`プレフィックスは**付けません**（サーバーサイド専用）
+- **注意**: この環境変数がない場合、Gemini Flashにフォールバックします
+
+### 3. GEMINI_API_KEY (必須)
 - **説明**: Google Gemini API キー
 - **取得方法**: https://aistudio.google.com/app/apikey
 - **値の例**: `AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
 - **重要**: `VITE_`プレフィックスは**付けません**（サーバーサイド専用）
 
-### 3. ALLOWED_ORIGIN (オプション)
+### 4. ALLOWED_ORIGIN (オプション)
 - **説明**: CORS許可オリジン（デフォルト: `https://movie-timeline-three.vercel.app`）
 - **値の例**: `https://your-custom-domain.com`
 - **注意**: カスタムドメインを使用する場合のみ設定
@@ -36,6 +44,12 @@
 ```
 TMDB_API_KEY
 Value: [your_tmdb_api_key]
+Environment: Production, Preview, Development
+```
+
+```
+DEEPSEEK_API_KEY
+Value: [your_deepseek_api_key]
 Environment: Production, Preview, Development
 ```
 
