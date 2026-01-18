@@ -1,17 +1,32 @@
+// Feature flag: プロキシ経由でAPIを呼び出す（本番環境推奨）
+const USE_PROXY = import.meta.env.PROD || import.meta.env.VITE_USE_PROXY === 'true';
+
+// レガシー: 直接呼び出し用（フォールバック）
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 import { movieTimePeriodDb } from './movieTimePeriodDb';
 import { logger } from '../utils/logger';
 
-// TMDb APIを直接呼び出す
+// TMDb APIを呼び出す（プロキシまたは直接）
 async function fetchTMDb(endpoint: string, params: Record<string, string>) {
-  const queryParams = new URLSearchParams({
-    api_key: TMDB_API_KEY,
-    ...params
-  });
-  const response = await fetch(`${TMDB_BASE_URL}/${endpoint}?${queryParams.toString()}`);
-  return response;
+  if (USE_PROXY) {
+    // プロキシ経由（APIキー不要）
+    const queryParams = new URLSearchParams({
+      endpoint,
+      ...params
+    });
+    const response = await fetch(`/api/tmdb-proxy?${queryParams.toString()}`);
+    return response;
+  } else {
+    // 直接呼び出し（開発環境フォールバック）
+    const queryParams = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      ...params
+    });
+    const response = await fetch(`${TMDB_BASE_URL}/${endpoint}?${queryParams.toString()}`);
+    return response;
+  }
 }
 
 export interface TMDbMovie {

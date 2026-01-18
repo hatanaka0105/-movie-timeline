@@ -4,6 +4,10 @@
 import { TMDbMovieDetails } from './tmdbApi';
 import { logger } from '../utils/logger';
 
+// Feature flag: プロキシ経由でAPIを呼び出す（本番環境推奨）
+const USE_PROXY = import.meta.env.PROD || import.meta.env.VITE_USE_PROXY === 'true';
+
+// レガシー: 直接呼び出し用（フォールバック）
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export interface GeminiTimePeriodResult {
@@ -90,16 +94,30 @@ JSON response:`;
       }
     };
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      }
-    );
+    const response = await (USE_PROXY
+      ? // プロキシ経由（APIキー不要）
+        fetch('/api/gemini-proxy', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gemini-2.0-flash-exp',
+            action: 'generateContent',
+            ...requestBody,
+          }),
+        })
+      : // 直接呼び出し（開発環境フォールバック）
+        fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+          }
+        ));
 
     if (!response.ok) {
       const errorText = await response.text();
