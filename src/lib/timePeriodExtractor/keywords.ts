@@ -451,4 +451,4 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   // これらのキーワードだけでは年代特定が不正確なため
 };
 
-export { HISTORICAL_KEYWORDS };
+export { PERIOD_KEYWORDS as HISTORICAL_KEYWORDS };
