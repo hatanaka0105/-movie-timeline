@@ -30,9 +30,9 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'middle ages': 1200,
   'crusades': 1190,
   '十字軍': 1190,
-  'knights': 1300,
-  'samurai': 1400,
-  '侍': 1400,
+  // 'knights': 1300, // 削除: too generic (11世紀～16世紀まで広範囲)
+  // 'samurai': 1400, // 削除: too generic (12世紀～19世紀まで広範囲)
+  // '侍': 1400, // 削除: too generic (12世紀～19世紀まで広範囲)
   'viking': 900,
   'ヴァイキング': 900,
   'joan of arc': 1429,
