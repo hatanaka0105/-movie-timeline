@@ -186,7 +186,12 @@ npm run test:auto
 
 When working on this project, especially for UI-related tasks, bugs, or feature implementations:
 
-**CRITICAL: Always use browser automation tools (Claude in Chrome MCP) for testing.**
+**CRITICAL RULES:**
+1. **ALWAYS use MCP browser automation (Claude in Chrome) for testing after implementation**
+2. **NEVER ask the user to manually test - YOU must test it yourself**
+3. **If MCP is unavailable or requires browser restart, STOP and report to the user immediately**
+
+**Testing is YOUR responsibility, not the user's.**
 
 #### Required Steps for UI Bug Fixes:
 1. **Start dev server**: Run `npm run dev` if not already running
