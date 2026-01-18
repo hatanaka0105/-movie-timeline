@@ -22,7 +22,7 @@ import staticDb from '../data/movieTimePeriods.json';
 // サーバーサイドキャッシュ + LocalStorageのハイブリッド
 const STORAGE_KEY = 'movieTimePeriodCache';
 const CACHE_VERSION_KEY = 'movieTimePeriodCacheVersion';
-const CURRENT_CACHE_VERSION = 5; // Incremented for server-side cache migration
+const CURRENT_CACHE_VERSION = 6; // Incremented to clear bad cached entries (e.g., Avengers)
 const API_CACHE_URL = '/api/movie-cache';
 
 class MovieTimePeriodDatabase {
