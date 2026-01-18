@@ -1,7 +1,7 @@
 // Feature flags for gradual rollout of optimizations
 export const featureFlags = {
   // Phase 2.1: Spatial Hashing for layout calculation
-  useOptimizedLayout: false, // Set to true to enable O(n) collision detection
+  useOptimizedLayout: true, // Enabled: O(n) collision detection via Spatial Hashing
 
   // Phase 2.3: Image lazy loading
   useLazyLoadImages: true, // Safe to enable by default
