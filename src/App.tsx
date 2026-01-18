@@ -123,23 +123,21 @@ function App() {
                   {t.deleteAll}
                 </button>
               )}
+              <button
+                onClick={() => setShowKeywordViewer(true)}
+                className="px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm md:text-base"
+                title="View keyword list"
+              >
+                📋
+              </button>
               {import.meta.env.DEV && (
-                <>
-                  <button
-                    onClick={handleClearCache}
-                    className="px-3 md:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm md:text-base"
-                    title="Clear time period cache"
-                  >
-                    🗑️
-                  </button>
-                  <button
-                    onClick={() => setShowKeywordViewer(true)}
-                    className="px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm md:text-base"
-                    title="View keyword list"
-                  >
-                    📋
-                  </button>
-                </>
+                <button
+                  onClick={handleClearCache}
+                  className="px-3 md:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm md:text-base"
+                  title="Clear time period cache"
+                >
+                  🗑️
+                </button>
               )}
             </div>
           </div>
