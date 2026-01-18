@@ -399,7 +399,6 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'oregon trail': 1850,
   'オレゴン街道': 1850,
   'california gold rush': 1849,
-  'ゴールドラッシュ': 1849,
   // 'カリフォルニア': 1849, // 削除: too generic
   'forty-niner': 1849,
 
@@ -451,3 +450,5 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   // 注: 未来系キーワード（'未来', 'dystopian future', etc）は削除済み
   // これらのキーワードだけでは年代特定が不正確なため
 };
+
+export { HISTORICAL_KEYWORDS };
