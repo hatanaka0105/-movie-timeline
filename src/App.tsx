@@ -7,6 +7,7 @@ import YearRangeImport from './components/YearRangeImport';
 import AutoMovieImporter from './components/AutoMovieImporter';
 import TimelineExportImport from './components/TimelineExportImport';
 import ThemeSwitcher from './components/ThemeSwitcher';
+import KeywordViewer from './components/KeywordViewer';
 import { useLanguage } from './i18n/LanguageContext';
 import { movieTimePeriodDb } from './services/movieTimePeriodDb';
 
@@ -17,6 +18,7 @@ function App() {
   const [inputMode, setInputMode] = useState<'search' | 'manual' | 'range' | 'auto' | 'export'>('search');
   const [scale, setScale] = useState(10); // PIXELS_PER_YEAR: 5-20
   const [thumbnailSize, setThumbnailSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [showKeywordViewer, setShowKeywordViewer] = useState(false);
 
   const handleAddMovie = (movie: Movie) => {
     setMovies([...movies, movie]);
@@ -122,13 +124,22 @@ function App() {
                 </button>
               )}
               {import.meta.env.DEV && (
-                <button
-                  onClick={handleClearCache}
-                  className="px-3 md:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm md:text-base"
-                  title="Clear time period cache"
-                >
-                  🗑️
-                </button>
+                <>
+                  <button
+                    onClick={handleClearCache}
+                    className="px-3 md:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm md:text-base"
+                    title="Clear time period cache"
+                  >
+                    🗑️
+                  </button>
+                  <button
+                    onClick={() => setShowKeywordViewer(true)}
+                    className="px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm md:text-base"
+                    title="View keyword list"
+                  >
+                    📋
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -324,6 +335,12 @@ function App() {
           </p>
         </div>
       </footer>
+
+      {/* キーワード一覧モーダル */}
+      <KeywordViewer
+        isOpen={showKeywordViewer}
+        onClose={() => setShowKeywordViewer(false)}
+      />
     </div>
   );
 }
