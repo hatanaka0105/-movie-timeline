@@ -78,6 +78,20 @@ Examples:
 JSON response:`;
 
     logger.debug(`🚀 Groq (Llama 3.3 70B): Analyzing "${movie.title}"...`);
+    logger.debug(`🔑 Groq API Key present: ${!!GROQ_API_KEY}, length: ${GROQ_API_KEY?.length || 0}`);
+
+    if (!GROQ_API_KEY) {
+      logger.error('❌ GROQ_API_KEY is not set');
+      return {
+        success: false,
+        startYear: null,
+        endYear: null,
+        period: '時代不明',
+        confidence: 'low',
+        source: 'groq_error',
+        error: 'GROQ_API_KEY is not configured',
+      };
+    }
 
     // Groq API は OpenAI 互換フォーマット
     const requestBody = {
@@ -106,6 +120,8 @@ JSON response:`;
 
     if (!response.ok) {
       const errorText = await response.text();
+      logger.error(`❌ Groq API error: ${response.status} ${response.statusText}`);
+      logger.error(`❌ Groq API error body:`, errorText);
 
       // レート制限エラーの検出
       if (response.status === 429) {
@@ -118,6 +134,20 @@ JSON response:`;
           confidence: 'low',
           source: 'groq_rate_limit',
           error: 'Groq API rate limit exceeded. Please try again later.',
+        };
+      }
+
+      // 401 Unauthorized (APIキーエラー)
+      if (response.status === 401) {
+        logger.error('❌ Groq API: Invalid API Key');
+        return {
+          success: false,
+          startYear: null,
+          endYear: null,
+          period: '時代不明',
+          confidence: 'low',
+          source: 'groq_auth_error',
+          error: 'Invalid Groq API Key',
         };
       }
 

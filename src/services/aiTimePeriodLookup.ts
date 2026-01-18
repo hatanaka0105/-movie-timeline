@@ -456,6 +456,12 @@ export async function lookupAndCacheTimePeriod(
     // 1. まずWikipediaで検索（無料なので優先）
     logger.debug(`🤖 Trying Wikipedia for "${movie.title}"...`);
     const wikipediaResult = await lookupMovieTimePeriod(movie);
+    logger.debug(`📊 Wikipedia result for "${movie.title}":`, {
+      success: wikipediaResult.success,
+      startYear: wikipediaResult.startYear,
+      source: wikipediaResult.source,
+      confidence: wikipediaResult.confidence
+    });
 
     if (wikipediaResult.success && wikipediaResult.startYear !== null) {
       const reliability = determineReliability(wikipediaResult, movie);
@@ -481,6 +487,13 @@ export async function lookupAndCacheTimePeriod(
     // 2. Wikipediaで見つからなかった場合、Gemini Flashで検索
     logger.debug(`🤖 Wikipedia failed, trying Gemini Flash for "${movie.title}"...`);
     const geminiResult = await extractTimePeriodWithGemini(movie);
+    logger.debug(`📊 Gemini result for "${movie.title}":`, {
+      success: geminiResult.success,
+      startYear: geminiResult.startYear,
+      source: geminiResult.source,
+      confidence: geminiResult.confidence,
+      error: geminiResult.error
+    });
 
     if (geminiResult.success && geminiResult.startYear !== null) {
       const reliability = determineReliability(geminiResult, movie);
@@ -507,6 +520,13 @@ export async function lookupAndCacheTimePeriod(
     if (geminiResult.source === 'gemini_rate_limit') {
       logger.debug(`🚀 Gemini rate limited, falling back to Groq for "${movie.title}"...`);
       const groqResult = await extractTimePeriodWithGroq(movie);
+      logger.debug(`📊 Groq result for "${movie.title}":`, {
+        success: groqResult.success,
+        startYear: groqResult.startYear,
+        source: groqResult.source,
+        confidence: groqResult.confidence,
+        error: groqResult.error
+      });
 
       if (groqResult.success && groqResult.startYear !== null) {
         const reliability = determineReliability(groqResult, movie);
