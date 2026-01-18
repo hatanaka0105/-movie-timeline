@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { kv } from '@vercel/kv';
-import { rateLimit } from '../lib/rateLimit';
+import { rateLimit } from '../lib/rateLimit.js';
 import { z } from 'zod';
 
 interface TimePeriodData {
@@ -77,7 +77,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (error instanceof z.ZodError) {
           return res.status(400).json({
             error: 'Invalid input',
-            details: error.errors
+            details: error.issues
           });
         }
         throw error;
