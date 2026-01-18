@@ -276,8 +276,6 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'rock and roll': 1955,
   'ロックンロール': 1955,
   'elvis': 1956,
-  // 'beatles': 1964, // 削除: 現代映画でも頻繁に言及される（Yesterday等）
-  // 'ビートルズ': 1964, // 削除: 現代映画でも頻繁に言及される
   'civil rights': 1963,
   '公民権運動': 1963,
   'martin luther king': 1963,
