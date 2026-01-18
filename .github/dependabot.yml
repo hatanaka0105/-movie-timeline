@@ -1,0 +1,71 @@
+# Dependabot configuration for automatic dependency updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Enable version updates for npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      # Check for updates weekly on Monday
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    # Maximum number of open pull requests
+    open-pull-requests-limit: 10
+    # Group updates by type
+    groups:
+      # Group all production dependencies together
+      production-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@types/*"
+          - "eslint*"
+          - "prettier*"
+          - "vite*"
+          - "@vitejs/*"
+          - "puppeteer*"
+      # Group dev dependencies separately
+      development-dependencies:
+        patterns:
+          - "@types/*"
+          - "eslint*"
+          - "prettier*"
+          - "vite*"
+          - "@vitejs/*"
+          - "puppeteer*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Automatically rebase PRs when base branch updates
+    rebase-strategy: "auto"
+    # Add labels to PRs for easier filtering
+    labels:
+      - "dependencies"
+      - "automated"
+    # Commit message prefix
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    # Reviewers (optional - add your GitHub username)
+    # reviewers:
+    #   - "hatanaka0105"
+    # Pull request branch name prefix
+    pull-request-branch-name:
+      separator: "/"
+
+  # Enable security updates for GitHub Actions (if you add workflows later)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
