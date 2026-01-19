@@ -6,6 +6,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+build.log
+build-error.log
+dev-output.log
+dev-server.log
 
 node_modules
 dist
@@ -16,6 +20,13 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Claude temporary files
+tmpclaude-*-cwd
+
+# Test artifacts (move to docs/screenshots if needed)
+test-*.png
+test-*.cjs
 
 # Editor directories and files
 .vscode/*
