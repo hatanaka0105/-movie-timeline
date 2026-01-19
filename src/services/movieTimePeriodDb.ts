@@ -22,7 +22,7 @@ import staticDb from '../data/movieTimePeriods.json';
 // サーバーサイドキャッシュ + LocalStorageのハイブリッド
 const STORAGE_KEY = 'movieTimePeriodCache';
 const CACHE_VERSION_KEY = 'movieTimePeriodCacheVersion';
-const CURRENT_CACHE_VERSION = 7; // Incremented to clear Beatles keyword entries (e.g., Yesterday)
+const CURRENT_CACHE_VERSION = 10; // Incremented to remove Beatles keyword from keyword matching
 const API_CACHE_URL = '/api/movie-cache';
 
 class MovieTimePeriodDatabase {

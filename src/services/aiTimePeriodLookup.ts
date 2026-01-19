@@ -396,7 +396,6 @@ function extractTimePeriodFromText(text: string, _movieTitle: string): {
     // 1950-60年代
     'elvis': 1956,
     'elvis presley': 1956,
-    'beatles': 1964,
     'martin luther king': 1963,
     'jfk': 1963,
     'kennedy': 1963,

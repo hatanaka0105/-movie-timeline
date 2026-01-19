@@ -594,8 +594,6 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     // 1950-60年代 - 特定の人物・イベントのみ
     'elvis': 1956,
     'elvis presley': 1956,
-    'beatles': 1964,
-    'ビートルズ': 1964,
     'martin luther king': 1963,
     'キング牧師': 1963,
     'jfk': 1963,
@@ -892,6 +890,7 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
       endYear: finalStartYear !== maxYear ? maxYear : null,
       period: formatPeriod(finalStartYear, finalStartYear !== maxYear ? maxYear : finalStartYear),
       additionalYears,
+      isEstimated: false,
     };
   }
 
