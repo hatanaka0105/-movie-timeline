@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { Movie } from './types/movie.types';
 import Timeline from './components/Timeline';
 import MovieInputForm from './components/MovieInputForm';
@@ -341,6 +342,9 @@ function App() {
         isOpen={showKeywordViewer}
         onClose={() => setShowKeywordViewer(false)}
       />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
