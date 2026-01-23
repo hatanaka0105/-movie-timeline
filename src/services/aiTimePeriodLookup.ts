@@ -488,48 +488,32 @@ export async function lookupAndCacheTimePeriod(
 
     // 2. Wikipediaで見つからなかった場合、DeepSeek-V3で検索（高推論能力）
     logger.debug(`🤖 Wikipedia failed, trying DeepSeek-V3 for "${movie.title}"...`);
-    const releaseYear = parseInt(movie.release_date?.split('-')[0] || '0');
-    const deepseekResult = await extractTimePeriodWithDeepSeek(
-      movie.original_title,
-      movie.overview || '',
-      releaseYear
-    );
-
-    const deepseekLookupResult: LookupResult = {
-      success: deepseekResult.startYear !== null,
-      startYear: deepseekResult.startYear,
-      endYear: deepseekResult.endYear,
-      period: deepseekResult.startYear
-        ? `${deepseekResult.startYear}${deepseekResult.endYear ? `-${deepseekResult.endYear}` : ''}`
-        : '時代不明',
-      confidence: deepseekResult.confidence > 0.8 ? 'high' : deepseekResult.confidence > 0.5 ? 'medium' : 'low',
-      source: 'deepseek',
-    };
-
+    const deepseekResult = await extractTimePeriodWithDeepSeek(movie);
     logger.debug(`📊 DeepSeek result for "${movie.title}":`, {
-      success: deepseekLookupResult.success,
-      startYear: deepseekLookupResult.startYear,
-      source: deepseekLookupResult.source,
-      confidence: deepseekLookupResult.confidence
+      success: deepseekResult.success,
+      startYear: deepseekResult.startYear,
+      source: deepseekResult.source,
+      confidence: deepseekResult.confidence,
+      error: deepseekResult.error
     });
 
-    if (deepseekLookupResult.success && deepseekLookupResult.startYear !== null) {
-      const reliability = determineReliability(deepseekLookupResult, movie);
+    if (deepseekResult.success && (deepseekResult.startYear !== null || deepseekResult.period === 'NEAR_FUTURE')) {
+      const reliability = determineReliability(deepseekResult, movie);
       const entry: MovieTimePeriodEntry = {
         tmdbId: movie.id,
         title: movie.original_title,
-        startYear: deepseekLookupResult.startYear,
-        endYear: deepseekLookupResult.endYear,
-        period: deepseekLookupResult.period,
+        startYear: deepseekResult.startYear || 0, // NEAR_FUTURE の場合は 0
+        endYear: deepseekResult.endYear,
+        period: deepseekResult.period === 'NEAR_FUTURE' ? '近未来' : deepseekResult.period,
         source: 'ai_lookup',
-        notes: `AI lookup (${deepseekLookupResult.confidence} confidence) from ${deepseekLookupResult.source}`,
-        additionalYears: deepseekLookupResult.additionalYears,
+        notes: `AI lookup (${deepseekResult.confidence} confidence) from ${deepseekResult.source}`,
+        additionalYears: deepseekResult.additionalYears,
         reliability,
       };
 
       // データベースに保存
       movieTimePeriodDb.addTimePeriod(entry);
-      logger.debug(`✅ Cached time period for "${movie.title}": ${deepseekLookupResult.period} (reliability: ${reliability})`);
+      logger.debug(`✅ Cached time period for "${movie.title}": ${deepseekResult.period} (reliability: ${reliability})`);
 
       return entry;
     }
@@ -545,14 +529,14 @@ export async function lookupAndCacheTimePeriod(
       error: geminiResult.error
     });
 
-    if (geminiResult.success && geminiResult.startYear !== null) {
+    if (geminiResult.success && (geminiResult.startYear !== null || geminiResult.period === 'NEAR_FUTURE')) {
       const reliability = determineReliability(geminiResult, movie);
       const entry: MovieTimePeriodEntry = {
         tmdbId: movie.id,
         title: movie.original_title,
-        startYear: geminiResult.startYear,
+        startYear: geminiResult.startYear || 0, // NEAR_FUTURE の場合は 0
         endYear: geminiResult.endYear,
-        period: geminiResult.period,
+        period: geminiResult.period === 'NEAR_FUTURE' ? '近未来' : geminiResult.period,
         source: 'ai_lookup',
         notes: `AI lookup (${geminiResult.confidence} confidence) from ${geminiResult.source}`,
         additionalYears: geminiResult.additionalYears,
@@ -578,14 +562,14 @@ export async function lookupAndCacheTimePeriod(
         error: groqResult.error
       });
 
-      if (groqResult.success && groqResult.startYear !== null) {
+      if (groqResult.success && (groqResult.startYear !== null || groqResult.period === 'NEAR_FUTURE')) {
         const reliability = determineReliability(groqResult, movie);
         const entry: MovieTimePeriodEntry = {
           tmdbId: movie.id,
           title: movie.original_title,
-          startYear: groqResult.startYear,
+          startYear: groqResult.startYear || 0, // NEAR_FUTURE の場合は 0
           endYear: groqResult.endYear,
-          period: groqResult.period,
+          period: groqResult.period === 'NEAR_FUTURE' ? '近未来' : groqResult.period,
           source: 'ai_lookup',
           notes: `AI lookup (${groqResult.confidence} confidence) from ${groqResult.source} (Gemini fallback)`,
           additionalYears: groqResult.additionalYears,

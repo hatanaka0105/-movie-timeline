@@ -58,7 +58,8 @@ Instructions:
 4. If it's a time-travel movie, list additional significant years in additionalYears array
 5. For pure fantasy with no real historical period and no specific year, AND not a sequel with calculable timeline, return startYear as null with period "NO_PERIOD"
 6. For "A long time ago in a galaxy far away" type settings (Star Wars), return startYear as null with period "LONG_AGO"
-7. If the time period is contemporary (same as release year), use the release year
+7. For near-future settings (described as "近未来" or "near future"), return startYear as null with period "NEAR_FUTURE"
+8. If the time period is contemporary (same as release year), use the release year
 
 Respond ONLY in valid JSON format (no markdown, no code blocks):
 {
@@ -77,6 +78,7 @@ Examples:
 - Avatar: The Way of Water (overview: "第1作目から約10年後"): {"startYear": 2167, "endYear": null, "additionalYears": null, "period": "2167年", "confidence": "high"}
 - Blade Runner 2049 (title has "2049"): {"startYear": 2049, "endYear": null, "additionalYears": null, "period": "2049年", "confidence": "high"}
 - Lord of the Rings (standalone fantasy, no timeline): {"startYear": null, "endYear": null, "additionalYears": null, "period": "NO_PERIOD", "confidence": "high"}
+- Near-future sci-fi (overview: "近未来"): {"startYear": null, "endYear": null, "additionalYears": null, "period": "NEAR_FUTURE", "confidence": "high"}
 
 JSON response:`;
 

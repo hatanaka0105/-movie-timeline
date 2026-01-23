@@ -254,26 +254,7 @@ function App() {
             <div className="bg-gray-900/30 rounded-lg p-6 border border-gray-700">
               {/* タイムラインコントロール */}
               <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                {/* スケールスライダー */}
-                <div className="flex-1 min-w-[200px]">
-                  <label className="block text-xs md:text-sm font-semibold text-amber-400 mb-2">
-                    {t.timelineScale}: {scale}px/{language === 'ja' ? '年' : 'year'}
-                  </label>
-                  <input
-                    type="range"
-                    min="5"
-                    max="20"
-                    value={scale}
-                    onChange={(e) => setScale(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>{t.narrow} (5px)</span>
-                    <span>{t.wide} (20px)</span>
-                  </div>
-                </div>
-
-                {/* サムネイルサイズボタン */}
+                {/* サムネイルサイズボタン（左に配置） */}
                 <div className="w-full md:w-auto">
                   <label className="block text-xs md:text-sm font-semibold text-amber-400 mb-2">
                     {t.thumbnailSize}
@@ -309,6 +290,25 @@ function App() {
                     >
                       {t.large}
                     </button>
+                  </div>
+                </div>
+
+                {/* スケールスライダー（右に配置） */}
+                <div className="flex-1 min-w-[200px]">
+                  <label className="block text-xs md:text-sm font-semibold text-amber-400 mb-2">
+                    {t.timelineScale}: {scale}px/{language === 'ja' ? '年' : 'year'}
+                  </label>
+                  <input
+                    type="range"
+                    min="5"
+                    max="20"
+                    value={scale}
+                    onChange={(e) => setScale(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>{t.narrow} (5px)</span>
+                    <span>{t.wide} (20px)</span>
                   </div>
                 </div>
               </div>

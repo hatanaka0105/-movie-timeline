@@ -26,6 +26,8 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
     yearDisplay = t.longAgoPeriod;
   } else if (timeline.period === '時代設定なし（ファンタジー）' || timeline.period === 'No Time Period (Fantasy)') {
     yearDisplay = t.fantasyPeriod;
+  } else if (timeline.period === '近未来' || timeline.period === 'Near Future') {
+    yearDisplay = t.nearFuturePeriod;
   } else if (timeline.startYear) {
     yearDisplay = timeline.endYear && timeline.endYear !== timeline.startYear
       ? `${timeline.startYear} - ${timeline.endYear}`

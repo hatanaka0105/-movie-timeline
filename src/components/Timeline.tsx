@@ -53,6 +53,8 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
       m.timeline.period === 'A Long Time Ago' ||
       m.timeline.period === '時代設定なし（ファンタジー）' ||
       m.timeline.period === 'No Time Period (Fantasy)' ||
+      m.timeline.period === '近未来' ||
+      m.timeline.period === 'Near Future' ||
       m.timeline.period === '時代不明' ||
       m.timeline.period === 'Unknown Period' ||
       m.timeline.startYear === null
@@ -67,6 +69,8 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
       m.timeline.period !== 'A Long Time Ago' &&
       m.timeline.period !== '時代設定なし（ファンタジー）' &&
       m.timeline.period !== 'No Time Period (Fantasy)' &&
+      m.timeline.period !== '近未来' &&
+      m.timeline.period !== 'Near Future' &&
       m.timeline.period !== '時代不明' &&
       m.timeline.period !== 'Unknown Period' &&
       m.timeline.startYear !== null

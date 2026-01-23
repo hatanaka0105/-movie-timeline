@@ -36,8 +36,8 @@ export function calculateTimelineLayout(
       .filter((y): y is number => y !== null)
   );
 
-  // コンテナ幅から配置可能なカラム数を計算
-  const columns = Math.max(1, Math.floor(containerWidth / (cardDim.width + HORIZONTAL_SPACING)));
+  // 無限に右に列を増やす（コンテナ幅の制限なし）
+  // columnsは削除し、必要に応じて動的に列を追加
 
   const layout: TimelineLayout[] = [];
   // 配置済みの矩形を管理（衝突検出用）
@@ -83,38 +83,23 @@ export function calculateTimelineLayout(
       spanHeight = yearSpan * pixelsPerYear;
     }
 
-    // 衝突しない位置を探す
+    // 衝突しない位置を探す（無限に右に列を追加）
     let finalX = 0;
     let finalY = baseY;
     let columnIndex = 0;
     let found = false;
 
-    // まず横方向に探索
-    for (let col = 0; col < columns && !found; col++) {
+    // 横方向に無制限に探索（縦には移動しない）
+    let col = 0;
+    while (!found) {
       const testX = LEFT_MARGIN + col * (cardDim.width + HORIZONTAL_SPACING);
       if (!hasCollision(testX, baseY)) {
         finalX = testX;
         finalY = baseY;
         columnIndex = col;
         found = true;
-      }
-    }
-
-    // 横に空きがなければ縦にずらす
-    if (!found) {
-      let offsetY = baseY;
-      const maxAttempts = 10;
-      for (let attempt = 0; attempt < maxAttempts && !found; attempt++) {
-        offsetY = baseY + (attempt + 1) * (cardDim.height + VERTICAL_SPACING);
-        for (let col = 0; col < columns && !found; col++) {
-          const testX = LEFT_MARGIN + col * (cardDim.width + HORIZONTAL_SPACING);
-          if (!hasCollision(testX, offsetY)) {
-            finalX = testX;
-            finalY = offsetY;
-            columnIndex = col;
-            found = true;
-          }
-        }
+      } else {
+        col++;
       }
     }
 
@@ -167,8 +152,8 @@ export function getYearMarkers(movies: Movie[], pixelsPerYear: number = 10): Yea
   const maxYear = Math.max(...years);
   const span = maxYear - minYear;
 
-  // 常に10年ごとに表示、スパンに応じて主要マーカー間隔を決定
-  const minorInterval = 10;
+  // pixelsPerYearが5px未満の場合は10年単位のメモリを表示しない
+  const minorInterval = pixelsPerYear < 5 ? 0 : 10;
   let majorInterval: number;
 
   if (span > 2000) {
@@ -180,16 +165,33 @@ export function getYearMarkers(movies: Movie[], pixelsPerYear: number = 10): Yea
   }
 
   const markers: YearMarker[] = [];
-  const start = Math.floor(minYear / minorInterval) * minorInterval;
-  const end = Math.ceil(maxYear / minorInterval) * minorInterval;
 
-  for (let year = start; year <= end; year += minorInterval) {
-    const yearDiff = year - minYear;
-    markers.push({
-      year,
-      y: yearDiff * pixelsPerYear,
-      isMajor: year % majorInterval === 0,
-    });
+  // minorIntervalが0の場合は、主要マーカーのみを表示
+  if (minorInterval === 0) {
+    const start = Math.floor(minYear / majorInterval) * majorInterval;
+    const end = Math.ceil(maxYear / majorInterval) * majorInterval;
+
+    for (let year = start; year <= end; year += majorInterval) {
+      const yearDiff = year - minYear;
+      markers.push({
+        year,
+        y: yearDiff * pixelsPerYear,
+        isMajor: true,
+      });
+    }
+  } else {
+    // 通常通り10年ごとに表示
+    const start = Math.floor(minYear / minorInterval) * minorInterval;
+    const end = Math.ceil(maxYear / minorInterval) * minorInterval;
+
+    for (let year = start; year <= end; year += minorInterval) {
+      const yearDiff = year - minYear;
+      markers.push({
+        year,
+        y: yearDiff * pixelsPerYear,
+        isMajor: year % majorInterval === 0,
+      });
+    }
   }
 
   return markers;

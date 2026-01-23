@@ -1,5 +1,8 @@
 // DeepSeek API client for time period extraction
 
+import { TMDbMovieDetails } from './tmdbApi';
+import { logger } from '../utils/logger';
+
 // Feature flag: プロキシ経由でAPIを呼び出す（本番環境推奨）
 const USE_PROXY = import.meta.env.PROD || import.meta.env.VITE_USE_PROXY === 'true';
 
@@ -39,38 +42,77 @@ interface DeepSeekResponse {
   };
 }
 
+export interface DeepSeekTimePeriodResult {
+  success: boolean;
+  startYear: number | null;
+  endYear: number | null;
+  period: string;
+  additionalYears?: number[];
+  confidence: 'high' | 'medium' | 'low';
+  source: string;
+  error?: string;
+}
+
 /**
  * Extract time period from movie plot using DeepSeek-V3
  */
 export async function extractTimePeriodWithDeepSeek(
-  title: string,
-  overview: string,
-  releaseYear: number
-): Promise<{ startYear: number | null; endYear: number | null; confidence: number }> {
-  const systemPrompt = `You are a movie time period analyzer. Analyze the movie plot and determine the time period when the story takes place.
+  movie: TMDbMovieDetails
+): Promise<DeepSeekTimePeriodResult> {
+  const releaseYear = movie.release_date?.split('-')[0] || 'unknown';
+  const genres = movie.genres?.map(g => g.name).join(', ') || 'unknown';
 
-IMPORTANT RULES:
-1. Return ONLY the year or year range, nothing else
-2. For modern movies (2000s-2020s), be precise about the decade
-3. Consider technology, events, and cultural references to determine the exact time period
-4. If the movie has multiple time periods (time travel), return the main time period only
-5. If the story is clearly set in the present day relative to the release year, return the release year
+  const prompt = `You are a movie time period expert. Extract the historical time period setting from this movie information.
 
-FORMAT:
-- Single year: "2015"
-- Year range: "2010-2015"
-- If uncertain: return the release year
+Movie Title: ${movie.title}
+Original Title: ${movie.original_title}
+Release Year: ${releaseYear}
+Overview (Japanese): ${movie.overview}
+Overview (English): ${movie.overviewEn || 'N/A'}
+Genres: ${genres}
 
-EXAMPLES:
-- "Yesterday" (2019): Story about a modern musician who wakes up in a world where The Beatles never existed → "2019" (present day)
-- "The Social Network" (2010): Story of Facebook's founding → "2003" (actual Facebook founding year)
-- "Titanic" (1997): Story of the ship sinking → "1912"
-- "Back to the Future" (1985): Time travel between 1985 and 1955 → "1985" (main time period)`;
+CRITICAL INSTRUCTIONS FOR SEQUELS AND REMAKES:
+- First, check if this is a sequel, prequel, or remake (look for keywords: "第1作目", "前作", "first film", "original", "sequel", "prequel", "remake", numbers like "2", "II", etc.)
+- If it IS a sequel/prequel/remake, you MUST use your knowledge of the original film's time period setting
+- Apply any relative time references (e.g., "10 years after", "decades later", "before the events of") to calculate the absolute year
+- Even if the setting is fictional (Avatar's Pandora, Blade Runner's Los Angeles), calculate the year based on the franchise timeline
 
-  const userPrompt = `Movie: "${title}" (${releaseYear})
-Plot: ${overview}
+Instructions:
+1. Identify if this is a sequel, prequel, or remake by analyzing the title and overview
+2. If it's a sequel/prequel/remake:
+   a. Recall the original film's time period setting from your knowledge
+   b. Extract any relative time references from the overview
+   c. Calculate the absolute year (e.g., Avatar 2009 is set in 2154, so "10 years later" = 2164)
+   d. Return the calculated year with "high" confidence if you know the original film's setting
+3. For standalone sci-fi movies set in a specific future year, extract that year even if the setting is fictional
+4. If it's a time-travel movie, list additional significant years in additionalYears array
+5. For pure fantasy with no real historical period and no specific year, AND not a sequel with calculable timeline, return startYear as null with period "NO_PERIOD"
+6. For "A long time ago in a galaxy far away" type settings (Star Wars), return startYear as null with period "LONG_AGO"
+7. For near-future settings (described as "近未来" or "near future"), return startYear as null with period "NEAR_FUTURE"
+8. If the time period is contemporary (same as release year), use the release year
 
-What year or year range does this story take place? Reply with ONLY the year(s).`;
+Respond ONLY in valid JSON format (no markdown, no code blocks):
+{
+  "startYear": number or null,
+  "endYear": number or null,
+  "additionalYears": [number] or null,
+  "period": "descriptive string in Japanese or special keyword",
+  "confidence": "high" | "medium" | "low"
+}
+
+Examples:
+- Gladiator: {"startYear": 180, "endYear": null, "additionalYears": null, "period": "180年", "confidence": "high"}
+- Star Wars Episode IV: {"startYear": null, "endYear": null, "additionalYears": null, "period": "LONG_AGO", "confidence": "high"}
+- Interstellar: {"startYear": 2067, "endYear": null, "additionalYears": [2100, 2130], "period": "2067年", "confidence": "high"}
+- Avatar (2009): {"startYear": 2154, "endYear": null, "additionalYears": null, "period": "2154年", "confidence": "high"}
+- Avatar: The Way of Water (overview: "第1作目から約10年後"): {"startYear": 2167, "endYear": null, "additionalYears": null, "period": "2167年", "confidence": "high"}
+- Blade Runner 2049 (title has "2049"): {"startYear": 2049, "endYear": null, "additionalYears": null, "period": "2049年", "confidence": "high"}
+- Lord of the Rings (standalone fantasy, no timeline): {"startYear": null, "endYear": null, "additionalYears": null, "period": "NO_PERIOD", "confidence": "high"}
+- Near-future sci-fi (overview: "近未来"): {"startYear": null, "endYear": null, "additionalYears": null, "period": "NEAR_FUTURE", "confidence": "high"}
+
+JSON response:`;
+
+  logger.debug(`🤖 DeepSeek-V3: Analyzing "${movie.title}"...`);
 
   try {
     const response = await (USE_PROXY
@@ -83,11 +125,10 @@ What year or year range does this story take place? Reply with ONLY the year(s).
           body: JSON.stringify({
             model: 'deepseek-chat',
             messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt },
+              { role: 'user', content: prompt },
             ],
-            temperature: 0.3, // Lower temperature for more consistent results
-            max_tokens: 100, // Short response expected
+            temperature: 0.1, // Lower temperature for more consistent results
+            max_tokens: 2048,
           } as DeepSeekRequest),
         })
       : // 直接呼び出し（開発環境フォールバック）
@@ -100,43 +141,76 @@ What year or year range does this story take place? Reply with ONLY the year(s).
           body: JSON.stringify({
             model: 'deepseek-chat',
             messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt },
+              { role: 'user', content: prompt },
             ],
-            temperature: 0.3,
-            max_tokens: 100,
+            temperature: 0.1,
+            max_tokens: 2048,
           }),
         }));
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('DeepSeek API error:', response.status, errorText);
-      throw new Error(`DeepSeek API error: ${response.status}`);
+      logger.error(`❌ DeepSeek API error: ${response.status} ${response.statusText}`);
+      logger.error(`❌ DeepSeek API error body:`, errorText);
+
+      // レート制限エラーの検出
+      if (response.status === 429) {
+        logger.warn('⚠️ DeepSeek API rate limit exceeded');
+        return {
+          success: false,
+          startYear: null,
+          endYear: null,
+          period: '時代不明',
+          confidence: 'low',
+          source: 'deepseek_rate_limit',
+          error: 'DeepSeek API rate limit exceeded. Please try again later.',
+        };
+      }
+
+      throw new Error(`DeepSeek API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data: DeepSeekResponse = await response.json();
 
-    const content = data.choices[0]?.message?.content?.trim();
-    if (!content) {
-      throw new Error('No content in DeepSeek response');
+    const textResponse = data.choices[0]?.message?.content;
+    if (!textResponse) {
+      throw new Error('Empty response from DeepSeek API');
     }
 
-    // Parse the response
-    const yearMatch = content.match(/(\d{4})(?:-(\d{4}))?/);
-    if (!yearMatch) {
-      console.warn('DeepSeek response does not contain valid year:', content);
-      return { startYear: null, endYear: null, confidence: 0 };
+    logger.debug(`🤖 DeepSeek raw response: ${textResponse}`);
+
+    // JSON抽出（マークダウンコードブロックを除去）
+    let jsonText = textResponse.trim();
+    if (jsonText.startsWith('```json')) {
+      jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
 
-    const startYear = parseInt(yearMatch[1], 10);
-    const endYear = yearMatch[2] ? parseInt(yearMatch[2], 10) : null;
+    const result = JSON.parse(jsonText);
 
-    // Confidence based on how specific the response is
-    const confidence = yearMatch[2] ? 0.85 : 0.9; // Range = slightly lower confidence
+    logger.debug(`✅ DeepSeek parsed result:`, result);
 
-    return { startYear, endYear, confidence };
+    return {
+      success: true,
+      startYear: result.startYear,
+      endYear: result.endYear,
+      period: result.period,
+      additionalYears: result.additionalYears,
+      confidence: result.confidence || 'medium',
+      source: 'deepseek_v3',
+    };
+
   } catch (error) {
-    console.error('DeepSeek extraction error:', error);
-    return { startYear: null, endYear: null, confidence: 0 };
+    logger.error('DeepSeek API error:', error);
+    return {
+      success: false,
+      startYear: null,
+      endYear: null,
+      period: '時代不明',
+      confidence: 'low',
+      source: 'deepseek_error',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
   }
 }

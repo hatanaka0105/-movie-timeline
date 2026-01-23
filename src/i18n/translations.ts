@@ -60,6 +60,7 @@ export interface Translations {
   unknownPeriod: string;
   fantasyPeriod: string;
   longAgoPeriod: string;
+  nearFuturePeriod: string;
   estimatedPeriod: string;
 
   // Timeline
@@ -181,6 +182,7 @@ export const translations: Record<Language, Translations> = {
     unknownPeriod: '時代不明',
     fantasyPeriod: '時代設定なし（ファンタジー）',
     longAgoPeriod: 'はるか昔',
+    nearFuturePeriod: '近未来',
     estimatedPeriod: '時代設定が検出できないため、公開年を使用しています（推定値）',
 
     emptyTimeline: '映画を追加してタイムラインを作成しましょう',
@@ -295,6 +297,7 @@ export const translations: Record<Language, Translations> = {
     unknownPeriod: 'Unknown Period',
     fantasyPeriod: 'No Time Period (Fantasy)',
     longAgoPeriod: 'A Long Time Ago',
+    nearFuturePeriod: 'Near Future',
     estimatedPeriod: 'Time period not detected. Using release year (estimated)',
 
     emptyTimeline: 'Add movies to create your timeline',
