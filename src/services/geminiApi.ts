@@ -37,9 +37,24 @@ export async function extractTimePeriodWithGemini(
 Movie Title: ${movie.title}
 Original Title: ${movie.original_title}
 Release Year: ${releaseYear}
-Overview (Japanese): ${movie.overview}
+Overview (Japanese): ${movie.overview || 'N/A'}
 Overview (English): ${movie.overviewEn || 'N/A'}
 Genres: ${genres}
+
+CRITICAL: Use ALL available information sources:
+1. TITLE ANALYSIS: Check if the title contains year numbers (e.g., "1917", "2001", "2049", "1984")
+2. GENRE INFERENCE: Use genres to narrow down time periods:
+   - History genre → likely pre-1950
+   - War genre → check which war (WWI=1914-1918, WWII=1939-1945, Vietnam=1960s-1970s, etc.)
+   - Western genre → typically 1850-1900 (American Old West)
+   - Period drama → use your knowledge of common period settings
+3. YOUR KNOWLEDGE: If overview is insufficient, use your knowledge of the film:
+   - "Caligula" → Roman Empire, AD 37-41
+   - "Seven Samurai" → 1586, Sengoku period Japan
+   - "Gladiator" → Roman Empire, ~180 AD
+   - "The Ten Commandments" → Ancient Egypt, ~1300 BC
+   - "Braveheart" → Scotland, 1300s
+4. OVERVIEW KEYWORDS: Extract time references from overview
 
 CRITICAL INSTRUCTIONS FOR SEQUELS AND REMAKES:
 - First, check if this is a sequel, prequel, or remake (look for keywords: "第1作目", "前作", "first film", "original", "sequel", "prequel", "remake", numbers like "2", "II", etc.)
