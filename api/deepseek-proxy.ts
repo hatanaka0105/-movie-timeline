@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { z } from 'zod';
-import { rateLimit } from '../lib/rateLimit';
+import { rateLimit } from '../lib/rateLimit.js';
 
 // DeepSeek API Key (server-side only, no VITE_ prefix)
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
