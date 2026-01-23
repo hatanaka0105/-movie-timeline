@@ -9,10 +9,10 @@ export interface MovieTimePeriodEntry {
   startYear: number;
   endYear: number | null;
   period: string;
-  source: 'manual' | 'ai_lookup' | 'user_provided';
+  source: 'manual' | 'ai_lookup' | 'user_provided' | 'shared_db';
   notes?: string;
   additionalYears?: number[];
-  reliability?: 'high' | 'low'; // キャッシュの信頼性（低は再試行可能）
+  reliability?: 'verified' | 'high' | 'medium' | 'low'; // キャッシュの信頼性（低は再試行可能）
 }
 
 // 静的データベース（事前登録された映画）

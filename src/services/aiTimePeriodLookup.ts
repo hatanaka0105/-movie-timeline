@@ -8,6 +8,7 @@ import { CENTURY_OFFSETS, YEAR_RANGE } from '../config/constants';
 import { extractTimePeriodWithDeepSeek } from './deepseekApi';
 import { extractTimePeriodWithGemini } from './geminiApi';
 import { extractTimePeriodWithGroq } from './groqApi';
+import { getTimePeriodFromSharedDb, saveTimePeriodToSharedDb } from './sharedDbApi';
 
 interface LookupResult {
   success: boolean;
@@ -455,7 +456,33 @@ export async function lookupAndCacheTimePeriod(
 
     logger.debug(`🤖 Starting AI lookup for movie: ${movie.title}`);
 
-    // 1. まずWikipediaで検索（無料なので優先）
+    // 1. まず共有DBで検索（全ユーザーで共有、最も高速）
+    logger.debug(`🗄️ Trying shared DB for "${movie.title}"...`);
+    const sharedDbResult = await getTimePeriodFromSharedDb(movie.id);
+
+    if (sharedDbResult) {
+      logger.debug(`✅ Found in shared DB: ${sharedDbResult.period}`);
+
+      const entry: MovieTimePeriodEntry = {
+        tmdbId: sharedDbResult.tmdb_id,
+        title: sharedDbResult.original_title || sharedDbResult.title,
+        startYear: sharedDbResult.start_year || 0,
+        endYear: sharedDbResult.end_year,
+        period: sharedDbResult.period,
+        source: 'shared_db',
+        notes: sharedDbResult.notes || `Shared DB (${sharedDbResult.source})`,
+        additionalYears: sharedDbResult.additional_years || undefined,
+        reliability: sharedDbResult.reliability as 'verified' | 'high' | 'medium' | 'low',
+      };
+
+      // LocalStorageにもキャッシュ
+      movieTimePeriodDb.addTimePeriod(entry);
+      logger.debug(`✅ Cached shared DB result for "${movie.title}"`);
+
+      return entry;
+    }
+
+    // 2. Wikipediaで検索（無料なので優先）
     logger.debug(`🤖 Trying Wikipedia for "${movie.title}"...`);
     const wikipediaResult = await lookupMovieTimePeriod(movie);
     logger.debug(`📊 Wikipedia result for "${movie.title}":`, {
@@ -479,9 +506,23 @@ export async function lookupAndCacheTimePeriod(
         reliability,
       };
 
-      // データベースに保存
+      // LocalStorageに保存
       movieTimePeriodDb.addTimePeriod(entry);
       logger.debug(`✅ Cached time period for "${movie.title}": ${wikipediaResult.period} (reliability: ${reliability})`);
+
+      // 共有DBにも保存（非同期、失敗してもエラーにしない）
+      saveTimePeriodToSharedDb({
+        tmdbId: movie.id,
+        title: movie.title,
+        originalTitle: movie.original_title,
+        startYear: wikipediaResult.startYear,
+        endYear: wikipediaResult.endYear,
+        period: wikipediaResult.period,
+        source: wikipediaResult.source,
+        notes: `AI lookup (${wikipediaResult.confidence} confidence) from ${wikipediaResult.source}`,
+        additionalYears: wikipediaResult.additionalYears,
+        reliability,
+      }).catch(err => logger.error('Failed to save to shared DB:', err));
 
       return entry;
     }
@@ -511,9 +552,23 @@ export async function lookupAndCacheTimePeriod(
         reliability,
       };
 
-      // データベースに保存
+      // LocalStorageに保存
       movieTimePeriodDb.addTimePeriod(entry);
       logger.debug(`✅ Cached time period for "${movie.title}": ${deepseekResult.period} (reliability: ${reliability})`);
+
+      // 共有DBにも保存（非同期、失敗してもエラーにしない）
+      saveTimePeriodToSharedDb({
+        tmdbId: movie.id,
+        title: movie.title,
+        originalTitle: movie.original_title,
+        startYear: deepseekResult.startYear,
+        endYear: deepseekResult.endYear,
+        period: deepseekResult.period === 'NEAR_FUTURE' ? '近未来' : deepseekResult.period,
+        source: deepseekResult.source,
+        notes: `AI lookup (${deepseekResult.confidence} confidence) from ${deepseekResult.source}`,
+        additionalYears: deepseekResult.additionalYears,
+        reliability,
+      }).catch(err => logger.error('Failed to save to shared DB:', err));
 
       return entry;
     }
@@ -543,9 +598,23 @@ export async function lookupAndCacheTimePeriod(
         reliability,
       };
 
-      // データベースに保存
+      // LocalStorageに保存
       movieTimePeriodDb.addTimePeriod(entry);
       logger.debug(`✅ Cached time period for "${movie.title}": ${geminiResult.period} (reliability: ${reliability})`);
+
+      // 共有DBにも保存（非同期、失敗してもエラーにしない）
+      saveTimePeriodToSharedDb({
+        tmdbId: movie.id,
+        title: movie.title,
+        originalTitle: movie.original_title,
+        startYear: geminiResult.startYear,
+        endYear: geminiResult.endYear,
+        period: geminiResult.period === 'NEAR_FUTURE' ? '近未来' : geminiResult.period,
+        source: geminiResult.source,
+        notes: `AI lookup (${geminiResult.confidence} confidence) from ${geminiResult.source}`,
+        additionalYears: geminiResult.additionalYears,
+        reliability,
+      }).catch(err => logger.error('Failed to save to shared DB:', err));
 
       return entry;
     }
@@ -576,9 +645,23 @@ export async function lookupAndCacheTimePeriod(
           reliability,
         };
 
-        // データベースに保存
+        // LocalStorageに保存
         movieTimePeriodDb.addTimePeriod(entry);
         logger.debug(`✅ Cached time period for "${movie.title}": ${groqResult.period} (via Groq fallback, reliability: ${reliability})`);
+
+        // 共有DBにも保存（非同期、失敗してもエラーにしない）
+        saveTimePeriodToSharedDb({
+          tmdbId: movie.id,
+          title: movie.title,
+          originalTitle: movie.original_title,
+          startYear: groqResult.startYear,
+          endYear: groqResult.endYear,
+          period: groqResult.period === 'NEAR_FUTURE' ? '近未来' : groqResult.period,
+          source: groqResult.source,
+          notes: `AI lookup (${groqResult.confidence} confidence) from ${groqResult.source} (Gemini fallback)`,
+          additionalYears: groqResult.additionalYears,
+          reliability,
+        }).catch(err => logger.error('Failed to save to shared DB:', err));
 
         return entry;
       }
@@ -628,8 +711,23 @@ export function saveUserProvidedTimePeriod(
       notes: 'Manually provided by user',
     };
 
+    // LocalStorageに保存
     movieTimePeriodDb.addTimePeriod(entry);
     logger.debug(`💾 Saved user-provided time period for "${movie.title}"`);
+
+    // 共有DBにも保存（非同期、失敗してもエラーにしない）
+    // ユーザー提供のデータは信頼性が高い
+    saveTimePeriodToSharedDb({
+      tmdbId: movie.id,
+      title: movie.title,
+      originalTitle: movie.original_title,
+      startYear,
+      endYear,
+      period,
+      source: 'user_provided',
+      notes: 'Manually provided by user',
+      reliability: 'verified', // ユーザー提供は最高信頼性
+    }).catch(err => logger.error('Failed to save user input to shared DB:', err));
   } catch (error) {
     logger.error(`Error saving user-provided time period for "${movie.title}":`, error);
     throw error;
