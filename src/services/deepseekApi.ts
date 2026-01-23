@@ -89,7 +89,11 @@ Instructions:
 5. For pure fantasy with no real historical period and no specific year, AND not a sequel with calculable timeline, return startYear as null with period "NO_PERIOD"
 6. For "A long time ago in a galaxy far away" type settings (Star Wars), return startYear as null with period "LONG_AGO"
 7. For near-future settings (described as "近未来" or "near future"), return startYear as null with period "NEAR_FUTURE"
-8. If the time period is contemporary (same as release year), use the release year
+8. For century-based time periods (e.g., "19th century", "20th century"), return the mid-point year with "medium" confidence:
+   - 19th century → 1850
+   - 20th century → 1950
+   - Calculate as: (century - 1) * 100 + 50
+9. If the time period is contemporary (same as release year), use the release year
 
 Respond ONLY in valid JSON format (no markdown, no code blocks):
 {
