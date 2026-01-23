@@ -32,7 +32,7 @@ export const CENTURY_OFFSETS = {
 export const CACHE_CONFIG = {
   STORAGE_KEY: 'movieTimePeriodCache',
   VERSION_KEY: 'movieTimePeriodCacheVersion',
-  CURRENT_VERSION: 3,
+  CURRENT_VERSION: 4,
 };
 
 // レイアウト設定
