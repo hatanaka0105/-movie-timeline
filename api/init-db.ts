@@ -31,9 +31,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
   console.log('Available database env vars:', envVars);
 
-  // Use PRISMA_DATABASE_URL which is the pooled connection string
+  // Use POSTGRES_URL which should be the pooled connection string
   const pool = createPool({
-    connectionString: process.env.PRISMA_DATABASE_URL,
+    connectionString: process.env.POSTGRES_URL,
   });
 
   try {
