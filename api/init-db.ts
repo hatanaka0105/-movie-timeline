@@ -23,6 +23,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
+  // Debug: Check which environment variables are available
+  const envVars = {
+    hasPostgresUrl: !!process.env.POSTGRES_URL,
+    hasPrismaUrl: !!process.env.PRISMA_DATABASE_URL,
+    hasDatabaseUrl: !!process.env.DATABASE_URL,
+  };
+  console.log('Available database env vars:', envVars);
+
   try {
     // Create movie_time_periods table
     await sql`
