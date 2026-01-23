@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from '@vercel/postgres';
+import { createClient } from '@vercel/postgres';
 
 /**
  * Database initialization endpoint (ONE-TIME USE ONLY)
@@ -31,9 +31,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
   console.log('Available database env vars:', envVars);
 
+  // Create a client connection for Prisma Postgres
+  const client = createClient();
+  await client.connect();
+
   try {
     // Create movie_time_periods table
-    await sql`
+    await client.sql`
       CREATE TABLE IF NOT EXISTS movie_time_periods (
         id SERIAL PRIMARY KEY,
         tmdb_id INTEGER NOT NULL UNIQUE,
@@ -54,28 +58,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Create indexes
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_tmdb_id
       ON movie_time_periods(tmdb_id)
     `;
 
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_start_year
       ON movie_time_periods(start_year)
     `;
 
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_reliability
       ON movie_time_periods(reliability)
     `;
 
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_updated_at
       ON movie_time_periods(updated_at)
     `;
 
     // Create stats view
-    await sql`
+    await client.sql`
       CREATE OR REPLACE VIEW movie_time_periods_stats AS
       SELECT
         COUNT(*) as total_movies,
@@ -90,7 +94,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Insert sample data
-    await sql`
+    await client.sql`
       INSERT INTO movie_time_periods (tmdb_id, title, original_title, start_year, end_year, period, source, notes, reliability)
       VALUES
         (603, 'マトリックス', 'The Matrix', 1999, NULL, '1999年', 'wikipedia', 'Contemporary setting', 'verified'),
@@ -115,5 +119,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       error: 'Database initialization failed',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
+  } finally {
+    await client.end();
   }
 }
