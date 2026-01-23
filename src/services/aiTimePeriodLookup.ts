@@ -638,9 +638,9 @@ export async function lookupAndCacheTimePeriod(
       return entry;
     }
 
-    // 4. Geminiがレート制限またはエラーの場合、Groqにフォールバック
-    if (geminiResult.source === 'gemini_rate_limit' || geminiResult.source === 'gemini_error') {
-      logger.debug(`🚀 Gemini failed, falling back to Groq for "${movie.title}"...`);
+    // 4. Geminiが失敗した場合（エラー、レート制限、または時代不明）、Groqにフォールバック
+    if (!geminiResult.success || geminiResult.startYear === null) {
+      logger.debug(`🚀 Gemini failed or returned unknown period, falling back to Groq for "${movie.title}"...`);
       const groqResult = await extractTimePeriodWithGroq(movie);
       logger.debug(`📊 Groq result for "${movie.title}":`, {
         success: groqResult.success,
