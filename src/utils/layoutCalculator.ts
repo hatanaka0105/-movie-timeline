@@ -14,7 +14,7 @@ const SPAN_WIDTH = 20; // スパンの衝突判定用幅（4pxの実際の幅 + 
 
 export function calculateTimelineLayout(
   movies: Movie[],
-  containerWidth: number,
+  _containerWidth: number, // 未使用（無限に右に列を増やすため）
   pixelsPerYear: number = 10, // 動的スケール: デフォルト10px
   thumbnailSize: 'small' | 'medium' | 'large' = 'medium'
 ): TimelineLayout[] {
