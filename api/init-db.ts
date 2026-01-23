@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from '@vercel/postgres';
+import { createClient } from '@vercel/postgres';
 
 /**
  * Database initialization endpoint (ONE-TIME USE ONLY)
@@ -28,13 +28,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     hasPostgresUrl: !!process.env.POSTGRES_URL,
     hasPrismaUrl: !!process.env.PRISMA_DATABASE_URL,
     hasDatabaseUrl: !!process.env.DATABASE_URL,
+    hasPostgresUrlNonPooling: !!process.env.POSTGRES_URL_NON_POOLING,
   };
   console.log('Available database env vars:', envVars);
 
+  // Use direct connection string for DDL operations
+  const connectionString = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+  const client = createClient({ connectionString });
+
   try {
+    await client.connect();
+
     // Create movie_time_periods table
-    // Use sql helper without explicit connection (auto-uses POSTGRES_URL in Vercel)
-    await sql`
+    await client.sql`
       CREATE TABLE IF NOT EXISTS movie_time_periods (
         id SERIAL PRIMARY KEY,
         tmdb_id INTEGER NOT NULL UNIQUE,
@@ -55,28 +61,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Create indexes
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_tmdb_id
       ON movie_time_periods(tmdb_id)
     `;
 
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_start_year
       ON movie_time_periods(start_year)
     `;
 
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_reliability
       ON movie_time_periods(reliability)
     `;
 
-    await sql`
+    await client.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_updated_at
       ON movie_time_periods(updated_at)
     `;
 
     // Create stats view
-    await sql`
+    await client.sql`
       CREATE OR REPLACE VIEW movie_time_periods_stats AS
       SELECT
         COUNT(*) as total_movies,
@@ -91,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Insert sample data
-    await sql`
+    await client.sql`
       INSERT INTO movie_time_periods (tmdb_id, title, original_title, start_year, end_year, period, source, notes, reliability)
       VALUES
         (603, 'マトリックス', 'The Matrix', 1999, NULL, '1999年', 'wikipedia', 'Contemporary setting', 'verified'),
@@ -99,6 +105,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         (155, 'ダークナイト', 'The Dark Knight', 2008, NULL, '2008年', 'ai_lookup', 'AI lookup (high confidence) from deepseek_v3', 'high')
       ON CONFLICT (tmdb_id) DO NOTHING
     `;
+
+    await client.end();
 
     return res.status(200).json({
       success: true,
@@ -111,6 +119,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   } catch (error) {
     console.error('Database initialization error:', error);
+    await client.end();
     return res.status(500).json({
       success: false,
       error: 'Database initialization failed',
