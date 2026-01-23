@@ -103,7 +103,7 @@ class SpatialHashGrid {
  */
 export function calculateTimelineLayout(
   movies: Movie[],
-  timelineWidth: number,
+  _timelineWidth: number,
   pixelsPerYear: number = 10,
   thumbnailSize: 'small' | 'medium' | 'large' = 'medium'
 ): TimelineLayout[] {
@@ -111,7 +111,7 @@ export function calculateTimelineLayout(
   const cardDim = CARD_DIMENSIONS[thumbnailSize];
 
   // No column limit - extend infinitely to the right
-  // timelineWidth parameter is ignored for horizontal expansion
+  // _timelineWidth parameter is ignored for horizontal expansion
 
   // Initialize spatial hash grid
   const spatialGrid = new SpatialHashGrid(cardDim.height);
