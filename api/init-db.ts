@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@vercel/postgres';
+import { createPool } from '@vercel/postgres';
 
 /**
  * Database initialization endpoint (ONE-TIME USE ONLY)
@@ -31,13 +31,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
   console.log('Available database env vars:', envVars);
 
-  // Create a client connection for Prisma Postgres
-  const client = createClient();
-  await client.connect();
+  // Use PRISMA_DATABASE_URL which is the pooled connection string
+  const pool = createPool({
+    connectionString: process.env.PRISMA_DATABASE_URL,
+  });
 
   try {
     // Create movie_time_periods table
-    await client.sql`
+    await pool.sql`
       CREATE TABLE IF NOT EXISTS movie_time_periods (
         id SERIAL PRIMARY KEY,
         tmdb_id INTEGER NOT NULL UNIQUE,
@@ -58,28 +59,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Create indexes
-    await client.sql`
+    await pool.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_tmdb_id
       ON movie_time_periods(tmdb_id)
     `;
 
-    await client.sql`
+    await pool.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_start_year
       ON movie_time_periods(start_year)
     `;
 
-    await client.sql`
+    await pool.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_reliability
       ON movie_time_periods(reliability)
     `;
 
-    await client.sql`
+    await pool.sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_updated_at
       ON movie_time_periods(updated_at)
     `;
 
     // Create stats view
-    await client.sql`
+    await pool.sql`
       CREATE OR REPLACE VIEW movie_time_periods_stats AS
       SELECT
         COUNT(*) as total_movies,
@@ -94,7 +95,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Insert sample data
-    await client.sql`
+    await pool.sql`
       INSERT INTO movie_time_periods (tmdb_id, title, original_title, start_year, end_year, period, source, notes, reliability)
       VALUES
         (603, 'マトリックス', 'The Matrix', 1999, NULL, '1999年', 'wikipedia', 'Contemporary setting', 'verified'),
@@ -119,7 +120,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       error: 'Database initialization failed',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
-  } finally {
-    await client.end();
   }
 }
