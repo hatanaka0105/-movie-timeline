@@ -110,12 +110,8 @@ export function calculateTimelineLayout(
   const layout: TimelineLayout[] = [];
   const cardDim = CARD_DIMENSIONS[thumbnailSize];
 
-  // Calculate available columns
-  const availableWidth = timelineWidth - LEFT_MARGIN - cardDim.width;
-  const columns = Math.max(
-    1,
-    Math.floor(availableWidth / (cardDim.width + HORIZONTAL_SPACING))
-  );
+  // No column limit - extend infinitely to the right
+  // timelineWidth parameter is ignored for horizontal expansion
 
   // Initialize spatial hash grid
   const spatialGrid = new SpatialHashGrid(cardDim.height);
@@ -158,32 +154,17 @@ export function calculateTimelineLayout(
     let columnIndex = 0;
     let found = false;
 
-    // Try to find position in current row
-    for (let col = 0; col < columns && !found; col++) {
+    // Extend infinitely to the right (no column limit)
+    let col = 0;
+    while (!found) {
       const testX = LEFT_MARGIN + col * (cardDim.width + HORIZONTAL_SPACING);
       if (!hasCollision(testX, baseY)) {
         finalX = testX;
         finalY = baseY;
         columnIndex = col;
         found = true;
-      }
-    }
-
-    // If no space in current row, try rows below
-    if (!found) {
-      let offsetY = baseY;
-      const maxAttempts = 10;
-      for (let attempt = 0; attempt < maxAttempts && !found; attempt++) {
-        offsetY = baseY + (attempt + 1) * (cardDim.height + VERTICAL_SPACING);
-        for (let col = 0; col < columns && !found; col++) {
-          const testX = LEFT_MARGIN + col * (cardDim.width + HORIZONTAL_SPACING);
-          if (!hasCollision(testX, offsetY)) {
-            finalX = testX;
-            finalY = offsetY;
-            columnIndex = col;
-            found = true;
-          }
-        }
+      } else {
+        col++;
       }
     }
 
