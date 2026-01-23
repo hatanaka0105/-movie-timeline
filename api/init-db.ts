@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createPool } from '@vercel/postgres';
+import { sql } from '@vercel/postgres';
 
 /**
  * Database initialization endpoint (ONE-TIME USE ONLY)
@@ -31,14 +31,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
   console.log('Available database env vars:', envVars);
 
-  // Use POSTGRES_URL which should be the pooled connection string
-  const pool = createPool({
-    connectionString: process.env.POSTGRES_URL,
-  });
-
   try {
     // Create movie_time_periods table
-    await pool.sql`
+    // Use sql helper without explicit connection (auto-uses POSTGRES_URL in Vercel)
+    await sql`
       CREATE TABLE IF NOT EXISTS movie_time_periods (
         id SERIAL PRIMARY KEY,
         tmdb_id INTEGER NOT NULL UNIQUE,
@@ -59,28 +55,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Create indexes
-    await pool.sql`
+    await sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_tmdb_id
       ON movie_time_periods(tmdb_id)
     `;
 
-    await pool.sql`
+    await sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_start_year
       ON movie_time_periods(start_year)
     `;
 
-    await pool.sql`
+    await sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_reliability
       ON movie_time_periods(reliability)
     `;
 
-    await pool.sql`
+    await sql`
       CREATE INDEX IF NOT EXISTS idx_movie_time_periods_updated_at
       ON movie_time_periods(updated_at)
     `;
 
     // Create stats view
-    await pool.sql`
+    await sql`
       CREATE OR REPLACE VIEW movie_time_periods_stats AS
       SELECT
         COUNT(*) as total_movies,
@@ -95,7 +91,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     // Insert sample data
-    await pool.sql`
+    await sql`
       INSERT INTO movie_time_periods (tmdb_id, title, original_title, start_year, end_year, period, source, notes, reliability)
       VALUES
         (603, 'マトリックス', 'The Matrix', 1999, NULL, '1999年', 'wikipedia', 'Contemporary setting', 'verified'),
