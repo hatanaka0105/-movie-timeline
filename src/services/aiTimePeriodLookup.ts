@@ -129,27 +129,46 @@ export async function lookupMovieTimePeriod(
       };
     }
 
-    // 2. 最初の結果のページ概要を取得
+    // 2. 最初の結果のページ詳細を取得（prop=extractsで最初の数段落を取得）
     for (const pageTitle of titles) {
       try {
-        const pageTitleEncoded = pageTitle.replace(/ /g, '_');
-        const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitleEncoded)}`;
+        // Wikipedia Action APIを使用してより詳細なextractを取得
+        // exintro=1: 導入部のみ取得（プロット含む最初の数段落）
+        // explaintext=1: プレーンテキストで取得
+        // exsentences=10: 最初の10文を取得（summaryより長い）
+        const extractUrl = `https://en.wikipedia.org/w/api.php?` +
+          `action=query&titles=${encodeURIComponent(pageTitle)}&` +
+          `prop=extracts&exintro=1&explaintext=1&exsentences=10&` +
+          `format=json&origin=*`;
 
-        const summaryResponse = await fetch(summaryUrl, {
+        const extractResponse = await fetch(extractUrl, {
           headers: {
             'User-Agent': 'MovieTimeline/1.0 (Educational Project)',
           },
         });
 
-        if (!summaryResponse.ok) {
-          logger.debug(`Failed to fetch summary for "${pageTitle}": ${summaryResponse.status}`);
+        if (!extractResponse.ok) {
+          logger.debug(`Failed to fetch extract for "${pageTitle}": ${extractResponse.status}`);
           continue;
         }
 
-        const summaryData = await summaryResponse.json();
-        const extract = summaryData.extract || '';
+        const extractData = await extractResponse.json();
+        const pages = extractData.query?.pages;
 
-        logger.debug(`📄 Analyzing Wikipedia extract for "${pageTitle}"...`);
+        if (!pages) {
+          logger.debug(`No pages found for "${pageTitle}"`);
+          continue;
+        }
+
+        const pageId = Object.keys(pages)[0];
+        const extract = pages[pageId]?.extract || '';
+
+        if (!extract) {
+          logger.debug(`No extract found for "${pageTitle}"`);
+          continue;
+        }
+
+        logger.debug(`📄 Analyzing Wikipedia extract for "${pageTitle}" (${extract.length} chars)...`);
 
         // 3. 概要テキストから時代設定を抽出
         const timePeriod = extractTimePeriodFromText(extract, movie.title);
