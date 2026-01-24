@@ -621,10 +621,10 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     // 1970-80年代 - 特定の人物・イベントのみ
     'watergate': 1974,
     'ウォーターゲート': 1974,
+    'watergate scandal': 1974,
     'nixon': 1972,
     'ニクソン': 1972,
-    'oil crisis': 1973,
-    '石油危機': 1973,
+    // 削除: 'oil crisis', '石油危機' (too generic - appears in many movie descriptions as background context)
     // 削除: 'disco', 'ディスコ', 'punk rock', 'パンク' (too generic cultural terms)
 
     // 1990年代以降 - 特定のイベント・戦争のみ
@@ -801,16 +801,22 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     // 'space age': 2100,
   };
 
-  // タイトルベースの優先判定: タイトルに特定の歴史上の人物名が含まれている場合、最優先
+  // タイトルベースの優先判定: 歴史ジャンル + 人物名、または完全一致の場合のみ
   const titleLower = movie.title.toLowerCase();
   const originalTitleLower = movie.original_title.toLowerCase();
+
+  // History/War/Biography ジャンルかチェック
+  const genreIds = movie.genres.map(g => g.id);
+  const isHistoricalGenre = genreIds.includes(10752) || // War
+                            genreIds.includes(36) ||    // History
+                            genreIds.includes(18);      // Drama (歴史ドラマ含む)
+
+  // タイトルが単独で人物名のみ、またはHistoricalジャンル + 人物名の組み合わせの場合のみマッチ
   const titleBasedKeywords: Record<string, number> = {
     'alexander': -323,  // Alexander the Great
     'アレキサンダー': -323,
     'cleopatra': -30,
     'クレオパトラ': -30,
-    'caesar': -44,
-    'シーザー': -44,
     'spartacus': -71,
     'スパルタカス': -71,
     'napoleon': 1805,
@@ -818,8 +824,12 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
   };
 
   for (const [keyword, year] of Object.entries(titleBasedKeywords)) {
-    if (titleLower.includes(keyword) || originalTitleLower.includes(keyword)) {
-      logger.debug(`🎬 Title-based match found: "${keyword}" → ${year}`);
+    // タイトルが完全一致、または歴史ジャンル + キーワード含む場合のみ
+    const isExactMatch = titleLower === keyword || originalTitleLower === keyword;
+    const isHistoricalMatch = isHistoricalGenre && (titleLower.includes(keyword) || originalTitleLower.includes(keyword));
+
+    if (isExactMatch || isHistoricalMatch) {
+      logger.debug(`🎬 Title-based match found: "${keyword}" → ${year} (exact: ${isExactMatch}, historical: ${isHistoricalMatch})`);
       foundYears.push({
         year: year,
         context: `Title: ${movie.title}`,
@@ -861,7 +871,8 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
       }
 
       // 一般的なイベント・文化的出来事（低優先度）
-      if (['oil crisis', '石油危機', 'watergate', 'ウォーターゲート', 'woodstock', 'ウッドストック',
+      // oil crisis は削除済み（曖昧すぎるため）
+      if (['watergate', 'ウォーターゲート', 'watergate scandal', 'woodstock', 'ウッドストック',
            'apollo 11', 'アポロ11号', 'moon landing', '月面着陸'].some(k => k === keyword.toLowerCase())) {
         return 4;
       }

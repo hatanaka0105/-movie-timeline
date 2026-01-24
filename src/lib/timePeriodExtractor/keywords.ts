@@ -314,8 +314,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'ディスコ': 1977,
   'punk rock': 1977,
   'パンク': 1977,
-  '石油危機': 1973,
-  'oil crisis': 1973,
+  // 削除: '石油危機', 'oil crisis' (too generic - appears as background context in many movies)
   'iranian revolution': 1979,
   'イラン革命': 1979,
   'ayatollah': 1979,
