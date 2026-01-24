@@ -1,16 +1,17 @@
 import { Movie, TimelineLayout } from '../types/movie.types';
+import { LAYOUT_CONFIG } from '../config/constants';
 
-// サムネイルサイズごとの幅と高さ
+// サムネイルサイズごとの幅と高さ (constants.tsから取得)
 const CARD_DIMENSIONS = {
-  small: { width: 80, height: 120 },    // w-20
-  medium: { width: 160, height: 240 },  // w-40
-  large: { width: 224, height: 336 },   // w-56
+  small: LAYOUT_CONFIG.CARD_DIMENSIONS.small,
+  medium: LAYOUT_CONFIG.CARD_DIMENSIONS.medium,
+  large: LAYOUT_CONFIG.CARD_DIMENSIONS.large,
 };
 
-const HORIZONTAL_SPACING = 20; // px between cards
-const VERTICAL_SPACING = 60; // px between cards vertically (for year labels)
-const LEFT_MARGIN = 40; // px margin from left side (to avoid year markers)
-const SPAN_WIDTH = 20; // スパンの衝突判定用幅（4pxの実際の幅 + マージン）
+const HORIZONTAL_SPACING = LAYOUT_CONFIG.HORIZONTAL_SPACING;
+const VERTICAL_SPACING = LAYOUT_CONFIG.VERTICAL_SPACING;
+const LEFT_MARGIN = LAYOUT_CONFIG.LEFT_MARGIN;
+const SPAN_WIDTH = LAYOUT_CONFIG.SPAN_WIDTH;
 
 export function calculateTimelineLayout(
   movies: Movie[],

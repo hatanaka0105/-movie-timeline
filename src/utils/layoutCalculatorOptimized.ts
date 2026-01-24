@@ -2,6 +2,7 @@
 // O(n) collision detection instead of O(n²)
 
 import { Movie } from '../types/movie.types';
+import { LAYOUT_CONFIG } from '../config/constants';
 
 export interface TimelineLayout {
   movieId: string;
@@ -23,16 +24,17 @@ interface CardDimensions {
   height: number;
 }
 
+// Use dimensions from constants.ts
 const CARD_DIMENSIONS: Record<'small' | 'medium' | 'large', CardDimensions> = {
-  small: { width: 150, height: 225 },
-  medium: { width: 200, height: 300 },
-  large: { width: 250, height: 375 },
+  small: LAYOUT_CONFIG.CARD_DIMENSIONS.small,
+  medium: LAYOUT_CONFIG.CARD_DIMENSIONS.medium,
+  large: LAYOUT_CONFIG.CARD_DIMENSIONS.large,
 };
 
-const HORIZONTAL_SPACING = 30;
-const VERTICAL_SPACING = 20;
-const LEFT_MARGIN = 150;
-const SPAN_WIDTH = 4;
+const HORIZONTAL_SPACING = LAYOUT_CONFIG.HORIZONTAL_SPACING;
+const VERTICAL_SPACING = LAYOUT_CONFIG.VERTICAL_SPACING;
+const LEFT_MARGIN = LAYOUT_CONFIG.LEFT_MARGIN;
+const SPAN_WIDTH = LAYOUT_CONFIG.SPAN_WIDTH;
 
 /**
  * Spatial Hash Grid for O(1) collision detection per cell
