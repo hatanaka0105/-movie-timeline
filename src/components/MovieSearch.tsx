@@ -9,6 +9,7 @@ import {
 } from '../services/tmdbApi';
 import { lookupAndCacheTimePeriod } from '../services/aiTimePeriodLookup';
 import { useLanguage } from '../i18n/LanguageContext';
+import { logger } from '../utils/logger';
 
 interface MovieSearchProps {
   onAddMovie: (movie: Movie) => void;
@@ -97,9 +98,15 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
     (async () => {
       // 時代設定を抽出
       let timeline = extractTimePeriod(details);
+      logger.debug(`📋 Timeline extraction result for "${details.title}":`, {
+        isEstimated: timeline.isEstimated,
+        startYear: timeline.startYear,
+        period: timeline.period
+      });
 
       // フォールバック（推定値）になった場合、自動的にWikipedia/Gemini検索を実行
       if (timeline.isEstimated) {
+        logger.debug(`🔄 Timeline is estimated, calling lookupAndCacheTimePeriod for "${details.title}"...`);
         const wikiResult = await lookupAndCacheTimePeriod(details);
 
         if (wikiResult) {
