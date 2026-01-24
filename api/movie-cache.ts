@@ -14,7 +14,8 @@ interface CacheData {
   [movieId: string]: TimePeriodData;
 }
 
-const CACHE_KEY = 'movie-time-periods';
+const CACHE_VERSION = 12; // v12: Fixed Wikipedia search + Japanese locale support
+const CACHE_KEY = `movie-time-periods-v${CACHE_VERSION}`;
 
 // 入力検証スキーマ
 const TimePeriodSchema = z.object({
