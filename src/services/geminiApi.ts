@@ -50,10 +50,22 @@ CRITICAL: Use ALL available information sources:
    - Period drama → use your knowledge of common period settings
 3. YOUR KNOWLEDGE: If overview is insufficient, use your knowledge of the film:
    - "Caligula" → Roman Empire, AD 37-41
-   - "Seven Samurai" → 1586, Sengoku period Japan
+   - "Seven Samurai" / "七人の侍" → 1586, Sengoku period Japan
    - "Gladiator" → Roman Empire, ~180 AD
-   - "The Ten Commandments" → Ancient Egypt, ~1300 BC
+   - "The Ten Commandments" / "十戒" → Ancient Egypt, ~1300 BC
+   - "Exodus: Gods and Kings" → Ancient Egypt, ~1300 BC
    - "Braveheart" → Scotland, 1300s
+   - "Chushingura" / "忠臣蔵" → 1703, Edo period Japan
+   - "Onmyoji" / "陰陽師" → 1000, Heian period Japan
+   - "Kingdom" / "キングダム" → 245 BC, Warring States China
+   - "One Million Years B.C." / "恐竜100万年" → 1,000,000 BC (prehistoric)
+   - "10,000 BC" / "紀元前1万年" → 10,000 BC (prehistoric)
+   - "Nobou no Shiro" / "のぼうの城" → 1590, Sengoku period Japan
+   - "The Great Gatsby" / "華麗なるギャツビー" → 1922, Jazz Age America
+   - "The Prestige" / "プレステージ" → 1899, Victorian era London
+   - "The Martian" / "オデッセイ" → 2035, near future Mars
+   - "Independence Day" / "インデペンデンス・デイ" → 1996, contemporary (release year)
+   - "Frankenstein" → 1818 (original novel) or 1931 (Universal film)
 4. OVERVIEW KEYWORDS: Extract time references from overview
 
 CRITICAL INSTRUCTIONS FOR SEQUELS AND REMAKES:

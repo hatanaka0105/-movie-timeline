@@ -33,6 +33,7 @@ export interface TMDbMovie {
   id: number;
   title: string;
   original_title: string;
+  original_language?: string;
   release_date: string;
   overview: string;
   poster_path: string | null;

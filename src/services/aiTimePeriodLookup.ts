@@ -99,95 +99,100 @@ export async function lookupMovieTimePeriod(
     const releaseYear = movie.release_date?.split('-')[0];
     logger.debug(`🔍 Wikipedia Lookup: Searching for time period of "${movie.title}"...`);
 
-    // 1. Wikipedia ページを検索
-    const searchQuery = `${movie.original_title} ${releaseYear} film`;
-    const searchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(searchQuery)}&limit=3&format=json&origin=*`;
+    // 日本語映画の判定（original_languageまたはタイトルに日本語が含まれる）
+    const isJapaneseMovie = movie.original_language === 'ja' || /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(movie.original_title);
 
-    const searchResponse = await fetch(searchUrl, {
-      headers: {
-        'User-Agent': 'MovieTimeline/1.0 (Educational Project)',
-      },
-    });
+    // 日本語映画の場合は日本語Wikipediaも検索
+    const wikiDomains = isJapaneseMovie
+      ? ['ja.wikipedia.org', 'en.wikipedia.org']  // 日本語Wikipedia優先
+      : ['en.wikipedia.org'];
 
-    if (!searchResponse.ok) {
-      throw new Error(`Wikipedia search failed: ${searchResponse.status} ${searchResponse.statusText}`);
-    }
+    for (const domain of wikiDomains) {
+      logger.debug(`🔍 Searching ${domain} for "${movie.title}"...`);
 
-    const searchData = await searchResponse.json();
-    const titles = searchData[1] as string[];
+      // 1. Wikipedia ページを検索
+      const searchQuery = `${movie.original_title} ${releaseYear} film`;
+      const searchUrl = `https://${domain}/w/api.php?action=opensearch&search=${encodeURIComponent(searchQuery)}&limit=3&format=json&origin=*`;
 
-    if (titles.length === 0) {
-      logger.debug(`❌ No Wikipedia page found for "${movie.title}"`);
-      return {
-        success: false,
-        startYear: null,
-        endYear: null,
-        period: '時代不明',
-        confidence: 'low',
-        source: 'wikipedia_not_found',
-        error: 'No Wikipedia page found',
-      };
-    }
+      const searchResponse = await fetch(searchUrl, {
+        headers: {
+          'User-Agent': 'MovieTimeline/1.0 (Educational Project)',
+        },
+      });
 
-    // 2. 最初の結果のページ詳細を取得（prop=extractsで最初の数段落を取得）
-    for (const pageTitle of titles) {
-      try {
-        // Wikipedia Action APIを使用してより詳細なextractを取得
-        // exintro=1: 導入部のみ取得（プロット含む最初の数段落）
-        // explaintext=1: プレーンテキストで取得
-        // exsentences=10: 最初の10文を取得（summaryより長い）
-        const extractUrl = `https://en.wikipedia.org/w/api.php?` +
-          `action=query&titles=${encodeURIComponent(pageTitle)}&` +
-          `prop=extracts&exintro=1&explaintext=1&exsentences=10&` +
-          `format=json&origin=*`;
+      if (!searchResponse.ok) {
+        logger.debug(`Wikipedia search failed on ${domain}: ${searchResponse.status}`);
+        continue;  // 次のドメインを試す
+      }
 
-        const extractResponse = await fetch(extractUrl, {
-          headers: {
-            'User-Agent': 'MovieTimeline/1.0 (Educational Project)',
-          },
-        });
+      const searchData = await searchResponse.json();
+      const titles = searchData[1] as string[];
 
-        if (!extractResponse.ok) {
-          logger.debug(`Failed to fetch extract for "${pageTitle}": ${extractResponse.status}`);
+      if (titles.length === 0) {
+        logger.debug(`❌ No Wikipedia page found on ${domain} for "${movie.title}"`);
+        continue;  // 次のドメインを試す
+      }
+
+      // 2. 最初の結果のページ詳細を取得（prop=extractsで最初の数段落を取得）
+      for (const pageTitle of titles) {
+        try {
+          // Wikipedia Action APIを使用してより詳細なextractを取得
+          // exintro=1: 導入部のみ取得（プロット含む最初の数段落）
+          // explaintext=1: プレーンテキストで取得
+          // exsentences=10: 最初の10文を取得（summaryより長い）
+          const extractUrl = `https://${domain}/w/api.php?` +
+            `action=query&titles=${encodeURIComponent(pageTitle)}&` +
+            `prop=extracts&exintro=1&explaintext=1&exsentences=10&` +
+            `format=json&origin=*`;
+
+          const extractResponse = await fetch(extractUrl, {
+            headers: {
+              'User-Agent': 'MovieTimeline/1.0 (Educational Project)',
+            },
+          });
+
+          if (!extractResponse.ok) {
+            logger.debug(`Failed to fetch extract for "${pageTitle}": ${extractResponse.status}`);
+            continue;
+          }
+
+          const extractData = await extractResponse.json();
+          const pages = extractData.query?.pages;
+
+          if (!pages) {
+            logger.debug(`No pages found for "${pageTitle}"`);
+            continue;
+          }
+
+          const pageId = Object.keys(pages)[0];
+          const extract = pages[pageId]?.extract || '';
+
+          if (!extract) {
+            logger.debug(`No extract found for "${pageTitle}"`);
+            continue;
+          }
+
+          logger.debug(`📄 Analyzing Wikipedia extract for "${pageTitle}" (${extract.length} chars)...`);
+
+          // 3. 概要テキストから時代設定を抽出
+          const timePeriod = extractTimePeriodFromText(extract, movie.title);
+
+          if (timePeriod) {
+            logger.debug(`✅ Found time period: ${timePeriod.startYear}${timePeriod.endYear ? `-${timePeriod.endYear}` : ''}`);
+            return {
+              success: true,
+              startYear: timePeriod.startYear,
+              endYear: timePeriod.endYear,
+              period: timePeriod.period,
+              additionalYears: timePeriod.additionalYears,
+              confidence: timePeriod.confidence,
+              source: 'wikipedia',
+            };
+          }
+        } catch (error) {
+          logger.warn(`Failed to fetch summary for "${pageTitle}":`, error);
           continue;
         }
-
-        const extractData = await extractResponse.json();
-        const pages = extractData.query?.pages;
-
-        if (!pages) {
-          logger.debug(`No pages found for "${pageTitle}"`);
-          continue;
-        }
-
-        const pageId = Object.keys(pages)[0];
-        const extract = pages[pageId]?.extract || '';
-
-        if (!extract) {
-          logger.debug(`No extract found for "${pageTitle}"`);
-          continue;
-        }
-
-        logger.debug(`📄 Analyzing Wikipedia extract for "${pageTitle}" (${extract.length} chars)...`);
-
-        // 3. 概要テキストから時代設定を抽出
-        const timePeriod = extractTimePeriodFromText(extract, movie.title);
-
-        if (timePeriod) {
-          logger.debug(`✅ Found time period: ${timePeriod.startYear}${timePeriod.endYear ? `-${timePeriod.endYear}` : ''}`);
-          return {
-            success: true,
-            startYear: timePeriod.startYear,
-            endYear: timePeriod.endYear,
-            period: timePeriod.period,
-            additionalYears: timePeriod.additionalYears,
-            confidence: timePeriod.confidence,
-            source: 'wikipedia',
-          };
-        }
-      } catch (error) {
-        logger.warn(`Failed to fetch summary for "${pageTitle}":`, error);
-        continue;
       }
     }
 
@@ -315,6 +320,41 @@ function extractTimePeriodFromText(text: string, _movieTitle: string): {
     'marco polo': 1275,
     'black death': 1348,
     'ottoman empire': 1500,
+
+    // 日本の時代区分（具体的）
+    'sengoku period': 1550,
+    'sengoku jidai': 1550,
+    'warring states': 1550,  // 戦国時代
+    'azuchi-momoyama': 1580,
+    'azuchi momoyama': 1580,
+    'edo period': 1700,
+    'tokugawa period': 1700,
+    'bakumatsu': 1865,  // 幕末
+    'meiji era': 1890,
+    'meiji period': 1890,
+    'meiji restoration': 1868,
+    'taisho period': 1920,
+    'taisho era': 1920,
+    'showa period': 1950,
+    'showa era': 1950,
+    'heisei period': 2000,
+    'heisei era': 2000,
+
+    // 日本の歴史的事件・人物
+    'honnoji': 1582,  // 本能寺の変
+    'honno-ji': 1582,
+    'sekigahara': 1600,  // 関ヶ原の戦い
+    'battle of sekigahara': 1600,
+    'oda nobunaga': 1570,
+    'toyotomi hideyoshi': 1590,
+    'tokugawa ieyasu': 1600,
+    '47 ronin': 1703,  // 忠臣蔵
+    'ako incident': 1703,
+    'chushingura': 1703,
+    'boshin war': 1868,
+    'satsuma rebellion': 1877,
+    'russo-japanese war': 1905,
+    'sino-japanese war': 1895,
 
     // ルネサンス・宗教改革
     'leonardo da vinci': 1500,
@@ -480,25 +520,31 @@ export async function lookupAndCacheTimePeriod(
     const sharedDbResult = await getTimePeriodFromSharedDb(movie.id);
 
     if (sharedDbResult) {
-      logger.debug(`✅ Found in shared DB: ${sharedDbResult.period}`);
+      // 共有DBに「時代不明」(start_year: 0 or null) が保存されている場合はスキップ
+      // Wikipedia/AI検索を続行して、より良い結果を得る
+      if (!sharedDbResult.start_year || sharedDbResult.start_year === 0) {
+        logger.debug(`⚠️ Shared DB has unknown period for "${movie.title}" - continuing with Wikipedia/AI lookup`);
+      } else {
+        logger.debug(`✅ Found in shared DB: ${sharedDbResult.period}`);
 
-      const entry: MovieTimePeriodEntry = {
-        tmdbId: sharedDbResult.tmdb_id,
-        title: sharedDbResult.original_title || sharedDbResult.title,
-        startYear: sharedDbResult.start_year || 0,
-        endYear: sharedDbResult.end_year,
-        period: sharedDbResult.period,
-        source: 'shared_db',
-        notes: sharedDbResult.notes || `Shared DB (${sharedDbResult.source})`,
-        additionalYears: sharedDbResult.additional_years || undefined,
-        reliability: sharedDbResult.reliability as 'verified' | 'high' | 'medium' | 'low',
-      };
+        const entry: MovieTimePeriodEntry = {
+          tmdbId: sharedDbResult.tmdb_id,
+          title: sharedDbResult.original_title || sharedDbResult.title,
+          startYear: sharedDbResult.start_year,
+          endYear: sharedDbResult.end_year,
+          period: sharedDbResult.period,
+          source: 'shared_db',
+          notes: sharedDbResult.notes || `Shared DB (${sharedDbResult.source})`,
+          additionalYears: sharedDbResult.additional_years || undefined,
+          reliability: sharedDbResult.reliability as 'verified' | 'high' | 'medium' | 'low',
+        };
 
-      // LocalStorageにもキャッシュ
-      movieTimePeriodDb.addTimePeriod(entry);
-      logger.debug(`✅ Cached shared DB result for "${movie.title}"`);
+        // LocalStorageにもキャッシュ
+        movieTimePeriodDb.addTimePeriod(entry);
+        logger.debug(`✅ Cached shared DB result for "${movie.title}"`);
 
-      return entry;
+        return entry;
+      }
     }
 
     // 2. Wikipediaで検索（無料なので優先）
