@@ -23,20 +23,12 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'spartacus': -71,
   'pompeii': 79,
 
-  // イエス・キリストの時代（紀元後1世紀）
-  'jesus': 30,
-  'jesus christ': 30,
-  'christ': 30,
-  'イエス': 30,
-  'キリスト': 30,
-  'crucifixion': 33,
-  '磔刑': 33,
-  '十字架': 33,
-  'judea': 30,
-  'ユダヤ': 30,
+  // 聖書時代の映画 - 具体的な映画タイトルのみ
   'ben-hur': 30,
   'ベン・ハー': 30,
   'ben hur': 30,
+  // 削除: 'jesus', 'christ', 'crucifixion', 'judea' などは曖昧すぎる
+  // これらの単語は多くの映画の説明文に背景として登場するため誤検出の原因になる
 
   // 中世
   '中世': 1200,

@@ -458,18 +458,13 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     'alexander the great': -323,
     'spartacus': -71,
     'pompeii': 79,  // ポンペイの火山噴火（特定イベント）
-    'jesus': 30,
-    'jesus christ': 30,
-    'christ': 30,
-    'イエス': 30,
-    'キリスト': 30,
-    'crucifixion': 33,
-    '磔刑': 33,
-    '十字架': 33,
-    'judea': 30,
-    'ユダヤ': 30,
+
+    // 聖書時代の映画 - 具体的な映画タイトルのみ
     'ben-hur': 30,
     'ベン・ハー': 30,
+    'ben hur': 30,
+    // 削除: 'jesus', 'christ', 'crucifixion', 'judea' などは曖昧すぎる
+    // → 映画タイトルに含まれる場合のみタイトルベース検出で対応
 
     // 中世 - 特定の人物・イベントのみ
     'joan of arc': 1429,
@@ -866,14 +861,14 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
 
     // 優先度の定義：より具体的なキーワードほど高い優先度（数値が小さいほど優先）
     const getKeywordPriority = (keyword: string): number => {
-      // 歴史上の人物名・重要な宗教的人物（最高優先度）
+      // 歴史上の人物名・具体的な映画タイトル（最高優先度）
       if (['alexander the great', 'cleopatra', 'julius caesar', 'spartacus', 'napoleon', 'ナポレオン',
            'joan of arc', 'ジャンヌ・ダルク', 'leonardo da vinci', 'michelangelo', 'galileo',
            'columbus', 'marie antoinette', 'マリー・アントワネット', 'nixon', 'ニクソン',
            'kennedy', 'ケネディ', 'martin luther king', 'キング牧師', 'mandela', 'マンデラ',
            'hitler', 'ヒトラー', 'churchill', 'チャーチル', 'stalin', 'スターリン',
            'lenin', 'レーニン', 'reagan', 'レーガン', 'thatcher', 'サッチャー',
-           'jesus', 'jesus christ', 'christ', 'イエス', 'キリスト', 'ben-hur', 'ベン・ハー', 'ben hur'].some(k => k === keyword.toLowerCase())) {
+           'ben-hur', 'ベン・ハー', 'ben hur'].some(k => k === keyword.toLowerCase())) {
         return 1;
       }
 
