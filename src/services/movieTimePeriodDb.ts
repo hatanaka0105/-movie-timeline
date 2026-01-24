@@ -22,7 +22,7 @@ import staticDb from '../data/movieTimePeriods.json';
 // サーバーサイドキャッシュ + LocalStorageのハイブリッド
 const STORAGE_KEY = 'movieTimePeriodCache';
 const CACHE_VERSION_KEY = 'movieTimePeriodCacheVersion';
-const CURRENT_CACHE_VERSION = 15; // v15: Fix Alexander misidentification with title-based priority
+const CURRENT_CACHE_VERSION = 16; // v16: Add Jesus/Christ/Ben-Hur keywords for Biblical era films
 const API_CACHE_URL = '/api/movie-cache';
 
 class MovieTimePeriodDatabase {

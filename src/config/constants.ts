@@ -32,7 +32,7 @@ export const CENTURY_OFFSETS = {
 export const CACHE_CONFIG = {
   STORAGE_KEY: 'movieTimePeriodCache',
   VERSION_KEY: 'movieTimePeriodCacheVersion',
-  CURRENT_VERSION: 15, // v15: Fix Alexander misidentification with title-based priority and improved keyword ranking
+  CURRENT_VERSION: 16, // v16: Add Jesus/Christ/Ben-Hur keywords for Biblical era films
 };
 
 // レイアウト設定

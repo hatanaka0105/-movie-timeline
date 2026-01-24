@@ -23,6 +23,21 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'spartacus': -71,
   'pompeii': 79,
 
+  // イエス・キリストの時代（紀元後1世紀）
+  'jesus': 30,
+  'jesus christ': 30,
+  'christ': 30,
+  'イエス': 30,
+  'キリスト': 30,
+  'crucifixion': 33,
+  '磔刑': 33,
+  '十字架': 33,
+  'judea': 30,
+  'ユダヤ': 30,
+  'ben-hur': 30,
+  'ベン・ハー': 30,
+  'ben hur': 30,
+
   // 中世
   '中世': 1200,
   'medieval': 1200,

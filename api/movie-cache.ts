@@ -14,7 +14,7 @@ interface CacheData {
   [movieId: string]: TimePeriodData;
 }
 
-const CACHE_VERSION = 15; // v15: Fix Alexander misidentification with title-based priority
+const CACHE_VERSION = 16; // v16: Add Jesus/Christ/Ben-Hur keywords for Biblical era films
 const CACHE_KEY = `movie-time-periods-v${CACHE_VERSION}`;
 
 // 入力検証スキーマ
