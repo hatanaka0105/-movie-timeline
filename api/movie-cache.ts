@@ -14,7 +14,7 @@ interface CacheData {
   [movieId: string]: TimePeriodData;
 }
 
-const CACHE_VERSION = 14; // v14: Fix BC dates to use negative numbers
+const CACHE_VERSION = 15; // v15: Fix Alexander misidentification with title-based priority
 const CACHE_KEY = `movie-time-periods-v${CACHE_VERSION}`;
 
 // 入力検証スキーマ

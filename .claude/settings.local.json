@@ -23,7 +23,8 @@
       "Bash(ls:*)",
       "Bash(pkill:*)",
       "Bash(xargs kill:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git push:*)"
     ]
   }
 }

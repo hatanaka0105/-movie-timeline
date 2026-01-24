@@ -32,7 +32,7 @@ export const CENTURY_OFFSETS = {
 export const CACHE_CONFIG = {
   STORAGE_KEY: 'movieTimePeriodCache',
   VERSION_KEY: 'movieTimePeriodCacheVersion',
-  CURRENT_VERSION: 14, // v14: Fix BC dates to use negative numbers
+  CURRENT_VERSION: 15, // v15: Fix Alexander misidentification with title-based priority and improved keyword ranking
 };
 
 // レイアウト設定

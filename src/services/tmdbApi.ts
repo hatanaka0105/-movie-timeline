@@ -801,6 +801,33 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     // 'space age': 2100,
   };
 
+  // タイトルベースの優先判定: タイトルに特定の歴史上の人物名が含まれている場合、最優先
+  const titleLower = movie.title.toLowerCase();
+  const originalTitleLower = movie.original_title.toLowerCase();
+  const titleBasedKeywords: Record<string, number> = {
+    'alexander': -323,  // Alexander the Great
+    'アレキサンダー': -323,
+    'cleopatra': -30,
+    'クレオパトラ': -30,
+    'caesar': -44,
+    'シーザー': -44,
+    'spartacus': -71,
+    'スパルタカス': -71,
+    'napoleon': 1805,
+    'ナポレオン': 1805,
+  };
+
+  for (const [keyword, year] of Object.entries(titleBasedKeywords)) {
+    if (titleLower.includes(keyword) || originalTitleLower.includes(keyword)) {
+      logger.debug(`🎬 Title-based match found: "${keyword}" → ${year}`);
+      foundYears.push({
+        year: year,
+        context: `Title: ${movie.title}`,
+        priority: -1, // 最高優先度（負の値で最優先）
+      });
+    }
+  }
+
   // キーワードベースの年代推定は、明示的な年が見つからなかった場合のみ使用
   if (foundYears.length === 0) {
     logger.debug('🔍 No explicit years found, using keyword-based estimation');
@@ -812,18 +839,35 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     // マッチしたキーワードとその優先度を記録
     const matchedKeywords: Array<{ keyword: string; year: number; priority: number }> = [];
 
-    // 優先度の定義：より具体的なキーワードほど高い優先度
+    // 優先度の定義：より具体的なキーワードほど高い優先度（数値が小さいほど優先）
     const getKeywordPriority = (keyword: string): number => {
-      // 戦闘・場所の具体名（最高優先度）
+      // 歴史上の人物名（最高優先度）
+      if (['alexander the great', 'cleopatra', 'julius caesar', 'spartacus', 'napoleon', 'ナポレオン',
+           'joan of arc', 'ジャンヌ・ダルク', 'leonardo da vinci', 'michelangelo', 'galileo',
+           'columbus', 'marie antoinette', 'マリー・アントワネット', 'nixon', 'ニクソン',
+           'kennedy', 'ケネディ', 'martin luther king', 'キング牧師', 'mandela', 'マンデラ',
+           'hitler', 'ヒトラー', 'churchill', 'チャーチル', 'stalin', 'スターリン',
+           'lenin', 'レーニン', 'reagan', 'レーガン', 'thatcher', 'サッチャー'].some(k => k === keyword.toLowerCase())) {
+        return 1;
+      }
+
+      // 戦闘・場所の具体名（高優先度）
       if (['iwo jima', '硫黄島', 'normandy', 'ノルマンディー', 'stalingrad', 'スターリングラード',
            'pearl harbor', '真珠湾', 'hiroshima', '広島', 'nagasaki', '長崎', 'midway', 'ミッドウェー',
            'okinawa', '沖縄戦', 'd-day', 'dunkirk', 'ダンケルク', 'verdun', 'somme', 'gallipoli', 'ガリポリ',
            'anzio', 'アンツィオ', 'monte cassino', 'モンテ・カッシーノ', 'el alamein',
            'battle of the bulge', 'バルジの戦い', 'omaha beach', 'オマハ・ビーチ'].some(k => k === keyword.toLowerCase())) {
-        return 1;
+        return 2;
       }
-      // その他すべて（中優先度） - 一般的な戦争名は削除済み
-      return 2;
+
+      // 一般的なイベント・文化的出来事（低優先度）
+      if (['oil crisis', '石油危機', 'watergate', 'ウォーターゲート', 'woodstock', 'ウッドストック',
+           'apollo 11', 'アポロ11号', 'moon landing', '月面着陸'].some(k => k === keyword.toLowerCase())) {
+        return 4;
+      }
+
+      // その他（中優先度）
+      return 3;
     };
 
     Object.entries(periodKeywords).forEach(([keyword, year]) => {
