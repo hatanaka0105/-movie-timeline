@@ -111,7 +111,9 @@ export async function lookupMovieTimePeriod(
       logger.debug(`🔍 Searching ${domain} for "${movie.title}"...`);
 
       // 1. Wikipedia ページを検索
-      const searchQuery = `${movie.original_title} ${releaseYear} film`;
+      // 日本語Wikipediaの場合は「映画」、英語は「film」を使用
+      const filmKeyword = domain === 'ja.wikipedia.org' ? '映画' : 'film';
+      const searchQuery = `${movie.original_title} ${releaseYear} ${filmKeyword}`;
       const searchUrl = `https://${domain}/w/api.php?action=opensearch&search=${encodeURIComponent(searchQuery)}&limit=3&format=json&origin=*`;
 
       const searchResponse = await fetch(searchUrl, {
@@ -126,7 +128,30 @@ export async function lookupMovieTimePeriod(
       }
 
       const searchData = await searchResponse.json();
-      const titles = searchData[1] as string[];
+      let titles = searchData[1] as string[];
+
+      // 検索結果が0件の場合、タイトルと年のみで再検索
+      if (titles.length === 0) {
+        logger.debug(`⚠️ No results with "${filmKeyword}", trying without keyword...`);
+        const fallbackQuery = `${movie.original_title} ${releaseYear}`;
+        const fallbackUrl = `https://${domain}/w/api.php?action=opensearch&search=${encodeURIComponent(fallbackQuery)}&limit=3&format=json&origin=*`;
+
+        try {
+          const fallbackResponse = await fetch(fallbackUrl, {
+            headers: {
+              'User-Agent': 'MovieTimeline/1.0 (Educational Project)',
+            },
+          });
+
+          if (fallbackResponse.ok) {
+            const fallbackData = await fallbackResponse.json();
+            titles = fallbackData[1] as string[];
+            logger.debug(`📝 Fallback search found ${titles.length} results`);
+          }
+        } catch (error) {
+          logger.debug(`Fallback search failed:`, error);
+        }
+      }
 
       if (titles.length === 0) {
         logger.debug(`❌ No Wikipedia page found on ${domain} for "${movie.title}"`);

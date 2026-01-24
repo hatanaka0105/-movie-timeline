@@ -60,6 +60,35 @@ npm run dev
 
 http://localhost:5173/ にアクセス
 
+**注意**: `npm run dev`コマンドは対話的なサーバーとして起動するため、ターミナルのプロンプトは返ってきません。これは正常な動作です。サーバーが起動すると以下のようなメッセージが表示されます:
+
+```
+VITE v7.3.1  ready in 400 ms
+➜  Local:   http://localhost:5173/
+➜  Network: use --host to expose
+```
+
+サーバーを停止するには`Ctrl+C`を押してください。
+
+#### トラブルシューティング
+
+**Node.jsバージョン警告が表示される場合**:
+```
+You are using Node.js 20.17.0. Vite requires Node.js version 20.19+ or 22.12+.
+```
+
+この警告が表示されても、Viteは動作します。警告を消すには以下のいずれかの方法でNode.jsをアップグレードしてください:
+- nvm使用の場合: `nvm install 20.19` または `nvm install 22.12`
+- 直接インストール: [Node.js公式サイト](https://nodejs.org/)から最新版をダウンロード
+
+**サーバーが起動しているか確認する方法**:
+```bash
+# 別のターミナルで以下を実行
+curl http://localhost:5173/
+# または
+node -e "fetch('http://localhost:5173/').then(r => console.log('Server is running!'))"
+```
+
 ## アーキテクチャ
 
 ### システム構成
