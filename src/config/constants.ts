@@ -32,7 +32,7 @@ export const CENTURY_OFFSETS = {
 export const CACHE_CONFIG = {
   STORAGE_KEY: 'movieTimePeriodCache',
   VERSION_KEY: 'movieTimePeriodCacheVersion',
-  CURRENT_VERSION: 5, // v5: Fixed time period detection for historical films
+  CURRENT_VERSION: 13, // v13: Force complete cache refresh after CSP fixes
 };
 
 // レイアウト設定
