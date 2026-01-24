@@ -78,7 +78,7 @@ export async function saveMovieTimePeriod(data: {
         ${data.period},
         ${data.source},
         ${data.notes || null},
-        ${data.additionalYears || null},
+        ${data.additionalYears ? JSON.stringify(data.additionalYears) : null},
         ${data.reliability},
         NOW()
       )
@@ -112,10 +112,12 @@ export async function getMovieTimePeriodsBatch(tmdbIds: number[]): Promise<Map<n
   }
 
   try {
-    const result = await sql`
-      SELECT * FROM movie_time_periods
-      WHERE tmdb_id = ANY(${tmdbIds})
-    `;
+    // IN句を使って配列を展開
+    const placeholders = tmdbIds.map((_, i) => `$${i + 1}`).join(',');
+    const result = await sql.query(
+      `SELECT * FROM movie_time_periods WHERE tmdb_id IN (${placeholders})`,
+      tmdbIds
+    );
 
     const map = new Map<number, MovieTimePeriodRow>();
     result.rows.forEach((row) => {
