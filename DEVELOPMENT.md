@@ -195,10 +195,53 @@ location.reload();
 
 ### 方法4: キャッシュバージョンを上げる（開発者向け）
 
-`src/services/movieTimePeriodDb.ts`の`CURRENT_CACHE_VERSION`を増やすと、全ユーザーのキャッシュが自動的にクリアされます:
+時代設定抽出ロジックを変更した場合、以下の**3つのファイル**でキャッシュバージョンを同じ番号に更新する必要があります:
 
+#### 1. フロントエンド - メインキャッシュ (`src/services/movieTimePeriodDb.ts`)
 ```typescript
-const CURRENT_CACHE_VERSION = 4; // increment this number
+const CURRENT_CACHE_VERSION = 13; // increment this number
+```
+
+#### 2. フロントエンド - 設定ファイル (`src/config/constants.ts`)
+```typescript
+export const CACHE_CONFIG = {
+  CURRENT_VERSION: 13, // increment to match movieTimePeriodDb.ts
+};
+```
+
+#### 3. バックエンド - Vercel KVキャッシュ (`api/movie-cache.ts`)
+```typescript
+const CACHE_VERSION = 13; // increment to match frontend
+const CACHE_KEY = `movie-time-periods-v${CACHE_VERSION}`;
+```
+
+**重要**: 3つのファイルすべてで同じバージョン番号にしないと、フロントエンドとバックエンドでキャッシュの不一致が発生します。
+
+### 方法5: 本番環境での完全なリフレッシュ
+
+本番環境で古いキャッシュをクリアする場合:
+
+1. **ブラウザの強制リロード**: `Ctrl+Shift+R` (Windows/Linux) または `Cmd+Shift+R` (Mac)
+   - これでブラウザキャッシュとローカルストレージが強制的に再読み込みされます
+
+2. **開発者ツールから手動クリア**:
+   ```javascript
+   // F12で開発者ツールを開き、Consoleで実行
+   localStorage.clear();
+   location.reload();
+   ```
+
+3. **Application/Storageタブから**:
+   - F12で開発者ツールを開く
+   - Applicationタブ → Local Storage → サイトのURL
+   - `movieTimePeriodCache` と `movieTimePeriodCacheVersion` を削除
+   - ページをリロード
+
+**キャッシュバージョン更新後の確認方法**:
+```javascript
+// Consoleで実行してバージョンを確認
+localStorage.getItem('movieTimePeriodCacheVersion');
+// 正しいバージョン番号(例: "13")が返ればOK
 ```
 
 ## 開発フロー
