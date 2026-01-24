@@ -91,6 +91,13 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
       language: 'ja-JP',
     });
 
+    // レート制限エラーのチェック
+    if (response1.status === 429) {
+      const errorData = await response1.json().catch(() => ({}));
+      const resetTime = errorData.resetTime;
+      throw new Error(`RATE_LIMIT${resetTime ? `:${resetTime}` : ''}`);
+    }
+
     if (response1.ok) {
       const data1: TMDbSearchResponse = await response1.json();
       data1.results.forEach(movie => {

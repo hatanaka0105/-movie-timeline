@@ -17,7 +17,7 @@ function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [showForm, setShowForm] = useState(true);
   const [inputMode, setInputMode] = useState<'search' | 'manual' | 'range' | 'auto' | 'export'>('search');
-  const [scale, setScale] = useState(10); // PIXELS_PER_YEAR: 5-20
+  const [scale, setScale] = useState(10); // PIXELS_PER_YEAR: 1-20
   const [thumbnailSize, setThumbnailSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [showKeywordViewer, setShowKeywordViewer] = useState(false);
 
@@ -300,14 +300,14 @@ function App() {
                   </label>
                   <input
                     type="range"
-                    min="5"
+                    min="1"
                     max="20"
                     value={scale}
                     onChange={(e) => setScale(Number(e.target.value))}
                     className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>{t.narrow} (5px)</span>
+                    <span>{t.narrow} (1px)</span>
                     <span>{t.wide} (20px)</span>
                   </div>
                 </div>

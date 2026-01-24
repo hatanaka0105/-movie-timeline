@@ -49,11 +49,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  // レート制限: 1時間あたり100リクエスト
+  // レート制限: 1時間あたり300リクエスト
   const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
              (req.headers['x-real-ip'] as string) ||
              'unknown';
-  const rateLimitResult = await rateLimit(ip, 100, 3600);
+  const rateLimitResult = await rateLimit(ip, 300, 3600);
 
   if (!rateLimitResult.success) {
     return res.status(429).json({

@@ -53,9 +53,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // Rate limiting: 50 requests per hour (same as Gemini due to cost)
+    // Rate limiting: 150 requests per hour (primary AI)
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0] || 'unknown';
-    const rateLimitResult = await rateLimit(ip, 50, 3600);
+    const rateLimitResult = await rateLimit(ip, 150, 3600);
 
     if (!rateLimitResult.success) {
       return res.status(429).json({

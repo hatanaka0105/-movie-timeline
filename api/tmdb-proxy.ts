@@ -29,11 +29,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // レート制限: 1時間あたり200リクエスト（検索が多いため）
+  // レート制限: 1時間あたり1000リクエスト（検索が多いため）
   const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
              (req.headers['x-real-ip'] as string) ||
              'unknown';
-  const rateLimitResult = await rateLimit(ip, 200, 3600);
+  const rateLimitResult = await rateLimit(ip, 1000, 3600);
 
   if (!rateLimitResult.success) {
     return res.status(429).json({

@@ -628,6 +628,11 @@ export async function lookupAndCacheTimePeriod(
       error: deepseekResult.error
     });
 
+    // レート制限エラーの場合、periodに分かりやすいメッセージを設定
+    if (deepseekResult.source === 'deepseek_rate_limit') {
+      deepseekResult.period = 'AI分析中（レート制限）';
+    }
+
     if (deepseekResult.success && (deepseekResult.startYear !== null || deepseekResult.period === 'NEAR_FUTURE')) {
       const reliability = determineReliability(deepseekResult, movie);
       const entry: MovieTimePeriodEntry = {
@@ -666,6 +671,11 @@ export async function lookupAndCacheTimePeriod(
     // 3. DeepSeekで見つからなかった場合、Gemini Flashで検索
     logger.debug(`🤖 DeepSeek failed, trying Gemini Flash for "${movie.title}"...`);
     const geminiResult = await extractTimePeriodWithGemini(movie);
+
+    // レート制限エラーの場合、periodに分かりやすいメッセージを設定
+    if (geminiResult.source === 'gemini_rate_limit') {
+      geminiResult.period = 'AI分析中（レート制限）';
+    }
     logger.debug(`📊 Gemini result for "${movie.title}":`, {
       success: geminiResult.success,
       startYear: geminiResult.startYear,
@@ -713,6 +723,11 @@ export async function lookupAndCacheTimePeriod(
     if (!geminiResult.success || geminiResult.startYear === null) {
       logger.debug(`🚀 Gemini failed or returned unknown period, falling back to Groq for "${movie.title}"...`);
       const groqResult = await extractTimePeriodWithGroq(movie);
+
+      // レート制限エラーの場合、periodに分かりやすいメッセージを設定
+      if (groqResult.source === 'groq_rate_limit') {
+        groqResult.period = 'AI分析中（レート制限）';
+      }
       logger.debug(`📊 Groq result for "${movie.title}":`, {
         success: groqResult.success,
         startYear: groqResult.startYear,

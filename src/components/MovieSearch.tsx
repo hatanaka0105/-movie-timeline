@@ -21,6 +21,7 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<TMDbMovie[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   // 自動検索のためのデバウンス処理
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
 
     const timeoutId = setTimeout(async () => {
       setIsSearching(true);
+      setSearchError(null);
       try {
         const results = await searchMovies(query);
         // searchMovies内で複数のAPIコールが実行され、結果がマージされているため
@@ -39,6 +41,18 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
       } catch (error) {
         console.error('Search error:', error);
         setSearchResults([]);
+
+        // レート制限エラーの検出
+        if (error instanceof Error && error.message.startsWith('RATE_LIMIT')) {
+          const resetTimePart = error.message.split(':')[1];
+          if (resetTimePart) {
+            const resetTime = parseInt(resetTimePart);
+            const waitMinutes = Math.ceil((resetTime - Date.now()) / 60000);
+            setSearchError(`検索のレート制限に達しました。${waitMinutes}分後に再試行してください。`);
+          } else {
+            setSearchError('検索のレート制限に達しました。しばらく待ってから再試行してください。');
+          }
+        }
       } finally {
         setIsSearching(false);
       }
@@ -53,12 +67,25 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
     if (!query.trim()) return;
 
     setIsSearching(true);
+    setSearchError(null);
     try {
       const results = await searchMovies(query);
       setSearchResults(results);
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
+
+      // レート制限エラーの検出
+      if (error instanceof Error && error.message.startsWith('RATE_LIMIT')) {
+        const resetTimePart = error.message.split(':')[1];
+        if (resetTimePart) {
+          const resetTime = parseInt(resetTimePart);
+          const waitMinutes = Math.ceil((resetTime - Date.now()) / 60000);
+          setSearchError(`検索のレート制限に達しました。${waitMinutes}分後に再試行してください。`);
+        } else {
+          setSearchError('検索のレート制限に達しました。しばらく待ってから再試行してください。');
+        }
+      }
     } finally {
       setIsSearching(false);
     }
@@ -107,20 +134,33 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
       // フォールバック（推定値）になった場合、自動的にWikipedia/Gemini検索を実行
       if (timeline.isEstimated) {
         logger.debug(`🔄 Timeline is estimated, calling lookupAndCacheTimePeriod for "${details.title}"...`);
-        const wikiResult = await lookupAndCacheTimePeriod(details);
 
-        if (wikiResult) {
-          // Wikipedia/Gemini検索結果を使用
-          timeline = {
-            startYear: wikiResult.startYear,
-            endYear: wikiResult.endYear,
-            period: wikiResult.period,
-            additionalYears: wikiResult.additionalYears,
-            isEstimated: false,
-            isPending: false,
-          };
-        } else {
-          // 検索が失敗した場合、時代設定を不明にする
+        try {
+          const wikiResult = await lookupAndCacheTimePeriod(details);
+
+          if (wikiResult) {
+            // Wikipedia/Gemini検索結果を使用
+            timeline = {
+              startYear: wikiResult.startYear,
+              endYear: wikiResult.endYear,
+              period: wikiResult.period,
+              additionalYears: wikiResult.additionalYears,
+              isEstimated: false,
+              isPending: false,
+            };
+          } else {
+            // 検索が失敗した場合、時代設定を不明にする
+            timeline = {
+              startYear: null,
+              endYear: null,
+              period: t.unknownEra || '時代不明',
+              isEstimated: false,
+              isPending: false,
+            };
+          }
+        } catch (error) {
+          logger.error('AI lookup error:', error);
+          // エラー時も時代設定を不明として処理を継続
           timeline = {
             startYear: null,
             endYear: null,
@@ -166,6 +206,13 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
           )}
         </div>
       </form>
+
+      {/* エラーメッセージ */}
+      {searchError && (
+        <div className="mb-4 p-3 bg-red-900/30 border border-red-700 rounded-md">
+          <p className="text-red-400 text-sm">⚠️ {searchError}</p>
+        </div>
+      )}
 
       {/* 検索結果 */}
       {searchResults.length > 0 && (

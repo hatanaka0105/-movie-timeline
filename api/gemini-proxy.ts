@@ -29,11 +29,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // レート制限: 1時間あたり50リクエスト（Gemini APIは高コスト）
+  // レート制限: 1時間あたり100リクエスト（フォールバックAI）
   const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
              (req.headers['x-real-ip'] as string) ||
              'unknown';
-  const rateLimitResult = await rateLimit(ip, 50, 3600);
+  const rateLimitResult = await rateLimit(ip, 100, 3600);
 
   if (!rateLimitResult.success) {
     return res.status(429).json({
