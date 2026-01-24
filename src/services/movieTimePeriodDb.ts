@@ -22,7 +22,7 @@ import staticDb from '../data/movieTimePeriods.json';
 // サーバーサイドキャッシュ + LocalStorageのハイブリッド
 const STORAGE_KEY = 'movieTimePeriodCache';
 const CACHE_VERSION_KEY = 'movieTimePeriodCacheVersion';
-const CURRENT_CACHE_VERSION = 13; // v13: Force complete cache refresh after CSP fixes (Groq API now allowed)
+const CURRENT_CACHE_VERSION = 14; // v14: Fix BC dates to use negative numbers (紀元前を負の数に修正)
 const API_CACHE_URL = '/api/movie-cache';
 
 class MovieTimePeriodDatabase {

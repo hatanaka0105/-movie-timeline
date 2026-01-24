@@ -14,7 +14,7 @@ interface CacheData {
   [movieId: string]: TimePeriodData;
 }
 
-const CACHE_VERSION = 13; // v13: Force complete cache refresh after CSP fixes
+const CACHE_VERSION = 14; // v14: Fix BC dates to use negative numbers
 const CACHE_KEY = `movie-time-periods-v${CACHE_VERSION}`;
 
 // 入力検証スキーマ

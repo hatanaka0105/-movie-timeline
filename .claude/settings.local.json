@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(npm run build:*)",
+      "Bash(test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix time period detection for historical films\n\nThis commit addresses the issue where well-known historical films\n\\(Seven Samurai, Caligula, The Ten Commandments, etc.\\) were being\nmarked as \"unknown period\" despite having clear historical settings.\n\nChanges:\n1. Skip shared DB results with unknown periods \\(startYear: 0\\)\n   - Previously, failed lookups cached in shared DB would prevent\n     re-attempts with Wikipedia/AI\n   - Now continues to Wikipedia/AI lookup if shared DB has no valid year\n\n2. Add Japanese film support with Japanese Wikipedia search\n   - Detect Japanese films by original_language or Japanese characters\n   - Search ja.wikipedia.org first, then en.wikipedia.org\n   - Added original_language field to TMDbMovie interface\n\n3. Expand Wikipedia keyword matching for Japanese historical periods\n   - Added Sengoku period, Edo period, Meiji era keywords\n   - Added Japanese historical events: Honnoji, Sekigahara, 47 Ronin\n   - Added Japanese historical figures: Oda Nobunaga, Tokugawa Ieyasu\n\n4. Enhance AI prompts with film knowledge examples\n   - Added 15+ historical film examples to DeepSeek/Gemini/Groq prompts\n   - Includes Japanese films: 七人の侍, 忠臣蔵, 陰陽師, キングダム\n   - Includes Western historical films: Caligula, Exodus, The Great Gatsby\n   - Added prehistoric films: 恐竜100万年, 紀元前1万年\n\nThis fix ensures that historical films with insufficient TMDb overviews\nwill be properly analyzed using Wikipedia and AI inference with film\nknowledge, rather than being immediately marked as unknown.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push)",
+      "Bash(git commit:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(npm run dev:*)",
+      "Bash(PORT=5173 npm run dev:*)",
+      "Bash(npx vite:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(findstr:*)",
+      "Bash(npx tsc:*)",
+      "Bash(tasklist:*)",
+      "Bash(cmd //c \"tasklist /FI \"\"IMAGENAME eq node.exe\"\"\")",
+      "Bash(node:*)",
+      "Bash(ls:*)",
+      "Bash(pkill:*)",
+      "Bash(xargs kill:*)",
+      "Bash(git reset:*)"
+    ]
+  }
+}

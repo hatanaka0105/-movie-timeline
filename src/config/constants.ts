@@ -32,7 +32,7 @@ export const CENTURY_OFFSETS = {
 export const CACHE_CONFIG = {
   STORAGE_KEY: 'movieTimePeriodCache',
   VERSION_KEY: 'movieTimePeriodCacheVersion',
-  CURRENT_VERSION: 13, // v13: Force complete cache refresh after CSP fixes
+  CURRENT_VERSION: 14, // v14: Fix BC dates to use negative numbers
 };
 
 // レイアウト設定

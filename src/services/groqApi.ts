@@ -88,11 +88,16 @@ Instructions:
    - 20th century → 1950
    - Calculate as: (century - 1) * 100 + 50
 9. If the time period is contemporary (same as release year), use the release year
+10. CRITICAL: For BC/BCE dates (紀元前), return NEGATIVE numbers:
+   - "10,000 BC" / "紀元前1万年" → startYear: -10000
+   - "1300 BC" / "紀元前1300年" → startYear: -1300
+   - "245 BC" → startYear: -245
+   - BC dates must be negative to position correctly on timeline
 
 Respond ONLY in valid JSON format (no markdown, no code blocks):
 {
-  "startYear": number or null,
-  "endYear": number or null,
+  "startYear": number or null (NEGATIVE for BC dates),
+  "endYear": number or null (NEGATIVE for BC dates),
   "additionalYears": [number] or null,
   "period": "descriptive string in Japanese or special keyword",
   "confidence": "high" | "medium" | "low"
@@ -100,6 +105,8 @@ Respond ONLY in valid JSON format (no markdown, no code blocks):
 
 Examples:
 - Gladiator: {"startYear": 180, "endYear": null, "additionalYears": null, "period": "180年", "confidence": "high"}
+- 10,000 BC: {"startYear": -10000, "endYear": null, "additionalYears": null, "period": "紀元前1万年", "confidence": "high"}
+- The Ten Commandments: {"startYear": -1300, "endYear": null, "additionalYears": null, "period": "紀元前1300年", "confidence": "high"}
 - Star Wars Episode IV: {"startYear": null, "endYear": null, "additionalYears": null, "period": "LONG_AGO", "confidence": "high"}
 - Interstellar: {"startYear": 2067, "endYear": null, "additionalYears": [2100, 2130], "period": "2067年", "confidence": "high"}
 - Avatar (2009): {"startYear": 2154, "endYear": null, "additionalYears": null, "period": "2154年", "confidence": "high"}
