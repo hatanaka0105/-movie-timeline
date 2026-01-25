@@ -197,11 +197,8 @@ function convertToTMDbFormat(result: WikipediaSearchResult): TMDbMovie {
     poster_path: null, // Wikipediaには画像情報がないのでnull
     backdrop_path: null,
     vote_average: 0,
-    vote_count: 0,
     popularity: 0,
     genre_ids: [],
-    adult: false,
     original_language: 'en',
-    video: false,
   };
 }
