@@ -96,6 +96,10 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
     if (response1.status === 429) {
       logger.warn('⚠️ TMDb API rate limit exceeded, falling back to Wikipedia Search');
 
+      // エラーデータを先に取得（レスポンスボディは一度しか読めないため）
+      const errorData = await response1.json().catch(() => ({}));
+      const resetTime = errorData.resetTime;
+
       // Wikipedia検索にフォールバック
       try {
         const wikiResults = await searchMoviesOnWikipedia(query);
@@ -104,8 +108,6 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
       } catch (wikiError) {
         logger.error('Wikipedia fallback also failed:', wikiError);
         // Wikipediaも失敗した場合はレート制限エラーを投げる
-        const errorData = await response1.json().catch(() => ({}));
-        const resetTime = errorData.resetTime;
         throw new Error(`RATE_LIMIT${resetTime ? `:${resetTime}` : ''}`);
       }
     }
