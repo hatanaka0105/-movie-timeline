@@ -272,8 +272,8 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     'ファンタジー世界',
   ];
 
-  const genreIds = movie.genre_ids || [];
-  const isFantasyGenre = genreIds.includes(14); // 14 = Fantasy genre
+  const movieGenreIds = movie.genre_ids || [];
+  const isFantasyGenre = movieGenreIds.includes(14); // 14 = Fantasy genre
 
   // ロード・オブ・ザ・リングなどの明確なファンタジー作品を検出
   const explicitFantasyTitles = [
