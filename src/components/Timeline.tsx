@@ -153,28 +153,8 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
       // }
 
       // 追加の年代（タイムトラベル映画用）
-      if (movie.timeline.additionalYears && movie.timeline.additionalYears.length > 0 && movie.timeline.startYear) {
-        movie.timeline.additionalYears.forEach((additionalYear) => {
-          // 追加年代のY座標を計算
-          const yearDiff = additionalYear - minYear;
-          const additionalY = yearDiff * scale;
-
-          // 追加サムネイル用の擬似レイアウト
-          const additionalLayout: TimelineLayout = {
-            movieId: `${movie.id}-additional-${additionalYear}`,
-            x: movieLayout?.x || 0,
-            y: additionalY,
-            column: movieLayout?.column || 0,
-          };
-
-          result.push({
-            movie,
-            layout: additionalLayout,
-            year: additionalYear,
-            isAdditional: true,
-          });
-        });
-      }
+      // 注: additionalYearsはサムネイル表示せず、endYearとして扱う（スパン線のみ表示）
+      // これにより、サムネイル過多を防ぎつつ、長方形の当たり判定は保持される
     });
 
     return result;
@@ -235,10 +215,17 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
               if (!movieLayout) return null;
 
               // 時代範囲がある場合のスパン計算（メインサムネイルのみ）
-              const hasTimeSpan = !isAdditional && movie.timeline.endYear && movie.timeline.endYear !== movie.timeline.startYear;
+              // additionalYearsがある場合、その最大値をendYearとして扱う
+              let effectiveEndYear = movie.timeline.endYear;
+              if (!isAdditional && movie.timeline.additionalYears && movie.timeline.additionalYears.length > 0) {
+                const maxAdditionalYear = Math.max(...movie.timeline.additionalYears);
+                effectiveEndYear = effectiveEndYear ? Math.max(effectiveEndYear, maxAdditionalYear) : maxAdditionalYear;
+              }
+
+              const hasTimeSpan = !isAdditional && effectiveEndYear && effectiveEndYear !== movie.timeline.startYear;
               let spanHeight = 0;
-              if (hasTimeSpan && movie.timeline.startYear && movie.timeline.endYear) {
-                const yearDiff = movie.timeline.endYear - movie.timeline.startYear;
+              if (hasTimeSpan && movie.timeline.startYear && effectiveEndYear) {
+                const yearDiff = effectiveEndYear - movie.timeline.startYear;
                 spanHeight = yearDiff * scale;
               }
 
