@@ -22,11 +22,29 @@ function App() {
   const [showKeywordViewer, setShowKeywordViewer] = useState(false);
 
   const handleAddMovie = (movie: Movie) => {
+    // 同じIDの映画が既に存在する場合は追加しない（重複防止）
+    if (movies.some(m => m.id === movie.id)) {
+      console.log(`Movie ${movie.id} (${movie.title}) is already in the timeline, skipping duplicate add`);
+      return;
+    }
     setMovies([...movies, movie]);
   };
 
   const handleAddMovies = (newMovies: Movie[]) => {
-    setMovies([...movies, ...newMovies]);
+    // 既存の映画IDセットを作成
+    const existingIds = new Set(movies.map(m => m.id));
+    // 重複を除外した新しい映画のみを追加
+    const uniqueNewMovies = newMovies.filter(movie => {
+      if (existingIds.has(movie.id)) {
+        console.log(`Movie ${movie.id} (${movie.title}) is already in the timeline, skipping duplicate add`);
+        return false;
+      }
+      return true;
+    });
+
+    if (uniqueNewMovies.length > 0) {
+      setMovies([...movies, ...uniqueNewMovies]);
+    }
   };
 
   const handleUpdateMovie = (movieId: string, updates: Partial<Movie>) => {
