@@ -22,7 +22,7 @@ import staticDb from '../data/movieTimePeriods.json';
 // サーバーサイドキャッシュ + LocalStorageのハイブリッド
 const STORAGE_KEY = 'movieTimePeriodCache';
 const CACHE_VERSION_KEY = 'movieTimePeriodCacheVersion';
-const CURRENT_CACHE_VERSION = 16; // v16: Add Jesus/Christ/Ben-Hur keywords for Biblical era films
+const CURRENT_CACHE_VERSION = 17; // v17: Remove ambiguous keywords (pharaoh, pyramid, gladiator, viking, plague, civil war, cowboys, frontier, gunslinger, tsar, disco, punk, afghanistan) and use full names (george patton, erwin rommel, elvis presley)
 const API_CACHE_URL = '/api/movie-cache';
 
 class MovieTimePeriodDatabase {

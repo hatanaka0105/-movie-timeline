@@ -32,7 +32,7 @@ export const CENTURY_OFFSETS = {
 export const CACHE_CONFIG = {
   STORAGE_KEY: 'movieTimePeriodCache',
   VERSION_KEY: 'movieTimePeriodCacheVersion',
-  CURRENT_VERSION: 16, // v16: Add Jesus/Christ/Ben-Hur keywords for Biblical era films
+  CURRENT_VERSION: 17, // v17: Remove ambiguous keywords (pharaoh, pyramid, gladiator, viking, plague, civil war, cowboys, frontier, gunslinger, tsar, disco, punk, afghanistan) and use full names (george patton, erwin rommel, elvis presley)
 };
 
 // レイアウト設定

@@ -17,9 +17,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'cleopatra': -30,
   'julius caesar': -44,
   'alexander the great': -323,
-  'pharaoh': -1500,
-  'pyramid': -2500,
-  'gladiator': 180,
+  // 削除: 'pharaoh', 'pyramid', 'gladiator' - 一般的な古代の要素として多くの映画で言及される
   'spartacus': -71,
   'pompeii': 79,
 
@@ -40,12 +38,11 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   // 'knights': 1300, // 削除: too generic (11世紀～16世紀まで広範囲)
   // 'samurai': 1400, // 削除: too generic (12世紀～19世紀まで広範囲)
   // '侍': 1400, // 削除: too generic (12世紀～19世紀まで広範囲)
-  'viking': 900,
-  'ヴァイキング': 900,
+  // 削除: 'viking', 'ヴァイキング' - 8世紀～11世紀の長期間の文化を指す一般的な用語
   'joan of arc': 1429,
   'ジャンヌ・ダルク': 1429,
   'black death': 1348,
-  'plague': 1348,
+  // 削除: 'plague' - 複数の時代のペストがあり曖昧（黒死病、ペスト等）
   'magna carta': 1215,
 
   // ルネサンス・宗教改革
@@ -103,7 +100,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'revolutionary war': 1776,
   'declaration of independence': 1776,
   'アメリカ独立': 1776,
-  'civil war': 1863,
+  // 削除: 'civil war' - 多くの国に南北戦争があり曖昧（アメリカ、スペイン、イギリス等）
   'american civil war': 1863,
   '南北戦争': 1863,
   'gettysburg': 1863,
@@ -115,9 +112,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'old west': 1870,
   'gold rush': 1849,
   'ゴールドラッシュ': 1849,
-  'cowboys': 1880,
-  'frontier': 1870,
-  'gunslinger': 1880,
+  // 削除: 'cowboys', 'frontier', 'gunslinger' - 西部劇の一般的な背景要素として頻出
   'tombstone': 1881,
   'ok corral': 1881,
   'billy the kid': 1881,
@@ -160,8 +155,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'dust bowl': 1935,
   'weimar': 1925,
   'ワイマール': 1925,
-  'tsar': 1917,
-  'ツァーリ': 1917,
+  // 削除: 'tsar', 'ツァーリ' - ロシア帝国全体（16世紀～1917年）を指す一般的な称号
   'russian revolution': 1917,
   'ロシア革命': 1917,
   'bolshevik': 1917,
@@ -226,9 +220,9 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'roosevelt': 1942,
   'ルーズベルト': 1942,
   'eisenhower': 1944,
-  'patton': 1944,
+  'george patton': 1944,  // 厳密化: 'patton' → 'george patton'（フルネーム）
   'パットン': 1944,
-  'rommel': 1942,
+  'erwin rommel': 1942,  // 厳密化: 'rommel' → 'erwin rommel'（フルネーム）
   'ロンメル': 1942,
   'gestapo': 1940,
   'ゲシュタポ': 1940,
@@ -282,7 +276,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   // 1950-60年代
   'rock and roll': 1955,
   'ロックンロール': 1955,
-  'elvis': 1956,
+  'elvis presley': 1956,  // 厳密化: 'elvis' → 'elvis presley'（フルネーム）
   'civil rights': 1963,
   '公民権運動': 1963,
   'martin luther king': 1963,
@@ -317,10 +311,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'ウォーターゲート': 1974,
   'nixon': 1972,
   'ニクソン': 1972,
-  'disco': 1977,
-  'ディスコ': 1977,
-  'punk rock': 1977,
-  'パンク': 1977,
+  // 削除: 'disco', 'ディスコ', 'punk rock', 'パンク' - 音楽ジャンルとして多くの映画の背景で言及される
   // 削除: '石油危機', 'oil crisis' (too generic - appears as background context in many movies)
   'iranian revolution': 1979,
   'イラン革命': 1979,
@@ -346,8 +337,7 @@ export const PERIOD_KEYWORDS: Record<string, number> = {
   'war on terror': 2003,
   'iraq war': 2005,
   'イラク戦争': 2005,
-  'afghanistan': 2005,
-  'アフガニスタン': 2005,
+  // 削除: 'afghanistan', 'アフガニスタン' - 地名として複数の戦争・時代で言及される（ソ連侵攻1979-1989、米国戦争2001-2021等）
 
   // 災害・事件
   'titanic': 1912,

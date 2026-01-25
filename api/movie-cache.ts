@@ -14,7 +14,7 @@ interface CacheData {
   [movieId: string]: TimePeriodData;
 }
 
-const CACHE_VERSION = 16; // v16: Add Jesus/Christ/Ben-Hur keywords for Biblical era films
+const CACHE_VERSION = 17; // v17: Remove ambiguous keywords (pharaoh, pyramid, gladiator, viking, plague, civil war, cowboys, frontier, gunslinger, tsar, disco, punk, afghanistan) and use full names (george patton, erwin rommel, elvis presley)
 const CACHE_KEY = `movie-time-periods-v${CACHE_VERSION}`;
 
 // 入力検証スキーマ

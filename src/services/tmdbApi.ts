@@ -862,12 +862,14 @@ export function extractTimePeriod(movie: TMDbMovieDetails): {
     // 優先度の定義：より具体的なキーワードほど高い優先度（数値が小さいほど優先）
     const getKeywordPriority = (keyword: string): number => {
       // 歴史上の人物名・具体的な映画タイトル（最高優先度）
+      // 注: フルネームまたは完全な固有名詞のみ（曖昧な単語は含めない）
       if (['alexander the great', 'cleopatra', 'julius caesar', 'spartacus', 'napoleon', 'ナポレオン',
            'joan of arc', 'ジャンヌ・ダルク', 'leonardo da vinci', 'michelangelo', 'galileo',
            'columbus', 'marie antoinette', 'マリー・アントワネット', 'nixon', 'ニクソン',
            'kennedy', 'ケネディ', 'martin luther king', 'キング牧師', 'mandela', 'マンデラ',
            'hitler', 'ヒトラー', 'churchill', 'チャーチル', 'stalin', 'スターリン',
            'lenin', 'レーニン', 'reagan', 'レーガン', 'thatcher', 'サッチャー',
+           'george patton', 'パットン', 'erwin rommel', 'ロンメル', 'elvis presley',
            'ben-hur', 'ベン・ハー', 'ben hur'].some(k => k === keyword.toLowerCase())) {
         return 1;
       }
