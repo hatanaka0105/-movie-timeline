@@ -22,6 +22,7 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
   const [searchResults, setSearchResults] = useState<TMDbMovie[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [isWikipediaFallback, setIsWikipediaFallback] = useState(false);
 
   // 自動検索のためのデバウンス処理
   useEffect(() => {
@@ -33,11 +34,17 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
     const timeoutId = setTimeout(async () => {
       setIsSearching(true);
       setSearchError(null);
+      setIsWikipediaFallback(false);
       try {
         const results = await searchMovies(query);
         // searchMovies内で複数のAPIコールが実行され、結果がマージされているため
         // そのまま設定すれば全ての結果が表示される
         setSearchResults(results);
+
+        // Wikipediaフォールバックを検出（poster_pathがnullの場合はWikipedia結果）
+        if (results.length > 0 && results.every(r => r.poster_path === null)) {
+          setIsWikipediaFallback(true);
+        }
       } catch (error) {
         console.error('Search error:', error);
         setSearchResults([]);
@@ -68,9 +75,15 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
 
     setIsSearching(true);
     setSearchError(null);
+    setIsWikipediaFallback(false);
     try {
       const results = await searchMovies(query);
       setSearchResults(results);
+
+      // Wikipediaフォールバックを検出（poster_pathがnullの場合はWikipedia結果）
+      if (results.length > 0 && results.every(r => r.poster_path === null)) {
+        setIsWikipediaFallback(true);
+      }
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
@@ -211,6 +224,15 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
       {searchError && (
         <div className="mb-4 p-3 bg-red-900/30 border border-red-700 rounded-md">
           <p className="text-red-400 text-sm">⚠️ {searchError}</p>
+        </div>
+      )}
+
+      {/* Wikipediaフォールバック通知 */}
+      {isWikipediaFallback && (
+        <div className="mb-4 p-3 bg-blue-900/30 border border-blue-700 rounded-md">
+          <p className="text-blue-400 text-sm">
+            📚 TMDb検索のレート制限中です。Wikipedia検索を使用しています。
+          </p>
         </div>
       )}
 

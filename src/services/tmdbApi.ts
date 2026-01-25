@@ -7,6 +7,7 @@ const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 import { movieTimePeriodDb } from './movieTimePeriodDb';
 import { logger } from '../utils/logger';
+import { searchMoviesOnWikipedia } from './wikipediaSearch';
 
 // TMDb APIを呼び出す（プロキシまたは直接）
 async function fetchTMDb(endpoint: string, params: Record<string, string>) {
@@ -93,9 +94,20 @@ export async function searchMovies(query: string): Promise<TMDbMovie[]> {
 
     // レート制限エラーのチェック
     if (response1.status === 429) {
-      const errorData = await response1.json().catch(() => ({}));
-      const resetTime = errorData.resetTime;
-      throw new Error(`RATE_LIMIT${resetTime ? `:${resetTime}` : ''}`);
+      logger.warn('⚠️ TMDb API rate limit exceeded, falling back to Wikipedia Search');
+
+      // Wikipedia検索にフォールバック
+      try {
+        const wikiResults = await searchMoviesOnWikipedia(query);
+        logger.debug(`📚 Wikipedia fallback returned ${wikiResults.length} results`);
+        return wikiResults;
+      } catch (wikiError) {
+        logger.error('Wikipedia fallback also failed:', wikiError);
+        // Wikipediaも失敗した場合はレート制限エラーを投げる
+        const errorData = await response1.json().catch(() => ({}));
+        const resetTime = errorData.resetTime;
+        throw new Error(`RATE_LIMIT${resetTime ? `:${resetTime}` : ''}`);
+      }
     }
 
     if (response1.ok) {
