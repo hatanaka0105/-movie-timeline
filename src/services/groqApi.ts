@@ -1,10 +1,12 @@
 // Groq API クライアント (Gemini フォールバック)
 // Geminiのレート制限時に使用する高速推論サービス
+// プロキシ経由でAPIキーをサーバーサイドで保護
 
 import { TMDbMovieDetails } from './tmdbApi';
 import { logger } from '../utils/logger';
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+// プロキシURL（APIキーはサーバーサイドで管理）
+const GROQ_PROXY_URL = '/api/groq-proxy';
 
 export interface GroqTimePeriodResult {
   success: boolean;
@@ -118,22 +120,8 @@ Examples:
 JSON response:`;
 
     logger.debug(`🚀 Groq (Llama 3.3 70B): Analyzing "${movie.title}"...`);
-    logger.debug(`🔑 Groq API Key present: ${!!GROQ_API_KEY}, length: ${GROQ_API_KEY?.length || 0}`);
 
-    if (!GROQ_API_KEY) {
-      logger.error('❌ GROQ_API_KEY is not set');
-      return {
-        success: false,
-        startYear: null,
-        endYear: null,
-        period: '時代不明',
-        confidence: 'low',
-        source: 'groq_error',
-        error: 'GROQ_API_KEY is not configured',
-      };
-    }
-
-    // Groq API は OpenAI 互換フォーマット
+    // Groq API は OpenAI 互換フォーマット（プロキシ経由で呼び出し）
     const requestBody = {
       model: 'llama-3.3-70b-versatile', // 最高精度のモデル (MMLU 86%)
       messages: [
@@ -146,17 +134,13 @@ JSON response:`;
       max_tokens: 2048,
     };
 
-    const response = await fetch(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-        },
-        body: JSON.stringify(requestBody),
-      }
-    );
+    const response = await fetch(GROQ_PROXY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
