@@ -104,6 +104,20 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
     [timelineMovies, layout, scale, thumbnailSize]
   );
 
+  // 最大カラム数を計算してタイムライン幅を決定
+  const timelineWidth = useMemo(() => {
+    const maxColumn = Math.max(0, ...Object.values(layout).map(l => l.column));
+    const cardWidth = LAYOUT_CONFIG.CARD_DIMENSIONS[thumbnailSize].width;
+    const spacing = LAYOUT_CONFIG.HORIZONTAL_SPACING;
+    const leftMargin = LAYOUT_CONFIG.LEFT_MARGIN;
+
+    // 幅 = 左マージン + (カラム数 + 1) × (カード幅 + スペーシング)
+    const calculatedWidth = leftMargin + (maxColumn + 1) * (cardWidth + spacing) + spacing * 2;
+
+    // コンテナ幅の最小値を確保
+    return Math.max(calculatedWidth, containerWidth - LAYOUT_CONFIG.RULER_WIDTH);
+  }, [layout, thumbnailSize, containerWidth]);
+
   const minYear = useMemo(() => {
     const years = timelineMovies
       .map(m => m.timeline.startYear)
@@ -210,7 +224,7 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
           />
 
           {/* 映画カードを絶対配置 */}
-          <div className="relative" style={{ height: `${timelineHeight}px` }}>
+          <div className="relative" style={{ height: `${timelineHeight}px`, minWidth: `${timelineWidth}px` }}>
             {moviesWithLayout.map(({ movie, layout: movieLayout, year, isAdditional, isEndYear }) => {
               if (!movieLayout) return null;
 
