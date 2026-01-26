@@ -66,8 +66,9 @@ export default function TimePeriodCorrectionModal({ movie, onClose, onSubmit }: 
     <div
       className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
       onClick={handleBackdropClick}
+      style={{ position: 'fixed', left: 0, right: 0, top: 0, bottom: 0 }}
     >
-      <div className="bg-gray-800 rounded-lg max-w-2xl w-full p-6 shadow-2xl mx-auto">
+      <div className="bg-gray-800 rounded-lg w-full p-6 shadow-2xl" style={{ maxWidth: '672px', width: '100%' }}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-white">時代設定の修正を報告</h2>
           <button
