@@ -1,5 +1,6 @@
 export type Movie = {
   id: string;
+  tmdbId?: number; // TMDb ID for user corrections
   title: string;
   year: number; // 公開年
   posterUrl: string;
@@ -7,6 +8,7 @@ export type Movie = {
     startYear: number | null;
     endYear: number | null;
     period: string;
+    reliability?: string; // 信頼度（high, medium, low）
     isEstimated?: boolean; // 推定値フラグ（公開年をフォールバックとして使用した場合）
     additionalYears?: number[]; // タイムトラベル映画用の追加の年代
     isPending?: boolean; // 年代判定処理中フラグ
