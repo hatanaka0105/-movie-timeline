@@ -8,6 +8,7 @@
  * - スケジュール: "0 3 * * 0" (毎週日曜日 午前3時 UTC)
  */
 
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Client } from 'pg';
 
 // Vercel Cron Job設定（vercel.jsonで指定）
@@ -188,20 +189,17 @@ async function saveProposal(
 /**
  * メイン処理
  */
-export default async function handler(req: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const now = new Date();
   const dayOfMonth = now.getUTCDate();
 
   // 月の第1週（1-7日）以外はスキップ
   if (dayOfMonth > 7) {
-    return new Response(
-      JSON.stringify({
-        message: 'Skipped: Not first week of month',
-        date: now.toISOString(),
-        dayOfMonth
-      }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
+    return res.status(200).json({
+      message: 'Skipped: Not first week of month',
+      date: now.toISOString(),
+      dayOfMonth
+    });
   }
 
   const client = new Client({
@@ -273,20 +271,14 @@ export default async function handler(req: Request) {
 
     console.log('[VALIDATION] Completed:', summary);
 
-    return new Response(JSON.stringify(summary), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(200).json(summary);
   } catch (error: any) {
     console.error('[VALIDATION] Fatal error:', error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: error.message,
-        date: now.toISOString()
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      date: now.toISOString()
+    });
   } finally {
     await client.end();
   }
