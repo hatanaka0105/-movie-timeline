@@ -8,6 +8,7 @@ import {
   TMDbMovie,
 } from '../services/tmdbApi';
 import { lookupAndCacheTimePeriod } from '../services/aiTimePeriodLookup';
+import { saveTimePeriodToSharedDb } from '../services/sharedDbApi';
 import { useLanguage } from '../i18n/LanguageContext';
 import { logger } from '../utils/logger';
 
@@ -183,8 +184,24 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
           };
         }
       } else {
-        // 時代設定が確定している場合
+        // 時代設定が確定している場合（TMDbメタデータから抽出できた）
         timeline.isPending = false;
+
+        // TMDbデータから抽出した結果も共有DBに保存
+        // これにより、将来的にはAI/Wikipedia APIに依存しない自己完結型DBを構築できる
+        logger.debug(`💾 Saving TMDb-extracted time period to shared DB for "${details.title}"`);
+        saveTimePeriodToSharedDb({
+          tmdbId: details.id,
+          title: details.title,
+          originalTitle: details.original_title,
+          startYear: timeline.startYear,
+          endYear: timeline.endYear,
+          period: timeline.period,
+          source: 'tmdb_metadata',
+          notes: `Extracted from TMDb metadata (title/overview)`,
+          additionalYears: timeline.additionalYears,
+          reliability: 'high', // TMDbメタデータから直接抽出できた場合は高信頼性
+        }).catch(err => logger.error('Failed to save TMDb result to shared DB:', err));
       }
 
       // 映画情報を更新（年代判定完了）

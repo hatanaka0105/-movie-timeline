@@ -295,6 +295,30 @@ localStorage.getItem('movieTimePeriodCacheVersion');
 - [ ] 既存機能が壊れていない（リグレッションテスト）
 - [ ] コミットメッセージが明確
 
+### デプロイ後の確認手順（必須）
+
+**🚨 重要: `git push`後は必ず以下の手順でデプロイを確認すること**
+
+1. **プッシュ後1分待つ**
+   - Vercelのビルドとデプロイが完了するまで待機
+
+2. **MCPブラウザツールでデプロイステータスを確認**
+   ```
+   URL: https://vercel.com/ccccradles-projects/movie-timeline/deployments
+   ```
+
+3. **デプロイ状態をチェック**
+   - ✅ **成功 (Ready)**: 次の作業に進む
+   - ❌ **失敗 (Error)**: エラーメッセージを確認して修正に戻る
+
+4. **エラーが出た場合**
+   - デプロイページのエラーログを読む
+   - エラーの原因を特定
+   - コードを修正
+   - 再度テスト→コミット→プッシュ→確認のサイクルを繰り返す
+
+**この確認を怠ると、本番環境が壊れた状態で放置されます。必ず実行してください。**
+
 ### やってはいけないこと
 
 - ❌ テストせずにコミット
@@ -450,6 +474,82 @@ npm run monitor
   - Spatial Hashing (O(n) レイアウト計算)
   - React.memo (不要な再レンダリング防止)
   - Lazy Loading (画像の遅延読み込み)
+
+## 共有データベースの戦略と将来ビジョン
+
+### 現在のDB保存の仕組み
+
+現在、映画の時代設定データは以下の条件でPostgreSQL共有DBに保存されます：
+
+**保存される条件（`lookupAndCacheTimePeriod`が実行される場合）：**
+- TMDbのメタデータだけでは時代設定が**推定値**になった映画
+- つまり、タイトルやあらすじから明確な年代が抽出できなかった映画
+
+**保存されない条件：**
+- TMDbのデータだけで時代設定が確定できた映画
+- 例：タイトルに「1945」が含まれる、あらすじに「第二次世界大戦」などの明確なキーワードがある
+
+**保存フロー：**
+```
+映画追加 → TMDbメタデータで時代設定抽出
+  ↓
+  ├─ 確定 (isEstimated: false)
+  │   └─ DBに保存されない ❌
+  │
+  └─ 推定値 (isEstimated: true)
+      └─ AI/Wikipedia検索実行
+          └─ 結果をDBに保存 ✅
+```
+
+**ファイル参照：**
+- DB保存関数: `src/services/sharedDbApi.ts` の `saveTimePeriodToSharedDb()`
+- AI検索関数: `src/services/aiTimePeriodLookup.ts` の `lookupAndCacheTimePeriod()`
+- 呼び出し元: `src/components/MovieSearch.tsx` の148行目（isEstimatedがtrueの場合のみ）
+
+### 将来ビジョン: API不要の最強DB
+
+**最終目標：**
+外部API（TMDb、DeepSeek、Gemini、Groq、Wikipedia）に依存せず、共有DB単体で全ての映画の正確な時代設定を提供できる自己完結型データベースを構築する。
+
+**理想的な状態：**
+```
+映画追加 → 共有DBから時代設定取得 → 即座に表示完了
+```
+
+**達成のためのステップ：**
+
+1. **データ収集フェーズ（現在）**
+   - ユーザーが映画を追加するたびにAI/Wikipedia検索結果をDBに蓄積
+   - 現在約50本/500本（約10%）のカバー率
+   - 目標：主要映画10,000本以上の時代設定データを蓄積
+
+2. **品質向上フェーズ**
+   - 低信頼性データ（`reliability: 'low'`）の再検証
+   - コミュニティ投票システムによる検証
+   - 専門家による手動キュレーション
+
+3. **完全カバレッジフェーズ**
+   - TMDb上の全映画（数十万本）の時代設定データを網羅
+   - 新作映画の自動追加パイプライン
+   - 外部APIへの依存を完全に排除
+
+**メリット：**
+- ⚡ 超高速レスポンス（API呼び出し不要）
+- 💰 コスト削減（AI APIの課金なし）
+- 🔒 安定性向上（外部APIのレート制限・障害の影響なし）
+- 🎯 精度向上（人間による検証済みデータ）
+
+**実装上の注意点：**
+- 全ての映画をDBに保存するには、`MovieSearch.tsx`を修正して`isEstimated`に関係なく常に`lookupAndCacheTimePeriod`を呼ぶか、TMDbデータから抽出した結果も`saveTimePeriodToSharedDb`で保存する必要がある
+- ただし、TMDbデータからの抽出は精度が低い可能性があるため、AI/Wikipedia検索結果のみを信頼できるソースとして扱う現在の方針は妥当
+
+**進捗確認方法：**
+```sql
+-- PostgreSQLで現在のDB登録件数を確認
+SELECT COUNT(*) FROM movie_time_periods;
+SELECT source, COUNT(*) FROM movie_time_periods GROUP BY source;
+SELECT reliability, COUNT(*) FROM movie_time_periods GROUP BY reliability;
+```
 
 ## セキュリティ
 
