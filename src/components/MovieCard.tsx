@@ -1,6 +1,7 @@
 import { useState, memo } from 'react';
 import { Movie } from '../types/movie.types';
 import { useLanguage } from '../i18n/LanguageContext';
+import TimePeriodCorrectionModal, { CorrectionData } from './TimePeriodCorrectionModal';
 
 interface MovieCardProps {
   movie: Movie;
@@ -15,6 +16,7 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
   const { title, timeline, posterUrl, genre } = movie;
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
+  const [showCorrectionModal, setShowCorrectionModal] = useState(false);
 
   // 時代設定の表示を決定
   let yearDisplay: string;
@@ -108,98 +110,147 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
     setIsEditing(false);
   };
 
+  // ダブルクリックハンドラー（年表示部分）
+  const handleYearDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowCorrectionModal(true);
+  };
+
+  // 修正申告の送信
+  const handleCorrectionSubmit = async (correction: CorrectionData) => {
+    const response = await fetch('/api/submit-time-period-correction', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        tmdb_id: movie.tmdbId,
+        title: movie.title,
+        current_start_year: timeline.startYear,
+        current_end_year: timeline.endYear,
+        current_period: timeline.period,
+        current_reliability: timeline.reliability,
+        ...correction,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to submit correction');
+    }
+
+    return response.json();
+  };
+
   return (
-    <div
-      onClick={onClick}
-      className={`${sizeClasses[size]} bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer border border-gray-700 relative group`}
-    >
-      {/* 編集・削除ボタン */}
-      {(onDelete || onEditYear) && (
-        <div className="absolute top-1 right-1 z-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          {onEditYear && (
-            <button
-              onClick={handleEdit}
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center"
-              title="Edit year"
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            </button>
-          )}
-          {onDelete && (
-            <button
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center"
-              title={t.delete}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-        </div>
-      )}
-      {/* Wikipedia検索中マーク（推定値の場合） */}
-      {timeline.isEstimated && (
-        <div
-          className="absolute top-1 left-1 z-10 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-          title={t.wikipediaSearching}
-        >
-          🔍
-        </div>
-      )}
-      <div className="aspect-[2/3] bg-gray-700 flex items-center justify-center overflow-hidden">
-        {posterUrl ? (
-          <img
-            src={posterUrl}
-            alt={title}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className={`text-gray-500 ${size === 'small' ? 'text-2xl' : size === 'large' ? 'text-5xl' : 'text-4xl'}`}>🎬</div>
-        )}
-      </div>
-      <div className={paddingClasses[size]}>
-        <h3 className={`${textSizeClasses[size].title} font-semibold text-white truncate`} title={title}>
-          {title}
-        </h3>
-        {isEditing ? (
-          <input
-            type="text"
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            onKeyDown={handleEditSubmit}
-            onBlur={handleEditBlur}
-            onClick={(e) => e.stopPropagation()}
-            placeholder="YYYY or YYYY-YYYY"
-            autoFocus
-            className={`${textSizeClasses[size].year} text-amber-400 mt-0.5 bg-gray-700 border border-amber-500 rounded px-1 w-full focus:outline-none focus:ring-1 focus:ring-amber-500`}
-          />
-        ) : (
-          <div className="flex items-center gap-1 mt-0.5">
-            {isPending && (
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-amber-400" />
-            )}
-            <p className={`${textSizeClasses[size].year} text-amber-400`}>{yearDisplay}</p>
-          </div>
-        )}
-        {size !== 'small' && genre.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {genre.slice(0, 2).map((g) => (
-              <span
-                key={g}
-                className={`${textSizeClasses[size].genre} px-2 py-0.5 bg-gray-700 text-gray-300 rounded-full`}
+    <>
+      <div
+        onClick={onClick}
+        className={`${sizeClasses[size]} bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer border border-gray-700 relative group`}
+      >
+        {/* 編集・削除ボタン */}
+        {(onDelete || onEditYear) && (
+          <div className="absolute top-1 right-1 z-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {onEditYear && (
+              <button
+                onClick={handleEdit}
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                title="Edit year"
               >
-                {g}
-              </span>
-            ))}
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={handleDelete}
+                className="bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                title={t.delete}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         )}
+        {/* Wikipedia検索中マーク（推定値の場合） */}
+        {timeline.isEstimated && (
+          <div
+            className="absolute top-1 left-1 z-10 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+            title={t.wikipediaSearching}
+          >
+            🔍
+          </div>
+        )}
+        <div className="aspect-[2/3] bg-gray-700 flex items-center justify-center overflow-hidden">
+          {posterUrl ? (
+            <img
+              src={posterUrl}
+              alt={title}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className={`text-gray-500 ${size === 'small' ? 'text-2xl' : size === 'large' ? 'text-5xl' : 'text-4xl'}`}>🎬</div>
+          )}
+        </div>
+        <div className={paddingClasses[size]}>
+          <h3 className={`${textSizeClasses[size].title} font-semibold text-white truncate`} title={title}>
+            {title}
+          </h3>
+          {isEditing ? (
+            <input
+              type="text"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onKeyDown={handleEditSubmit}
+              onBlur={handleEditBlur}
+              onClick={(e) => e.stopPropagation()}
+              placeholder="YYYY or YYYY-YYYY"
+              autoFocus
+              className={`${textSizeClasses[size].year} text-amber-400 mt-0.5 bg-gray-700 border border-amber-500 rounded px-1 w-full focus:outline-none focus:ring-1 focus:ring-amber-500`}
+            />
+          ) : (
+            <div
+              className="flex items-center gap-1 mt-0.5"
+              onDoubleClick={handleYearDoubleClick}
+              title="ダブルクリックで修正を報告"
+            >
+              {isPending && (
+                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-amber-400" />
+              )}
+              <p className={`${textSizeClasses[size].year} text-amber-400 cursor-pointer hover:underline`}>
+                {yearDisplay}
+              </p>
+            </div>
+          )}
+          {size !== 'small' && genre.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {genre.slice(0, 2).map((g) => (
+                <span
+                  key={g}
+                  className={`${textSizeClasses[size].genre} px-2 py-0.5 bg-gray-700 text-gray-300 rounded-full`}
+                >
+                  {g}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* 修正申告モーダル */}
+      {showCorrectionModal && (
+        <TimePeriodCorrectionModal
+          movie={movie}
+          onClose={() => setShowCorrectionModal(false)}
+          onSubmit={handleCorrectionSubmit}
+        />
+      )}
+    </>
   );
 }
 
