@@ -52,5 +52,11 @@
       "source": "/api/:path*",
       "destination": "/api/:path*"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/validate-time-periods",
+      "schedule": "0 3 * * 0"
+    }
   ]
 }
