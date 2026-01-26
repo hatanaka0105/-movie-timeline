@@ -2,6 +2,12 @@ import { useState, memo } from 'react';
 import { Movie } from '../types/movie.types';
 import { useLanguage } from '../i18n/LanguageContext';
 import TimePeriodCorrectionModal, { CorrectionData } from './TimePeriodCorrectionModal';
+import {
+  isAmazonAffiliateEnabled,
+  generateAmazonSearchUrl,
+  generatePrimeVideoUrl,
+  trackAmazonClick
+} from '../utils/amazonAffiliate';
 
 interface MovieCardProps {
   movie: Movie;
@@ -257,6 +263,35 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
                   {g}
                 </span>
               ))}
+            </div>
+          )}
+          {/* Amazon アソシエイトリンク（環境変数が設定されている場合のみ表示） */}
+          {size !== 'small' && isAmazonAffiliateEnabled() && (
+            <div className="mt-2 flex gap-1">
+              <a
+                href={generatePrimeVideoUrl(title)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trackAmazonClick(title, 'prime-video');
+                }}
+                className="flex-1 text-center text-xs px-2 py-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded transition-colors"
+              >
+                Prime Video
+              </a>
+              <a
+                href={generateAmazonSearchUrl(title)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trackAmazonClick(title, 'search');
+                }}
+                className="flex-1 text-center text-xs px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors"
+              >
+                DVD/Blu-ray
+              </a>
             </div>
           )}
         </div>

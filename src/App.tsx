@@ -11,6 +11,7 @@ import ThemeSwitcher from './components/ThemeSwitcher';
 import KeywordViewer from './components/KeywordViewer';
 import { useLanguage } from './i18n/LanguageContext';
 import { movieTimePeriodDb } from './services/movieTimePeriodDb';
+import { isAmazonAffiliateEnabled, getAffiliateDisclaimer } from './utils/amazonAffiliate';
 
 function App() {
   const { language, setLanguage, t } = useLanguage();
@@ -352,6 +353,12 @@ function App() {
               TMDb API
             </a>
           </p>
+          {/* Amazon アソシエイト表記（環境変数が設定されている場合のみ表示） */}
+          {isAmazonAffiliateEnabled() && (
+            <p className="mt-2 text-xs text-gray-600">
+              {getAffiliateDisclaimer()}
+            </p>
+          )}
         </div>
       </footer>
 
