@@ -1,0 +1,68 @@
+name: Auto Create Correction PR
+
+on:
+  repository_dispatch:
+    types: [user_correction_threshold_reached]
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install pg
+
+      - name: Generate correction JSON
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          TMDB_ID: ${{ github.event.client_payload.tmdb_id }}
+          TITLE: ${{ github.event.client_payload.title }}
+          SUGGESTED_START_YEAR: ${{ github.event.client_payload.suggested_start_year }}
+          SUGGESTED_END_YEAR: ${{ github.event.client_payload.suggested_end_year }}
+          SUGGESTED_PERIOD: ${{ github.event.client_payload.suggested_period }}
+        run: node scripts/generate-correction-json.cjs
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: user-corrections/auto-${{ github.event.client_payload.tmdb_id }}-${{ github.run_number }}
+          commit-message: |
+            Apply user correction for "${{ github.event.client_payload.title }}"
+
+            TMDb ID: ${{ github.event.client_payload.tmdb_id }}
+            Suggested period: ${{ github.event.client_payload.suggested_period }}
+
+            This correction was automatically approved based on 10+ unique user reports.
+          title: '🎬 User Correction: ${{ github.event.client_payload.title }}'
+          body: |
+            ## 自動生成されたユーザー修正申告PR
+
+            ### 映画情報
+            - **タイトル**: ${{ github.event.client_payload.title }}
+            - **TMDb ID**: ${{ github.event.client_payload.tmdb_id }}
+
+            ### 提案された時代設定
+            - **時代**: ${{ github.event.client_payload.suggested_period }}
+            - **開始年**: ${{ github.event.client_payload.suggested_start_year || 'N/A' }}
+            - **終了年**: ${{ github.event.client_payload.suggested_end_year || 'N/A' }}
+
+            ### 承認理由
+            この修正は10人以上のユニークユーザーから同じ提案があったため、自動的に承認されました。
+
+            ### レビュー手順
+            1. `.github/user-corrections.json`の内容を確認
+            2. 問題なければマージ
+            3. マージすると自動的にデータベースが更新されます
+
+            ---
+            🤖 このPRは自動生成されました
+          labels: user-correction,auto-approved

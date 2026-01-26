@@ -9,6 +9,53 @@ export const config = {
   maxDuration: 10,
 };
 
+/**
+ * GitHub repository_dispatchをトリガーしてPR作成ワークフローを起動
+ */
+async function triggerPRCreation(
+  tmdbId: number,
+  title: string,
+  suggestion: { suggested_start_year?: number; suggested_end_year?: number; suggested_period: string }
+) {
+  const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+  const GITHUB_REPO = process.env.GITHUB_REPOSITORY || 'hatanaka0105/-movie-timeline';
+
+  if (!GITHUB_TOKEN) {
+    console.warn('[USER_CORRECTION] GITHUB_TOKEN not set, skipping PR creation');
+    return;
+  }
+
+  const [owner, repo] = GITHUB_REPO.split('/');
+
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event_type: 'user_correction_threshold_reached',
+        client_payload: {
+          tmdb_id: tmdbId,
+          title: title,
+          suggested_start_year: suggestion.suggested_start_year,
+          suggested_end_year: suggestion.suggested_end_year,
+          suggested_period: suggestion.suggested_period,
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+  }
+
+  console.log('[USER_CORRECTION] Successfully triggered PR creation workflow');
+}
+
 interface CorrectionRequest {
   tmdb_id: number;
   title: string;
@@ -111,10 +158,47 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     console.log(`[USER_CORRECTION] New correction #${correctionId} for ${body.title} (${body.tmdb_id})`);
 
+    // 同じ映画・同じ提案の件数をカウント
+    const countQuery = `
+      SELECT COUNT(DISTINCT user_ip) as unique_count
+      FROM user_corrections
+      WHERE tmdb_id = $1
+        AND suggested_start_year IS NOT DISTINCT FROM $2
+        AND suggested_end_year IS NOT DISTINCT FROM $3
+        AND suggested_period = $4
+        AND status = 'pending'
+    `;
+
+    const countResult = await client.query(countQuery, [
+      body.tmdb_id,
+      body.suggested_start_year || null,
+      body.suggested_end_year || null,
+      body.suggested_period
+    ]);
+
+    const uniqueCount = parseInt(countResult.rows[0].unique_count);
+    console.log(`[USER_CORRECTION] ${uniqueCount} unique users suggested this correction`);
+
+    // 閾値（10件以上）を超えたらGitHub repository_dispatchをトリガー
+    const THRESHOLD = 10;
+    if (uniqueCount >= THRESHOLD) {
+      console.log(`[USER_CORRECTION] Threshold reached! Triggering PR creation workflow...`);
+
+      // GitHub repository_dispatchをトリガー（非同期・ノンブロッキング）
+      triggerPRCreation(body.tmdb_id, body.title, {
+        suggested_start_year: body.suggested_start_year,
+        suggested_end_year: body.suggested_end_year,
+        suggested_period: body.suggested_period
+      }).catch(err => {
+        console.error('[USER_CORRECTION] Failed to trigger PR creation:', err);
+      });
+    }
+
     return res.status(201).json({
       success: true,
       correction_id: correctionId,
-      message: 'Thank you for your correction! It will be reviewed.'
+      message: 'Thank you for your correction! It will be reviewed.',
+      unique_supporters: uniqueCount
     });
 
   } catch (error: any) {
