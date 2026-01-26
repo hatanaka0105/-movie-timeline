@@ -181,3 +181,57 @@ Phase 1が安定稼働したら、以下の機能を追加予定：
 3. **Web UI**: ブラウザで提案を確認・承認
 
 詳細は `DEVELOPMENT.md` の「自動メンテナンス機能の設計」セクションを参照してください。
+
+## Vercel Cron Jobs に関する技術的課題
+
+現在、Vercel Cron Jobsの実装を試みましたが、以下の課題が発生しています：
+
+### 問題点
+
+1. **DEPLOYMENT_NOT_FOUND エラー**
+   - `https://www.movietimeliner.com/api/validate-time-periods` にアクセスすると404エラー
+   - 既存の `api/` フォルダ内のAPIエンドポイント（`movie-time-period.ts` など）も同様に404
+   - これは、Vercelのデプロイメント設定に根本的な問題があることを示唆
+
+2. **Vercel Cron Jobsの制限**
+   - Vercel Cron Jobsは **Hobby（無料）プランでは利用不可**
+   - Pro プラン（$20/月）以上が必要
+   - 参考: https://vercel.com/docs/cron-jobs
+
+3. **代替アプローチ**
+   - 現時点では手動スクリプト（`scripts/validate-time-periods.cjs`）を使用
+   - 月次で手動実行することで、Phase 1の機能は完全に動作
+
+### 今後の対応方針
+
+- **短期**: 手動スクリプトを継続使用（Phase 1として十分機能）
+- **中期**: GitHub Actionsでの自動実行を検討（無料で利用可能）
+- **長期**: Vercel Proプランへのアップグレードを検討
+
+### GitHub Actions による代替実装案
+
+```yaml
+# .github/workflows/validate-time-periods.yml
+name: Monthly Time Period Validation
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # 毎週日曜日 午前3時 UTC
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/validate-time-periods.cjs --limit 100
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          VITE_DEEPSEEK_API_KEY: ${{ secrets.VITE_DEEPSEEK_API_KEY }}
+```
+
+この方法なら、無料で月次自動実行が可能です。
