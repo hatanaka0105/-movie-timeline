@@ -211,12 +211,12 @@ export default function Timeline({ movies, scale, thumbnailSize, onDeleteMovie, 
 
       {/* タイムライン本体（通常の時代設定の映画がある場合のみ表示） */}
       {timelineMovies.length > 0 && (
-        <div className="flex">
+        <div className="flex overflow-x-auto">
           {/* 左側の定規 */}
           <TimelineRuler markers={yearMarkers} height={timelineHeight} />
 
           {/* タイムライン本体 */}
-          <div className="flex-1 relative pl-8">
+          <div className="relative pl-8" style={{ minWidth: `${timelineWidth}px` }}>
           {/* 中央の縦線 */}
           <div
             className="absolute left-1/2 top-0 w-0.5 bg-amber-500/20 -translate-x-1/2"
