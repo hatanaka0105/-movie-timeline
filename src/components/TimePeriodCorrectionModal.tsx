@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Movie } from '../types/movie.types';
 
 interface TimePeriodCorrectionModalProps {
@@ -61,7 +62,7 @@ export default function TimePeriodCorrectionModal({ movie, onClose, onSubmit }: 
     }
   };
 
-  return (
+  const modalContent = (
     <div
       className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
       onClick={handleBackdropClick}
@@ -183,4 +184,6 @@ export default function TimePeriodCorrectionModal({ movie, onClose, onSubmit }: 
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
