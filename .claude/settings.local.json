@@ -24,7 +24,21 @@
       "Bash(pkill:*)",
       "Bash(xargs kill:*)",
       "Bash(git reset:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(timeout 10 cmd:*)",
+      "Bash(timeout 20 cmd:*)",
+      "Bash(timeout 30 cmd:*)",
+      "Bash(timeout:*)",
+      "Bash(dir:*)",
+      "Bash(vercel env:*)",
+      "Bash(psql $DATABASE_URL -c \"SELECT COUNT\\(*\\) as total_movies, COUNT\\(CASE WHEN source LIKE ''%deepseek%'' THEN 1 END\\) as deepseek_movies FROM movie_time_periods;\")",
+      "Bash(gh api:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(tee:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(git stash pop:*)",
+      "Bash(vercel ls:*)"
     ]
   }
 }

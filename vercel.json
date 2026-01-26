@@ -55,7 +55,7 @@
   ],
   "crons": [
     {
-      "path": "/api/cron/validate-time-periods",
+      "path": "/api/validate-time-periods",
       "schedule": "0 3 * * 0"
     }
   ]
