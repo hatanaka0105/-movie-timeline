@@ -110,12 +110,6 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
     setIsEditing(false);
   };
 
-  // ダブルクリックハンドラー（年表示部分）
-  const handleYearDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowCorrectionModal(true);
-  };
-
   // 修正申告の送信
   const handleCorrectionSubmit = async (correction: CorrectionData) => {
     const response = await fetch('/api/submit-time-period-correction', {
@@ -214,17 +208,27 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
               className={`${textSizeClasses[size].year} text-amber-400 mt-0.5 bg-gray-700 border border-amber-500 rounded px-1 w-full focus:outline-none focus:ring-1 focus:ring-amber-500`}
             />
           ) : (
-            <div
-              className="flex items-center gap-1 mt-0.5"
-              onDoubleClick={handleYearDoubleClick}
-              title="ダブルクリックで修正を報告"
-            >
-              {isPending && (
-                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-amber-400" />
-              )}
-              <p className={`${textSizeClasses[size].year} text-amber-400 cursor-pointer hover:underline`}>
-                {yearDisplay}
-              </p>
+            <div className="flex items-center justify-between gap-1 mt-0.5">
+              <div className="flex items-center gap-1">
+                {isPending && (
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-amber-400" />
+                )}
+                <p className={`${textSizeClasses[size].year} text-amber-400`}>
+                  {yearDisplay}
+                </p>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowCorrectionModal(true);
+                }}
+                className="text-amber-400 hover:text-amber-300 opacity-70 hover:opacity-100 transition-opacity"
+                title="時代設定の修正を報告"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </button>
             </div>
           )}
           {size !== 'small' && genre.length > 0 && (
