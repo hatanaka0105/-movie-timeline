@@ -112,20 +112,29 @@ function MovieCard({ movie, onClick, onDelete, onEditYear, size = 'medium' }: Mo
 
   // 修正申告の送信
   const handleCorrectionSubmit = async (correction: CorrectionData) => {
+    // tmdbIdが存在しない場合はエラー
+    if (!movie.tmdbId) {
+      throw new Error('この映画にはTMDb IDが設定されていません。一度削除して再度追加してください。');
+    }
+
+    const payload = {
+      tmdb_id: movie.tmdbId,
+      title: movie.title,
+      current_start_year: timeline.startYear,
+      current_end_year: timeline.endYear,
+      current_period: timeline.period,
+      current_reliability: timeline.reliability,
+      ...correction,
+    };
+
+    console.log('[CORRECTION] Submitting payload:', payload);
+
     const response = await fetch('/api/submit-time-period-correction', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        tmdb_id: movie.tmdbId,
-        title: movie.title,
-        current_start_year: timeline.startYear,
-        current_end_year: timeline.endYear,
-        current_period: timeline.period,
-        current_reliability: timeline.reliability,
-        ...correction,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {

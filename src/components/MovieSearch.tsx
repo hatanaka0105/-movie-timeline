@@ -117,6 +117,7 @@ export default function MovieSearch({ onAddMovie, onUpdateMovie }: MovieSearchPr
     // まず「年代測定中」の状態でカードを即座に追加
     const pendingMovie: Movie = {
       id: movieId,
+      tmdbId: details.id,
       title: details.title,
       year: details.release_date
         ? parseInt(details.release_date.split('-')[0])
