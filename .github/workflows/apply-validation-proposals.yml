@@ -1,0 +1,45 @@
+name: Apply Validation Proposals
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  apply:
+    # PRがマージされた場合のみ実行
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'validation/time-periods-')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply proposals to database
+        run: node scripts/apply-validation-proposals.cjs
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+
+      - name: Remove proposals file
+        run: |
+          if [ -f .github/validation-proposals.json ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git rm .github/validation-proposals.json
+            git commit -m "Remove applied validation proposals"
+            git push
+          fi
+
+      - name: Summary
+        run: |
+          echo "## Proposals Applied" >> $GITHUB_STEP_SUMMARY
+          echo "Validation proposals have been applied to the database." >> $GITHUB_STEP_SUMMARY

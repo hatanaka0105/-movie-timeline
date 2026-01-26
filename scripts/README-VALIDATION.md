@@ -247,6 +247,31 @@ GitHub Actionsを使用した月次自動検証が実装されています。
    - `Monthly Time Period Validation` ワークフローを選択
    - `Run workflow` → `Run workflow` をクリック
 
+#### 承認フロー（Pull Request方式）
+
+検証後、自動的にPull Requestが作成されます：
+
+1. **自動PR作成**
+   - 検証実行後、提案内容を含むPRが自動作成
+   - 各提案の詳細（現在値、提案値、理由、信頼度）が表示
+
+2. **ブラウザで承認・却下**
+   - ✅ **承認**: PRをマージ → データベースが自動更新
+   - ❌ **却下**: PRをクローズ → 提案は保留のまま
+
+3. **自動適用**
+   - PRマージ時に `apply-validation-proposals.yml` ワークフローが実行
+   - `movie_time_periods` テーブルを自動更新
+   - `validation_proposals` テーブルのステータスを `approved` に変更
+
+#### メリット
+
+- 🖱️ コマンド不要、ブラウザで完結
+- 👀 視覚的に提案内容を確認
+- 💬 レビューコメント機能が使える
+- 📜 変更履歴がGitに残る
+- 🔄 一括承認・一括却下が可能
+
 #### コスト
 
 - **Public リポジトリ**: 完全無料 ✅

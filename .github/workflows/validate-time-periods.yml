@@ -12,6 +12,9 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -32,8 +35,14 @@ jobs:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           VITE_DEEPSEEK_API_KEY: ${{ secrets.VITE_DEEPSEEK_API_KEY }}
 
+      - name: Create Pull Request with proposals
+        run: node scripts/create-validation-pr.cjs
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          GH_TOKEN: ${{ github.token }}
+
       - name: Summary
         if: always()
         run: |
           echo "## Validation Summary" >> $GITHUB_STEP_SUMMARY
-          echo "Validation script completed. Check logs for details." >> $GITHUB_STEP_SUMMARY
+          echo "Validation completed. Check for Pull Request with proposals." >> $GITHUB_STEP_SUMMARY
