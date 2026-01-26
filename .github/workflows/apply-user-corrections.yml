@@ -1,0 +1,44 @@
+name: Apply User Corrections
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  apply-corrections:
+    # Only run if PR was merged (not just closed)
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'user-corrections/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install pg
+
+      - name: Apply user corrections
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+        run: node scripts/apply-user-corrections.cjs
+
+      - name: Clean up corrections file
+        run: |
+          if [ -f .github/user-corrections.json ]; then
+            echo "Removing applied corrections file"
+            rm .github/user-corrections.json
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .github/user-corrections.json
+            git commit -m "Clean up applied user corrections file" || echo "No changes to commit"
+            git push origin main || echo "Nothing to push"
+          fi
