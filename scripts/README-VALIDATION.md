@@ -208,30 +208,48 @@ Phase 1が安定稼働したら、以下の機能を追加予定：
 - **中期**: GitHub Actionsでの自動実行を検討（無料で利用可能）
 - **長期**: Vercel Proプランへのアップグレードを検討
 
-### GitHub Actions による代替実装案
+### GitHub Actions による自動化（実装済み）
 
-```yaml
-# .github/workflows/validate-time-periods.yml
-name: Monthly Time Period Validation
+GitHub Actionsを使用した月次自動検証が実装されています。
 
-on:
-  schedule:
-    - cron: '0 3 * * 0'  # 毎週日曜日 午前3時 UTC
-  workflow_dispatch:  # 手動実行も可能
+**ワークフローファイル**: `.github/workflows/validate-time-periods.yml`
 
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: node scripts/validate-time-periods.cjs --limit 100
-        env:
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-          VITE_DEEPSEEK_API_KEY: ${{ secrets.VITE_DEEPSEEK_API_KEY }}
-```
+**実行スケジュール**:
+- 毎週日曜日 午前3時（UTC）に自動実行
+- スクリプト内で月の第1週（1-7日）のみ処理
+- 手動実行も可能（GitHub ActionsタブからDispatch）
+
+**必要な設定**: GitHub Secretsの設定
+
+#### GitHub Secretsの設定手順
+
+1. GitHubリポジトリページにアクセス
+   - URL: `https://github.com/hatanaka0105/-movie-timeline`
+
+2. `Settings` → `Secrets and variables` → `Actions` に移動
+
+3. `New repository secret` をクリックして以下のシークレットを追加：
+
+   **Secret 1: POSTGRES_URL**
+   ```
+   Name: POSTGRES_URL
+   Secret: postgresql://neondb_owner:npg_9Jpbfd0Vtmxc@ep-sparkling-sun-ahjfetvl-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
+   ```
+
+   **Secret 2: VITE_DEEPSEEK_API_KEY**
+   ```
+   Name: VITE_DEEPSEEK_API_KEY
+   Secret: sk-bd1651de585c4c098f7d1cdc623801d0
+   ```
+
+4. 手動でワークフローをテスト実行
+   - `Actions` タブに移動
+   - `Monthly Time Period Validation` ワークフローを選択
+   - `Run workflow` → `Run workflow` をクリック
+
+#### コスト
+
+- **Public リポジトリ**: 完全無料 ✅
+- **Private リポジトリ**: 月2,000分の無料枠内（1回7分程度なので十分）
 
 この方法なら、無料で月次自動実行が可能です。

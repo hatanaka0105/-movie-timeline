@@ -1,0 +1,39 @@
+name: Monthly Time Period Validation
+
+on:
+  schedule:
+    # 毎週日曜日 午前3時（UTC）に実行
+    # スクリプト内で月の第1週（1-7日）のみ処理する
+    - cron: '0 3 * * 0'
+
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run validation script
+        run: node scripts/validate-time-periods.cjs --limit 100
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          VITE_DEEPSEEK_API_KEY: ${{ secrets.VITE_DEEPSEEK_API_KEY }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Validation script completed. Check logs for details." >> $GITHUB_STEP_SUMMARY
