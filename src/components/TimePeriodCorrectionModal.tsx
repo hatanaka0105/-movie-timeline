@@ -109,7 +109,6 @@ export default function TimePeriodCorrectionModal({ movie, onClose, onSubmit }: 
                 </p>
                 <ul className="text-xs text-blue-200 mt-2 space-y-1 list-disc list-inside">
                   <li>申告内容は必ず反映されるとは限りません</li>
-                  <li>複数のユーザーから同じ修正提案があった場合に自動承認されます</li>
                   <li>反映には数日〜数週間かかる場合があります</li>
                 </ul>
               </div>
